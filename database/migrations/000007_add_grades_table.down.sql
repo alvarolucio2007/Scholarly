@@ -1,0 +1,2 @@
+DROP INDEX IF EXISTS idx_grades_test;
+DROP TABLE IF EXISTS grades;
