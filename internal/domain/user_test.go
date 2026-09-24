@@ -56,11 +56,15 @@ func Test_isValidCPF(t *testing.T) {
 			"99999999999",
 			false,
 		},
+		{
+			"CPF with incorrect amount of characters (!=11)",
+			"9999999999",
+			false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := isValidCPF(tt.cpf)
-			// TODO: update the condition below to compare got with tt.want.
 			if got != tt.want {
 				t.Errorf("isValidCPF() = %v, want %v", got, tt.want)
 			}
