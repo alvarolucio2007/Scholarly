@@ -45,15 +45,23 @@ func Test_isValidCPF(t *testing.T) {
 			"valid CPF, no punctuation",
 			"34693992046",
 			true,
-		},{
-			"invalid CPF, "
-		}
+		},
+		{
+			"invalid CPF with punctuation",
+			"999.999.999-99",
+			false,
+		},
+		{
+			"invalid CPF with no punctuation",
+			"99999999999",
+			false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := isValidCPF(tt.cpf)
 			// TODO: update the condition below to compare got with tt.want.
-			if true {
+			if got != tt.want {
 				t.Errorf("isValidCPF() = %v, want %v", got, tt.want)
 			}
 		})
