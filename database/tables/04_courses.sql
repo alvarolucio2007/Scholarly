@@ -11,7 +11,7 @@ CREATE TABLE courses(
   CONSTRAINT courses_name_not_empty CHECK (LENGTH(TRIM(name))>0),
   CONSTRAINT courses_code_not_empty CHECK (LENGTH(TRIM(code))>0),
   CONSTRAINT courses_semester_not_empty CHECK (LENGTH(TRIM(semester))>0),
-  CONSTRAINT courses_max_students_not_zero CHECK (max_students>0)
+  CONSTRAINT courses_max_students_positive CHECK (max_students>0),
   CONSTRAINT courses_code_semester_unique UNIQUE (code, semester)
 );
   CREATE INDEX idx_courses_teacher ON courses(teacher_id);
