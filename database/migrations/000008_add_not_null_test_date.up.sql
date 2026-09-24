@@ -1,0 +1,2 @@
+ALTER TABLE tests
+ALTER COLUMN test_date SET NOT NULL;
