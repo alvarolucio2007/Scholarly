@@ -2,7 +2,7 @@ package domain
 
 import "time"
 
-type Tests struct {
+type Test struct {
 	ID        int64
 	CourseID  int64
 	Name      string
