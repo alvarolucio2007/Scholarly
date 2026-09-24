@@ -2,17 +2,11 @@ package domain
 
 import (
 	"errors"
-	"net/mail"
 	"regexp"
-	"strings"
 	"time"
 )
 
-var (
-	ErrNameRequired = errors.New("name is required")
-	ErrInvalidEmail = errors.New("invalid email")
-	ErrInvalidCPF   = errors.New("invalid CPF")
-)
+var ErrInvalidCPF = errors.New("invalid CPF")
 
 type User struct {
 	ID           int64
@@ -24,13 +18,7 @@ type User struct {
 	UpdatedAt    *time.Time
 }
 
-func (u *User) Validate() error {
-	if strings.TrimSpace(u.Name) == "" {
-		return ErrNameRequired
-	}
-	if _, err := mail.ParseAddress(u.Email); err != nil {
-		return ErrInvalidEmail
-	}
+func (u *User) ValidateCPF() error {
 	if !isValidCPF(u.CPF) {
 		return ErrInvalidCPF
 	}
