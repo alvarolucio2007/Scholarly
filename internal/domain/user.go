@@ -1,12 +1,9 @@
 package domain
 
 import (
-	"errors"
 	"regexp"
 	"time"
 )
-
-var ErrInvalidCPF = errors.New("invalid CPF")
 
 type User struct {
 	ID           int64
