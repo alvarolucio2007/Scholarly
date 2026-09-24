@@ -6,6 +6,9 @@ var (
 	// User
 	ErrInvalidCPF = errors.New("invalid CPF")
 
+	// Student
+	ErrEnrollmentNumberRequired = errors.New("enrollment number is required")
+
 	// Enrollment
 	ErrAlreadyEnrolled = errors.New("student already enrolled")
 	ErrCourseFull      = errors.New("course is full")
