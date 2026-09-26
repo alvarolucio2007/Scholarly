@@ -21,5 +21,11 @@ var (
 	ErrInvalidGrade = errors.New("invalid grade value")
 
 	// General
-	ErrNotFound = errors.New("not found")
+	ErrNotFound                = errors.New("not found")
+	ErrEmailAlreadyExists      = errors.New("email already exists")
+	ErrCPFAlreadyExists        = errors.New("CPF already exists")
+	ErrEnrollmentAlreadyExists = errors.New("enrollment number already exists")
+	ErrCourseCodeAlreadyExists = errors.New("course code already exists for this semester")
+	ErrConflict                = errors.New("conflict")
+	ErrForeignKeyViolation     = errors.New("referenced entity does not exist")
 )
