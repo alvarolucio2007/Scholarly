@@ -21,12 +21,12 @@ func NewStudentRepo(db *sql.DB) *StudentRepo {
 }
 
 func (r *StudentRepo) Create(ctx context.Context, student *domain.Student) error {
-	query := `INSERT INTO students (user_id,enrollment_number) VALUES ($1,$2) RETURNING user_id`
+	query := `INSERT INTO students (user_id,enrollment_number) VALUES ($1,$2)`
 	ctx, cancel := context.WithTimeout(ctx, PostgresQueryTimeout)
 	defer cancel()
-	if err := r.db.QueryRowContext(ctx, query, student.UserID, student.EnrollmentNumber).Scan(&student.UserID); err != nil {
+	if _, err := r.db.ExecContext(ctx, query, student.UserID, student.EnrollmentNumber); err != nil {
 		translated := translateError(err)
-		if translated != err {
+		if !errors.Is(err, translated) {
 			return translated
 		}
 		return fmt.Errorf("postgres: create student: %w", err)
@@ -69,7 +69,7 @@ func (r *StudentRepo) GetByEnrollment(ctx context.Context, enrollment string) (*
 func (r *StudentRepo) Update(ctx context.Context, student *domain.Student) error {
 	query := `UPDATE students
 	SET
-		enrollment_number=COALESCE(NULLIF($1,''),enrollment_number),
+		enrollment_number=COALESCE(NULLIF($1,''),enrollment_number)
 	WHERE user_id=$2`
 	ctx, cancel := context.WithTimeout(ctx, PostgresQueryTimeout)
 	defer cancel()
