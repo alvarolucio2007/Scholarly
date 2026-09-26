@@ -21,13 +21,6 @@ func (b *whereBuilder) add(column string, value any) {
 	b.argPos++
 }
 
-func (b *whereBuilder) addIf(column string, value any) {
-	if value == nil {
-		return
-	}
-	b.add(column, value)
-}
-
 func (b *whereBuilder) build() (string, []any) {
 	if len(b.conditions) == 0 {
 		return "", b.args
