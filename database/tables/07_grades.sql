@@ -7,6 +7,6 @@ CREATE TABLE grades(
   updated_at TIMESTAMPTZ,
 
   CONSTRAINT grades_value_valid CHECK (value>=0 AND value<=10),
- CONSTRAINT grades_unique UNIQUE (enrollment_id, test_id)
+  CONSTRAINT grades_unique UNIQUE (enrollment_id, test_id)
 );
 CREATE INDEX idx_grades_test ON grades(test_id);
