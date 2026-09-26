@@ -8,6 +8,7 @@ import (
 
 	"github.com/alvarolucio2007/Scholarly/internal/domain"
 	"github.com/alvarolucio2007/Scholarly/internal/ports"
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
 var _ ports.StudentRepository = (*StudentRepo)(nil)
