@@ -56,6 +56,7 @@ type CourseRepository interface {
 type EnrollmentFilter struct {
 	StudentID *int64
 	CourseID  *int64
+	Status    *string
 }
 type EnrollmentRepository interface {
 	Create(ctx context.Context, enrollment *domain.Enrollment) error
