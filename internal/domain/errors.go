@@ -18,8 +18,15 @@ var (
 	ErrDepartmentRequired = errors.New("department is required")
 
 	// Grade
-	ErrInvalidGrade = errors.New("invalid grade value")
+	ErrInvalidGrade       = errors.New("invalid grade value")
+	ErrGradeAlreadyExists = errors.New("grade already exists")
 
 	// General
-	ErrNotFound = errors.New("not found")
+	ErrNotFound                = errors.New("not found")
+	ErrEmailAlreadyExists      = errors.New("email already exists")
+	ErrCPFAlreadyExists        = errors.New("CPF already exists")
+	ErrEnrollmentAlreadyExists = errors.New("enrollment number already exists")
+	ErrCourseCodeAlreadyExists = errors.New("course code already exists for this semester")
+	ErrConflict                = errors.New("conflict")
+	ErrForeignKeyViolation     = errors.New("referenced entity does not exist")
 )

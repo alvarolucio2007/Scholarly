@@ -56,12 +56,13 @@ type CourseRepository interface {
 type EnrollmentFilter struct {
 	StudentID *int64
 	CourseID  *int64
+	Status    *string
 }
 type EnrollmentRepository interface {
 	Create(ctx context.Context, enrollment *domain.Enrollment) error
 	GetByID(ctx context.Context, enrollmentID int64) (*domain.Enrollment, error)
 	List(ctx context.Context, filter EnrollmentFilter) ([]*domain.Enrollment, error)
-	Update(ctx context.Context, enrollment *domain.Enrollment) error
+	Update(ctx context.Context, enrollment *domain.Enrollment) error // TODO: Add status editing later...
 	Delete(ctx context.Context, enrollmentID int64) error
 }
 
