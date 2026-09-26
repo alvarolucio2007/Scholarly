@@ -5,23 +5,24 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/alvarolucio2007/Scholarly/internal/domain"
 	"github.com/alvarolucio2007/Scholarly/internal/ports"
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-var _ ports.UserRepository = (*PostgresUserRepository)(nil)
+var _ ports.UserRepository = (*UserRepo)(nil)
 
-type PostgresUserRepository struct {
+type UserRepo struct {
 	db *sql.DB
 }
 
-func NewPostgresUserRepository(db *sql.DB) *PostgresUserRepository {
-	return &PostgresUserRepository{db: db}
+func NewUserRepo(db *sql.DB) *UserRepo {
+	return &UserRepo{db: db}
 }
 
-func (r *PostgresUserRepository) Create(ctx context.Context, user *domain.User) error {
+func (r *UserRepo) Create(ctx context.Context, user *domain.User) error {
 	query := `INSERT INTO users (name,cpf,email,password_hash) VALUES ($1,$2,$3,$4) RETURNING id,created_at`
 	ctx, cancel := context.WithTimeout(ctx, PostgresQueryTimeout)
 	defer cancel()
@@ -31,7 +32,7 @@ func (r *PostgresUserRepository) Create(ctx context.Context, user *domain.User) 
 	return nil
 }
 
-func (r *PostgresUserRepository) GetByID(ctx context.Context, userID int64) (*domain.User, error) {
+func (r *UserRepo) GetByID(ctx context.Context, userID int64) (*domain.User, error) {
 	var u domain.User
 	query := `SELECT id,name,cpf,email,created_at,updated_at FROM users WHERE id = $1`
 	ctx, cancel := context.WithTimeout(ctx, PostgresQueryTimeout)
@@ -46,7 +47,7 @@ func (r *PostgresUserRepository) GetByID(ctx context.Context, userID int64) (*do
 	return &u, nil
 }
 
-func (r *PostgresUserRepository) List(ctx context.Context, filter ports.UserFilter) ([]*domain.User, error) {
+func (r *UserRepo) List(ctx context.Context, filter ports.UserFilter) ([]*domain.User, error) {
 	wb := newWhereBuilder()
 	if filter.Name != nil {
 		wb.addILike("name", *filter.Name)
@@ -71,7 +72,11 @@ func (r *PostgresUserRepository) List(ctx context.Context, filter ports.UserFilt
 	if err != nil {
 		return nil, fmt.Errorf("postgres: list users: %w", err)
 	}
-	defer rows.Close()
+	defer func() {
+		if err := rows.Close(); err != nil {
+			log.Printf("postgres: rows.close list users: %v", err)
+		}
+	}()
 	var users []*domain.User
 	for rows.Next() {
 		var u domain.User
@@ -86,7 +91,7 @@ func (r *PostgresUserRepository) List(ctx context.Context, filter ports.UserFilt
 	return users, nil
 }
 
-func (r *PostgresUserRepository) Update(ctx context.Context, user *domain.User) error {
+func (r *UserRepo) Update(ctx context.Context, user *domain.User) error {
 	query := `UPDATE users
 	SET
 		name=COALESCE(NULLIF($1,''),name),
@@ -111,7 +116,7 @@ func (r *PostgresUserRepository) Update(ctx context.Context, user *domain.User) 
 	return nil
 }
 
-func (r *PostgresUserRepository) Delete(ctx context.Context, userID int64) error {
+func (r *UserRepo) Delete(ctx context.Context, userID int64) error {
 	query := `DELETE FROM users WHERE id=$1`
 	ctx, cancel := context.WithTimeout(ctx, PostgresQueryTimeout)
 	defer cancel()
