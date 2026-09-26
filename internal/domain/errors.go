@@ -18,7 +18,8 @@ var (
 	ErrDepartmentRequired = errors.New("department is required")
 
 	// Grade
-	ErrInvalidGrade = errors.New("invalid grade value")
+	ErrInvalidGrade       = errors.New("invalid grade value")
+	ErrGradeAlreadyExists = errors.New("grade already exists")
 
 	// General
 	ErrNotFound                = errors.New("not found")
