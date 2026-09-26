@@ -3,7 +3,7 @@ CREATE TABLE tests(
   course_id BIGINT NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
   name VARCHAR(255) NOT NULL,
   weight NUMERIC(4,2) NOT NULL DEFAULT 1.0,
-  test_date DATE,
+  test_date DATE NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ,
 

@@ -7,7 +7,6 @@ import (
 )
 
 var (
-	ErrNotFound            error = errors.New("not found")
 	ErrUniqueViolation     error = errors.New("unique constraint violation")
 	ErrForeignKeyViolation error = errors.New("foregin key violation")
 )
@@ -17,8 +16,7 @@ func translateError(err error) error {
 		return nil
 	}
 
-	var pgErr *pgconn.PgError
-	if errors.As(err, &pgErr) {
+	if pgErr, ok := errors.AsType[*pgconn.PgError](err); ok {
 		switch pgErr.Code {
 		case "23505": // unique_violation
 			return ErrUniqueViolation
