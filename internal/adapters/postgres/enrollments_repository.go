@@ -58,6 +58,9 @@ func (r *EnrollmentRepo) List(ctx context.Context, filter ports.EnrollmentFilter
 	if filter.CourseID != nil {
 		wb.add("course_id", *filter.CourseID)
 	}
+	if filter.Status != nil {
+		wb.add("status", *filter.Status)
+	}
 	where, args := wb.build()
 	query := `
     SELECT id,student_id,course_id,enrolled_at,status
@@ -92,8 +95,8 @@ func (r *EnrollmentRepo) List(ctx context.Context, filter ports.EnrollmentFilter
 func (r *EnrollmentRepo) Update(ctx context.Context, enrollment *domain.Enrollment) error {
 	query := `UPDATE enrollments
 	SET
-		student_id=COALESCE(NULLIF($1,'0'),student_id),
-		course_id=COALESCE(NULLIF($2,'0'),course_id)
+		student_id=COALESCE(NULLIF($1,0),student_id),
+		course_id=COALESCE(NULLIF($2,0),course_id)
 	WHERE id=$3;
 	`
 	ctx, cancel := context.WithTimeout(ctx, PostgresQueryTimeout)
