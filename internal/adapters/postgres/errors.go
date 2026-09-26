@@ -17,8 +17,7 @@ func translateError(err error) error {
 		return nil
 	}
 
-	var pgErr *pgconn.PgError
-	if errors.As(err, &pgErr) {
+	if pgErr, ok := errors.AsType[*pgconn.PgError](err); ok {
 		switch pgErr.Code {
 		case "23505": // unique_violation
 			switch pgErr.ConstraintName {
@@ -28,7 +27,7 @@ func translateError(err error) error {
 				return domain.ErrCPFAlreadyExists
 			case "students_enrollment_number_key":
 				return domain.ErrEnrollmentAlreadyExists
-			case "courses_code_semester_key":
+			case "courses_code_semester_unique":
 				return domain.ErrCourseCodeAlreadyExists
 			}
 			return domain.ErrConflict
