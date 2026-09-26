@@ -29,6 +29,8 @@ func translateError(err error) error {
 				return domain.ErrEnrollmentAlreadyExists
 			case "courses_code_semester_unique":
 				return domain.ErrCourseCodeAlreadyExists
+			case "grades_unique":
+				return domain.ErrGradeAlreadyExists
 			}
 			return domain.ErrConflict
 		case "23503":
