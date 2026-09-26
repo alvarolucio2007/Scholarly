@@ -97,7 +97,8 @@ func (r *UserRepo) Update(ctx context.Context, user *domain.User) error {
 		name=COALESCE(NULLIF($1,''),name),
 		cpf=COALESCE(NULLIF($2,''),cpf),
 		email=COALESCE(NULLIF($3,''),email),
-		password_hash=COALESCE($4,password_hash)
+		password_hash=COALESCE($4,password_hash),
+		updated_at=NOW()
 	WHERE id=$5;
 	`
 	ctx, cancel := context.WithTimeout(ctx, PostgresQueryTimeout)
