@@ -1,0 +1,1 @@
+DROP FUNCTION IF EXISTS fn_weighted_sum(BIGINT, BIGINT);
