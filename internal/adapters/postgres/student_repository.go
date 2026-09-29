@@ -122,3 +122,18 @@ func (r *StudentRepo) GetWeighedAverage(ctx context.Context, studentID, courseID
 	}
 	return &res, nil
 }
+
+func (r *StudentRepo) EnrollStudent(ctx context.Context, studentID, courseID int64) (*int64, error) {
+	query := `CALL sp_enroll_student($1,$2);`
+	ctx, cancel := context.WithTimeout(ctx, PostgresQueryTimeout)
+	defer cancel()
+	var res int64
+	if err := r.db.QueryRowContext(ctx, query, studentID, courseID).Scan(&res); err != nil {
+		translated := translateError(err)
+		if !errors.Is(err, translated) {
+			return nil, translated
+		}
+		return nil, fmt.Errorf("postgres: enroll student : %w", err)
+	}
+	return &res, nil
+}
