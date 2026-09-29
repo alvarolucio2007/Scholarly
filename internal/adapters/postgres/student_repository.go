@@ -108,8 +108,8 @@ func (r *StudentRepo) Delete(ctx context.Context, studentID int64) error {
 	return nil
 }
 
-func (r *StudentRepo) GetWeighedAverage(ctx context.Context, studentID, courseID int64) (*float64, error) {
-	query := `SELECT fn_weighted_average($1,$2);`
+func (r *StudentRepo) GetWeightedAverage(ctx context.Context, studentID, courseID int64) (*float64, error) {
+	query := `SELECT fn_weighted_average($1,$2)`
 	ctx, cancel := context.WithTimeout(ctx, PostgresQueryTimeout)
 	defer cancel()
 	var res float64
@@ -124,7 +124,7 @@ func (r *StudentRepo) GetWeighedAverage(ctx context.Context, studentID, courseID
 }
 
 func (r *StudentRepo) EnrollStudent(ctx context.Context, studentID, courseID int64) (*int64, error) {
-	query := `CALL sp_enroll_student($1,$2);`
+	query := `CALL sp_enroll_student($1,$2,NULL)`
 	ctx, cancel := context.WithTimeout(ctx, PostgresQueryTimeout)
 	defer cancel()
 	var res int64
