@@ -15,6 +15,8 @@ var (
 var codeToError = map[string]error{
 	"P0S01": domain.ErrStudentNotFound,
 	"P0C01": domain.ErrCourseNotFound,
+	"P0E01": domain.ErrAlreadyEnrolled,
+	"P0C02": domain.ErrCourseFull,
 }
 
 func translateError(err error) error {
