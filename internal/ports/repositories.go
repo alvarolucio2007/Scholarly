@@ -90,3 +90,6 @@ type GradeRepository interface {
 	Update(ctx context.Context, grade *domain.Grade) error
 	Delete(ctx context.Context, gradeID int64) error
 }
+type ReportCardRepository interface {
+	View(ctx context.Context) ([]*domain.ReportCard, error)
+}
