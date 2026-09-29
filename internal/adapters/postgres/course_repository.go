@@ -146,3 +146,18 @@ func (r *CourseRepo) Delete(ctx context.Context, courseID int64) error {
 	}
 	return nil
 }
+
+func (r *CourseRepo) EnrollStudent(ctx context.Context, studentID, courseID int64) (int64, error) {
+	query := `CALL sp_enroll_student($1,$2,NULL)`
+	ctx, cancel := context.WithTimeout(ctx, PostgresQueryTimeout)
+	defer cancel()
+	var res int64
+	if err := r.db.QueryRowContext(ctx, query, studentID, courseID).Scan(&res); err != nil {
+		translated := translateError(err)
+		if !errors.Is(err, translated) {
+			return 0, translated
+		}
+		return 0, fmt.Errorf("postgres: enroll student : %w", err)
+	}
+	return res, nil
+}

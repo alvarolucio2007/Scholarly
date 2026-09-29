@@ -26,6 +26,7 @@ type StudentRepository interface {
 	GetByEnrollment(ctx context.Context, enrollment string) (*domain.Student, error)
 	Update(ctx context.Context, student *domain.Student) error
 	Delete(ctx context.Context, studentID int64) error
+	GetWeightedAverage(ctx context.Context, studentID, courseID int64) (float64, error)
 }
 
 type TeacherFilter struct {
@@ -51,6 +52,7 @@ type CourseRepository interface {
 	List(ctx context.Context, filter CourseFilter) ([]*domain.Course, error)
 	Update(ctx context.Context, course *domain.Course) error
 	Delete(ctx context.Context, courseID int64) error
+	EnrollStudent(ctx context.Context, studentID, courseID int64) (int64, error)
 }
 
 type EnrollmentFilter struct {
@@ -83,10 +85,15 @@ type GradeFilter struct {
 	TestID       *int64
 	EnrollmentID *int64
 }
+type ReportCardFilter struct {
+	StudentID *int64
+}
 type GradeRepository interface {
 	Create(ctx context.Context, grade *domain.Grade) error
 	GetByID(ctx context.Context, gradeID int64) (*domain.Grade, error)
 	List(ctx context.Context, filter GradeFilter) ([]*domain.Grade, error)
 	Update(ctx context.Context, grade *domain.Grade) error
 	Delete(ctx context.Context, gradeID int64) error
+	ListReportCard(ctx context.Context, filter ReportCardFilter) ([]*domain.ReportCard, error)
 }
+type ReportCardRepository interface{}
