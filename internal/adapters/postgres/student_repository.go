@@ -108,7 +108,7 @@ func (r *StudentRepo) Delete(ctx context.Context, studentID int64) error {
 	return nil
 }
 
-func (r *StudentRepo) GetWeightedAverage(ctx context.Context, studentID, courseID int64) (*float64, error) {
+func (r *StudentRepo) GetWeightedAverage(ctx context.Context, studentID, courseID int64) (float64, error) {
 	query := `SELECT fn_weighted_average($1,$2)`
 	ctx, cancel := context.WithTimeout(ctx, PostgresQueryTimeout)
 	defer cancel()
@@ -116,14 +116,14 @@ func (r *StudentRepo) GetWeightedAverage(ctx context.Context, studentID, courseI
 	if err := r.db.QueryRowContext(ctx, query, studentID, courseID).Scan(&res); err != nil {
 		translated := translateError(err)
 		if !errors.Is(err, translated) {
-			return nil, translated
+			return 0, translated
 		}
-		return nil, fmt.Errorf("postgres: get weighed average : %w", err)
+		return 0, fmt.Errorf("postgres: get weighed average : %w", err)
 	}
-	return &res, nil
+	return res, nil
 }
 
-func (r *StudentRepo) EnrollStudent(ctx context.Context, studentID, courseID int64) (*int64, error) {
+func (r *StudentRepo) EnrollStudent(ctx context.Context, studentID, courseID int64) (int64, error) {
 	query := `CALL sp_enroll_student($1,$2,NULL)`
 	ctx, cancel := context.WithTimeout(ctx, PostgresQueryTimeout)
 	defer cancel()
@@ -131,9 +131,9 @@ func (r *StudentRepo) EnrollStudent(ctx context.Context, studentID, courseID int
 	if err := r.db.QueryRowContext(ctx, query, studentID, courseID).Scan(&res); err != nil {
 		translated := translateError(err)
 		if !errors.Is(err, translated) {
-			return nil, translated
+			return 0, translated
 		}
-		return nil, fmt.Errorf("postgres: enroll student : %w", err)
+		return 0, fmt.Errorf("postgres: enroll student : %w", err)
 	}
-	return &res, nil
+	return res, nil
 }
