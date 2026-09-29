@@ -26,8 +26,8 @@ type StudentRepository interface {
 	GetByEnrollment(ctx context.Context, enrollment string) (*domain.Student, error)
 	Update(ctx context.Context, student *domain.Student) error
 	Delete(ctx context.Context, studentID int64) error
-	GetWeightedAverage(ctx context.Context, studentID, courseID int64) (*float64, error)
-	EnrollStudent(ctx context.Context, studentID, courseID int64) (*int64, error)
+	GetWeightedAverage(ctx context.Context, studentID, courseID int64) (float64, error)
+	EnrollStudent(ctx context.Context, studentID, courseID int64) (int64, error)
 }
 
 type TeacherFilter struct {
