@@ -12,12 +12,22 @@ var (
 	ErrForeignKeyViolation error = errors.New("foregin key violation")
 )
 
+var codeToError = map[string]error{
+	"P0S01": domain.ErrStudentNotFound,
+	"P0C01": domain.ErrCourseNotFound,
+	"P0E01": domain.ErrAlreadyEnrolled,
+	"P0C02": domain.ErrCourseFull,
+}
+
 func translateError(err error) error {
 	if err == nil {
 		return nil
 	}
 
 	if pgErr, ok := errors.AsType[*pgconn.PgError](err); ok {
+		if error, ok := codeToError[pgErr.Code]; ok {
+			return error
+		}
 		switch pgErr.Code {
 		case "23505": // unique_violation
 			switch pgErr.ConstraintName {

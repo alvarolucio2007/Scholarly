@@ -7,15 +7,19 @@ var (
 	ErrInvalidCPF = errors.New("invalid CPF")
 
 	// Student
+	ErrStudentNotFound          = errors.New("student not found")
 	ErrEnrollmentNumberRequired = errors.New("enrollment number is required")
+
+	// Teacher
+	ErrDepartmentRequired = errors.New("department is required")
+
+	// Course
+	ErrCourseNotFound = errors.New("course not found")
 
 	// Enrollment
 	ErrAlreadyEnrolled = errors.New("student already enrolled")
 	ErrCourseFull      = errors.New("course is full")
 	ErrCannotCancel    = errors.New("enrollment cannot be cancelled")
-
-	// Teacher
-	ErrDepartmentRequired = errors.New("department is required")
 
 	// Grade
 	ErrInvalidGrade       = errors.New("invalid grade value")
