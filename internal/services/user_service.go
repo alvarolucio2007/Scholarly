@@ -25,17 +25,20 @@ type CreateUserPayload struct {
 }
 
 func (s *UserService) CreateUser(ctx context.Context, payload CreateUserPayload) (*domain.User, error) {
+	user := &domain.User{
+		Name:  payload.Name,
+		CPF:   payload.CPF,
+		Email: payload.Email,
+	}
+	if err := user.ValidateCPF(); err != nil {
+		return nil, err
+	}
+
 	hash, err := s.hasher.Hash(payload.Password)
 	if err != nil {
 		return nil, fmt.Errorf("service: hash password: %w", err)
 	}
-
-	user := &domain.User{
-		Name:         payload.Name,
-		CPF:          payload.CPF,
-		Email:        payload.Email,
-		PasswordHash: []byte(hash),
-	}
+	user.PasswordHash = []byte(hash)
 
 	if err := s.users.Create(ctx, user); err != nil {
 		return nil, err
@@ -76,6 +79,9 @@ func (s *UserService) UpdateUser(ctx context.Context, payload UpdateUserPayload)
 	}
 	if payload.CPF != nil {
 		user.CPF = *payload.CPF
+		if err := user.ValidateCPF(); err != nil {
+			return nil, err
+		}
 	}
 	if payload.Email != nil {
 		user.Email = *payload.Email
