@@ -50,18 +50,8 @@ func (s *UserService) GetUserByID(ctx context.Context, userID int64) (*domain.Us
 	return s.users.GetByID(ctx, userID)
 }
 
-type ListUsersFilter struct {
-	Name  *string
-	Email *string
-	CPF   *string
-}
-
-func (s *UserService) ListUsers(ctx context.Context, filter ListUsersFilter) ([]*domain.User, error) {
-	return s.users.List(ctx, ports.UserFilter{
-		Name:  filter.Name,
-		Email: filter.Email,
-		CPF:   filter.CPF,
-	})
+func (s *UserService) ListUsers(ctx context.Context, filter ports.UserFilter) ([]*domain.User, error) {
+	return s.users.List(ctx, filter)
 }
 
 type UpdateUserPayload struct {
