@@ -15,8 +15,13 @@ func NewStudentService(students ports.StudentRepository) *StudentService {
 	return &StudentService{students: students}
 }
 
-func (s *StudentService) CreateStudent(ctx context.Context, userID int64, enrollmentNumber string) error {
-	student := &domain.Student{UserID: userID, EnrollmentNumber: enrollmentNumber}
+type CreateStudentPayload struct {
+	UserID           int64
+	EnrollmentNumber string
+}
+
+func (s *StudentService) CreateStudent(ctx context.Context, payload CreateStudentPayload) error {
+	student := &domain.Student{UserID: payload.UserID, EnrollmentNumber: payload.EnrollmentNumber}
 	return s.students.Create(ctx, student)
 }
 
