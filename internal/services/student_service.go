@@ -20,9 +20,12 @@ type CreateStudentPayload struct {
 	EnrollmentNumber string
 }
 
-func (s *StudentService) CreateStudent(ctx context.Context, payload CreateStudentPayload) error {
+func (s *StudentService) CreateStudent(ctx context.Context, payload CreateStudentPayload) (*domain.Student, error) {
 	student := &domain.Student{UserID: payload.UserID, EnrollmentNumber: payload.EnrollmentNumber}
-	return s.students.Create(ctx, student)
+	if err := s.students.Create(ctx, student); err != nil {
+		return nil, err
+	}
+	return student, nil
 }
 
 func (s *StudentService) GetByID(ctx context.Context, studentID int64) (*domain.Student, error) {
@@ -34,22 +37,19 @@ func (s *StudentService) GetByEnrollment(ctx context.Context, enrollment string)
 }
 
 type UpdateStudentPayload struct {
-	UserID           *int64
+	UserID           int64
 	EnrollmentNumber *string
 }
 
-func (s *StudentService) Update(ctx context.Context, payload UpdateStudentPayload) error {
-	var student domain.Student
-	if payload.UserID != nil {
-		student.UserID = *payload.UserID
-	}
+func (s *StudentService) Update(ctx context.Context, payload UpdateStudentPayload) (*domain.Student, error) {
+	student := domain.Student{UserID: payload.UserID}
 	if payload.EnrollmentNumber != nil {
 		student.EnrollmentNumber = *payload.EnrollmentNumber
 	}
 	if err := s.students.Update(ctx, &student); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return &student, nil
 }
 
 func (s *StudentService) Delete(ctx context.Context, studentID int64) error {
