@@ -20,9 +20,12 @@ type CreateTeacherPayload struct {
 	Department string
 }
 
-func (s *TeacherService) CreateTeacher(ctx context.Context, payload CreateTeacherPayload) error {
+func (s *TeacherService) CreateTeacher(ctx context.Context, payload CreateTeacherPayload) (*domain.Teacher, error) {
 	teacher := &domain.Teacher{UserID: payload.UserID, Department: payload.Department}
-	return s.teachers.Create(ctx, teacher)
+	if err := s.teachers.Create(ctx, teacher); err != nil {
+		return nil, err
+	}
+	return teacher, nil
 }
 
 func (s *TeacherService) GetByID(ctx context.Context, teacherID int64) (*domain.Teacher, error) {
