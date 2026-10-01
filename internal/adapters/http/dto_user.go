@@ -7,7 +7,7 @@ type CreateUserDTO struct {
 	Password string `json:"password" validate:"required"`
 }
 type UpdateUserDTO struct {
-	ID       int64   `json:"id" validate:"required"`
+	ID       int64   `json:"id" validate:"required,gte=1"`
 	Name     *string `json:"name" validate:"max=255"`
 	CPF      *string `json:"cpf" validate:"max=14"`
 	Email    *string `json:"email" validate:"email"`
