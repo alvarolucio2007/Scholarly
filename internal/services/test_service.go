@@ -41,6 +41,7 @@ func (s *TestService) ListTests(ctx context.Context, filter ports.TestFilter) ([
 
 type UpdateTestPayload struct {
 	ID       int64
+	CourseID *int64
 	Name     *string
 	Weight   *float64
 	TestDate *time.Time
@@ -50,6 +51,9 @@ func (s *TestService) UpdateTest(ctx context.Context, payload UpdateTestPayload)
 	test := domain.Test{ID: payload.ID}
 	if payload.Name != nil {
 		test.Name = *payload.Name
+	}
+	if payload.CourseID != nil {
+		test.CourseID = *payload.CourseID
 	}
 	if payload.Weight != nil {
 		test.Weight = *payload.Weight
