@@ -6,7 +6,14 @@ import (
 	"net/http"
 
 	"github.com/alvarolucio2007/Scholarly/internal/domain"
+	"github.com/go-playground/validator/v10"
 )
+
+var validate *validator.Validate
+
+func init() {
+	validate = validator.New(validator.WithRequiredStructEnabled())
+}
 
 func writeJSON(w http.ResponseWriter, status int, data any) error {
 	buf, err := json.Marshal(data)
