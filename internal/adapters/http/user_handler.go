@@ -35,13 +35,13 @@ func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetUserByID(w http.ResponseWriter, r *http.Request) {
-	userID, err := strconv.ParseInt(chi.URLParam(r, "userID"), 10, 64)
+	userID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
 	if err != nil {
 		_ = writeJSONError(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	if userID < 1 {
-		_ = writeJSONError(w, http.StatusBadRequest, "userID must be greater than 1")
+	if userID <= 0 {
+		_ = writeJSONError(w, http.StatusBadRequest, "userID must be at least 1")
 		return
 	}
 	user, err := h.users.GetUserByID(r.Context(), userID)
@@ -49,7 +49,7 @@ func (h *Handler) GetUserByID(w http.ResponseWriter, r *http.Request) {
 		respondDomainError(w, err)
 		return
 	}
-	if err := writeJSONData(w, http.StatusOK, &user); err != nil {
+	if err := writeJSONData(w, http.StatusOK, user); err != nil {
 		_ = writeJSONError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
