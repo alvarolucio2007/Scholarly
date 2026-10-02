@@ -49,10 +49,7 @@ func (h *Handler) GetUserByID(w http.ResponseWriter, r *http.Request) {
 		respondDomainError(w, err)
 		return
 	}
-	if err := writeJSONData(w, http.StatusOK, user); err != nil {
-		_ = writeJSONError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
+	_ = writeJSONData(w, http.StatusOK, user)
 }
 
 func (h *Handler) ListUser(w http.ResponseWriter, r *http.Request) {
