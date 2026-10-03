@@ -11,7 +11,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func (h *Handler) GetErollmentByID(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetEnrollmentByID(w http.ResponseWriter, r *http.Request) {
 	courseID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
 	if err != nil {
 		_ = writeJSONError(w, http.StatusBadRequest, err.Error())
@@ -39,7 +39,7 @@ func (h *Handler) ListEnrollments(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if vID <= 0 {
-			_ = writeJSONError(w, http.StatusBadRequest, "teacherID must be greater than 0")
+			_ = writeJSONError(w, http.StatusBadRequest, "student_id must be greater than 0")
 			return
 		}
 		filter.StudentID = &vID
@@ -59,6 +59,7 @@ func (h *Handler) ListEnrollments(w http.ResponseWriter, r *http.Request) {
 	if v := q.Get("status"); v != "" {
 		if v != string(domain.StatusActive) && v != string(domain.StatusCancelled) && v != string(domain.StatusCompleted) {
 			_ = writeJSONError(w, http.StatusBadRequest, "status must be either 'active', 'cancelled' or 'completed' ")
+			return
 		}
 		filter.Status = &v
 	}
