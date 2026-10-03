@@ -11,7 +11,11 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	httpSwagger "github.com/swaggo/http-swagger/v2"
+	"github.com/swaggo/swag/example/basic/docs"
 )
+
+const addr string = "localhost:8080"
 
 func (h *Handler) mount() http.Handler {
 	r := chi.NewRouter()
@@ -20,13 +24,87 @@ func (h *Handler) mount() http.Handler {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Get("/health", h.healthCheckHandler)
+	r.Get("/swagger/*", httpSwagger.Handler("%s/swagger/doc.json", addr))
+	// TODO: make it so that it gets user ID from path, all updates for that matter.(really gotta do this)
+	r.Route("/users", func(r chi.Router) {
+		r.Post("/", h.CreateUser)
+		r.Get("/", h.ListUsers)
+		r.Put("/", h.UpdateUser)
+		r.Route("/{id}", func(r chi.Router) {
+			r.Get("/", h.GetUserByID)
+			r.Delete("/", h.DeleteUser)
+		})
+	})
+	r.Route("/students", func(r chi.Router) {
+		r.Post("/", h.CreateStudent)
+		r.Put("/", h.UpdateStudent)
+		r.Route("/{id}", func(r chi.Router) {
+			r.Get("/", h.GetStudentByID)
+			r.Delete("/", h.DeleteStudent)
+		})
+		r.Route("/{enrollment}", func(r chi.Router) {
+			r.Get("/", h.GetStudentByEnrollment)
+		})
+	})
+	r.Route("/teachers", func(r chi.Router) {
+		r.Post("/", h.CreateTeacher)
+		r.Put("/", h.UpdateTeacher)
+		r.Get("/", h.ListTeachers)
+		r.Route("/{id}", func(r chi.Router) {
+			r.Get("/", h.GetTeacherByID)
+			r.Delete("/", h.DeleteTeacher)
+		})
+	})
+	r.Route("/courses", func(r chi.Router) {
+		r.Post("/", h.CreateCourse)
+		r.Put("/", h.UpdateCourse)
+		r.Get("/", h.ListCourses)
+		r.Route("/{id}", func(r chi.Router) {
+			r.Get("/", h.GetCourseByID)
+			r.Delete("/", h.DeleteCourse)
+		})
+		r.Route("/{student_id}", func(r chi.Router) {
+			r.Post("/", h.EnrollStudent)
+		})
+	})
+	r.Route("/enrollments", func(r chi.Router) {
+		r.Put("/", h.UpdateEnrollment)
+		r.Get("/", h.ListEnrollments)
+		r.Route("/{id}", func(r chi.Router) {
+			r.Get("/", h.GetEnrollmentByID)
+			r.Delete("/", h.DeleteEnrollment)
+		})
+	})
+	r.Route("/tests", func(r chi.Router) {
+		r.Post("/", h.CreateTest)
+		r.Put("/", h.UpdateTest)
+		r.Get("/", h.ListTests)
+		r.Route("/{id}", func(r chi.Router) {
+			r.Get("/", h.GetTestByID)
+			r.Delete("/", h.DeleteTest)
+		})
+	})
+	r.Route("/grades", func(r chi.Router) {
+		r.Post("/", h.CreateGrade)
+		r.Put("/", h.UpdateGrade)
+		r.Get("/", h.ListGrades)
+		r.Route("/{id}", func(r chi.Router) {
+			r.Get("/", h.GetGradeByID)
+			r.Delete("/", h.DeleteGrade)
+		})
+		r.Route("/{student_id}/enroll", func(r chi.Router) {
+			r.Post("/", h.ListReportCard)
+		})
+	})
 
 	return r
 }
 
 func (h *Handler) run(mux http.Handler) error {
+	docs.SwaggerInfo.Version = "0.0.1"
+	docs.SwaggerInfo.Host = addr
 	srv := &http.Server{
-		Addr:         "localhost:8080/",
+		Addr:         addr,
 		Handler:      mux,
 		WriteTimeout: 30 * time.Second,
 		ReadTimeout:  10 * time.Second,
