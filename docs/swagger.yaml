@@ -1,4 +1,199 @@
+definitions:
+  http.CreateUserDTO:
+    properties:
+      cpf:
+        maxLength: 14
+        type: string
+      email:
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      password:
+        type: string
+    required:
+    - cpf
+    - email
+    - name
+    - password
+    type: object
+  http.UpdateUserDTO:
+    properties:
+      cpf:
+        maxLength: 14
+        type: string
+      email:
+        type: string
+      id:
+        minimum: 1
+        type: integer
+      name:
+        maxLength: 255
+        type: string
+      password:
+        type: string
+    required:
+    - id
+    type: object
+  http.UserResponseDTO:
+    properties:
+      cpf:
+        type: string
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  http.errorResponse:
+    properties:
+      error:
+        type: string
+    type: object
 info:
   contact: {}
-paths: {}
+paths:
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: Create an user account
+      parameters:
+      - description: User DTO
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/http.CreateUserDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/http.UserResponseDTO'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "409":
+          description: Conflict
+          schema: {}
+        "422":
+          description: Unprocessable Entity
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Create an user account
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: Update an user account
+      parameters:
+      - description: User DTO
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/http.UpdateUserDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/http.UserResponseDTO'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "409":
+          description: Conflict
+          schema: {}
+        "422":
+          description: Unprocessable Entity
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Update an user account
+      tags:
+      - users
+  /users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes an user account by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Deletes an user account
+      tags:
+      - users
+    get:
+      consumes:
+      - application/json
+      description: List users by name,cpf and email
+      parameters:
+      - description: filter by name
+        in: query
+        name: name
+        type: string
+      - description: filter by cpf
+        in: query
+        name: cpf
+        type: string
+      - description: filter by email
+        in: query
+        name: email
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/http.UserResponseDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      summary: List users by parameters
+      tags:
+      - users
 swagger: "2.0"
