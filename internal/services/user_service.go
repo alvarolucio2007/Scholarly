@@ -33,7 +33,7 @@ type UserResponse struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 }
 
-func (s *UserService) CreateUser(ctx context.Context, payload CreateUserPayload) (*UserResponse, error) {
+func (s *UserService) CreateUser(ctx context.Context, payload CreateUserPayload) (*domain.User, error) {
 	user := &domain.User{
 		Name:  payload.Name,
 		CPF:   payload.CPF,
@@ -52,7 +52,7 @@ func (s *UserService) CreateUser(ctx context.Context, payload CreateUserPayload)
 	if err := s.users.Create(ctx, user); err != nil {
 		return nil, err
 	}
-	return &UserResponse{ID: user.ID, Name: user.Name, CPF: user.CPF, Email: user.Email, CreatedAt: user.CreatedAt, UpdatedAt: user.UpdatedAt}, nil
+	return user, nil
 }
 
 func (s *UserService) GetUserByID(ctx context.Context, userID int64) (*domain.User, error) {
