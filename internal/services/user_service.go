@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/alvarolucio2007/Scholarly/internal/domain"
 	"github.com/alvarolucio2007/Scholarly/internal/ports"
@@ -23,8 +24,16 @@ type CreateUserPayload struct {
 	Email    string
 	Password string
 }
+type UserResponse struct {
+	ID        int64      `json:"id"`
+	Name      string     `json:"name"`
+	CPF       string     `json:"cpf"`
+	Email     string     `json:"email"`
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
+}
 
-func (s *UserService) CreateUser(ctx context.Context, payload CreateUserPayload) (*domain.User, error) {
+func (s *UserService) CreateUser(ctx context.Context, payload CreateUserPayload) (*UserResponse, error) {
 	user := &domain.User{
 		Name:  payload.Name,
 		CPF:   payload.CPF,
@@ -43,7 +52,7 @@ func (s *UserService) CreateUser(ctx context.Context, payload CreateUserPayload)
 	if err := s.users.Create(ctx, user); err != nil {
 		return nil, err
 	}
-	return user, nil
+	return &UserResponse{ID: user.ID, Name: user.Name, CPF: user.CPF, Email: user.Email, CreatedAt: user.CreatedAt, UpdatedAt: user.UpdatedAt}, nil
 }
 
 func (s *UserService) GetUserByID(ctx context.Context, userID int64) (*domain.User, error) {
