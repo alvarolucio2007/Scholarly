@@ -19,9 +19,8 @@ import (
 //	@Accept			json
 //	@Produce		json
 //	@Param			payload	body		CreateUserDTO	true	"User DTO"
-//	@Success		201		{object}	domain.User
+//	@Success		201		{object}	UserResponseDTO
 //	@Failure		400		{object}	error
-//	@Failure		404		{object}	error
 //	@Failure		409		{object}	error
 //	@Failure		422		{object}	error
 //	@Failure		500		{object}	error
@@ -57,10 +56,10 @@ func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			id	path		int	true	"User ID"
-//	@Success		200		{object}	domain.User
-//	@Failure		400		{object}	errorResponse
-//	@Failure		404		{object}	errorResponse
-//	@Failure		500		{object}	errorResponse
+//	@Success		200	{object}	UserResponseDTO
+//	@Failure		400	{object}	errorResponse
+//	@Failure		404	{object}	errorResponse
+//	@Failure		500	{object}	errorResponse
 //	@Router			/users/{id} [get]
 
 func (h *Handler) GetUserByID(w http.ResponseWriter, r *http.Request) {
@@ -83,15 +82,15 @@ func (h *Handler) GetUserByID(w http.ResponseWriter, r *http.Request) {
 
 // ListUsers godoc
 //
-//	@Summary		 List users by parameters
+//	@Summary		List users by parameters
 //	@Description	List users by name,cpf and email
 //	@Tags			users
 //	@Accept			json
 //	@Produce		json
-//	@Param name query string false "filter by name"
-//	@Param cpf query string false "filter by cpf"
-//	@Param email query string false "filter by email"
-//	@Success		200		{object}	domain.User
+//	@Param			name	query		string	false	"filter by name"
+//	@Param			cpf		query		string	false	"filter by cpf"
+//	@Param			email	query		string	false	"filter by email"
+//	@Success		200		{array}		UserResponseDTO
 //	@Failure		400		{object}	errorResponse
 //	@Failure		500		{object}	errorResponse
 //	@Router			/users/{id} [get]
@@ -124,6 +123,21 @@ func (h *Handler) ListUsers(w http.ResponseWriter, r *http.Request) {
 	_ = writeJSONData(w, http.StatusOK, users)
 }
 
+// UpdateUser godoc
+//
+//	@Summary		Update an user account
+//	@Description	Update an user account
+//	@Tags			users
+//	@Accept			json
+//	@Produce		json
+//	@Param			payload	body		UpdateUserDTO	true	"User DTO"
+//	@Success		201		{object}	UserResponseDTO
+//	@Failure		400		{object}	error
+//	@Failure		404		{object}	error
+//	@Failure		409		{object}	error
+//	@Failure		422		{object}	error
+//	@Failure		500		{object}	error
+//	@Router			/users [put]
 func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	var dto UpdateUserDTO
 	if err := json.NewDecoder(r.Body).Decode(&dto); err != nil {
@@ -148,6 +162,19 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	_ = writeJSONData(w, http.StatusOK, user)
 }
 
+// DeleteUser godoc
+//
+//	@Summary		Deletes an user account
+//	@Description	Deletes an user account by ID
+//	@Tags			users
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path	int	true	"User ID"
+//	@Success		204
+//	@Failure		400	{object}	error
+//	@Failure		404	{object}	error
+//	@Failure		500	{object}	error
+//	@Router			/users/{id} [delete]
 func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	userID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
 	if err != nil {
