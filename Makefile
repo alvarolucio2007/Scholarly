@@ -1,4 +1,4 @@
-.PHONY: migrateup migratedown migration test 
+.PHONY: migrateup migratedown migration test gen-docs
 MIGRATIONS_PATH=./database/migrations/
 DB_URL=postgres://admin:root@localhost/scholarly?sslmode=disable
 migration:
@@ -9,3 +9,5 @@ migratedown:
 	migrate -path=$(MIGRATIONS_PATH) -database "$(DB_URL)" -verbose down
 test:
 	go test -v -cover -short ./...
+gen-docs:
+	swag init -g ./cmd/api/main.go -o ./docs --parseDependency --parseInternal && swag fmt 
