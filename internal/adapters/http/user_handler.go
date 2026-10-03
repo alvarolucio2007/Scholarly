@@ -11,6 +11,21 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
+// CreateUser godoc
+//
+//	@Summary		Create an user account
+//	@Description	Create an user account
+//	@Tags			users
+//	@Accept			json
+//	@Produce		json
+//	@Param			payload	body		CreateUserDTO	true	"User DTO"
+//	@Success		201		{object}	domain.User
+//	@Failure		400		{object}	error
+//	@Failure		404		{object}	error
+//	@Failure		409		{object}	error
+//	@Failure		422		{object}	error
+//	@Failure		500		{object}	error
+//	@Router			/users [post]
 func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var dto CreateUserDTO
 	if err := json.NewDecoder(r.Body).Decode(&dto); err != nil {
@@ -34,6 +49,20 @@ func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	_ = writeJSONData(w, http.StatusCreated, user)
 }
 
+// GetUserByID godoc
+//
+//	@Summary		Fetch an user by it's ID
+//	@Description	Fetch an user by it's ID
+//	@Tags			users
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		int	true	"User ID"
+//	@Success		200		{object}	domain.User
+//	@Failure		400		{object}	errorResponse
+//	@Failure		404		{object}	errorResponse
+//	@Failure		500		{object}	errorResponse
+//	@Router			/users/{id} [get]
+
 func (h *Handler) GetUserByID(w http.ResponseWriter, r *http.Request) {
 	userID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
 	if err != nil {
@@ -52,7 +81,21 @@ func (h *Handler) GetUserByID(w http.ResponseWriter, r *http.Request) {
 	_ = writeJSONData(w, http.StatusOK, user)
 }
 
-func (h *Handler) ListUser(w http.ResponseWriter, r *http.Request) {
+// ListUsers godoc
+//
+//	@Summary		 List users by parameters
+//	@Description	List users by name,cpf and email
+//	@Tags			users
+//	@Accept			json
+//	@Produce		json
+//	@Param name query string false "filter by name"
+//	@Param cpf query string false "filter by cpf"
+//	@Param email query string false "filter by email"
+//	@Success		200		{object}	domain.User
+//	@Failure		400		{object}	errorResponse
+//	@Failure		500		{object}	errorResponse
+//	@Router			/users/{id} [get]
+func (h *Handler) ListUsers(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	filter := ports.UserFilter{}
 	if v := q.Get("name"); v != "" {
@@ -78,7 +121,7 @@ func (h *Handler) ListUser(w http.ResponseWriter, r *http.Request) {
 		respondDomainError(w, err)
 		return
 	}
-	_ = writeJSONData(w, http.StatusOK, &users)
+	_ = writeJSONData(w, http.StatusOK, users)
 }
 
 func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
