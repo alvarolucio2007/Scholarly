@@ -41,7 +41,7 @@ func (h *Handler) GetTestByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if testID <= 0 {
-		_ = writeJSONError(w, http.StatusBadRequest, "userID must be at least 1")
+		_ = writeJSONError(w, http.StatusBadRequest, "testID must be at least 1")
 		return
 	}
 	test, err := h.tests.GetByID(r.Context(), testID)
