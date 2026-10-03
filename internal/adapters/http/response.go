@@ -11,6 +11,10 @@ import (
 
 var validate *validator.Validate
 
+type errorResponse struct {
+	Error string `json:"error"`
+}
+
 func init() {
 	validate = validator.New(validator.WithRequiredStructEnabled())
 }
