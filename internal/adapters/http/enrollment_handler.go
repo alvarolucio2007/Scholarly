@@ -11,6 +11,19 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
+// GetEnrollmentByID godoc
+//
+//	@Summary		Fetch an enrollment by it's ID
+//	@Description	Fetch an enrollment by it's ID
+//	@Tags			enrollments
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		int	true	"Enrollment ID"
+//	@Success		200	{object}	EnrollmentResponseDTO
+//	@Failure		400	{object}	errorResponse
+//	@Failure		404	{object}	errorResponse
+//	@Failure		500	{object}	errorResponse
+//	@Router			/enrollments/{id} [get]
 func (h *Handler) GetEnrollmentByID(w http.ResponseWriter, r *http.Request) {
 	courseID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
 	if err != nil {
@@ -29,6 +42,20 @@ func (h *Handler) GetEnrollmentByID(w http.ResponseWriter, r *http.Request) {
 	_ = writeJSONData(w, http.StatusOK, enrollment)
 }
 
+// ListEnrollments godoc
+//
+//	@Summary		List enrollments by parameters
+//	@Description	List enrollments by courseID,status and studentID
+//	@Tags			enrollments
+//	@Accept			json
+//	@Produce		json
+//	@Param			course_id	query		int		false	"filter by course id"
+//	@Param			status		query		string	false	"filter by status"
+//	@Param			student_id	query		int		false	"filter by student id"
+//	@Success		200			{array}		EnrollmentResponseDTO
+//	@Failure		400			{object}	errorResponse
+//	@Failure		500			{object}	errorResponse
+//	@Router			/enrollments/{id} [get]
 func (h *Handler) ListEnrollments(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	filter := ports.EnrollmentFilter{}
@@ -71,6 +98,21 @@ func (h *Handler) ListEnrollments(w http.ResponseWriter, r *http.Request) {
 	_ = writeJSONData(w, http.StatusOK, &enrollments)
 }
 
+// UpdateEnrollment godoc
+//
+//	@Summary		Update an enrollment
+//	@Description	Update an enrollment by its ID
+//	@Tags			enrollments
+//	@Accept			json
+//	@Produce		json
+//	@Param			payload	body		UpdateEnrollmentDTO	true	"enrollment DTO"
+//	@Success		201		{object}	EnrollmentResponseDTO
+//	@Failure		400		{object}	error
+//	@Failure		404		{object}	error
+//	@Failure		409		{object}	error
+//	@Failure		422		{object}	error
+//	@Failure		500		{object}	error
+//	@Router			/enrollments [put]
 func (h *Handler) UpdateEnrollment(w http.ResponseWriter, r *http.Request) {
 	var dto UpdateEnrollmentDTO
 	if err := json.NewDecoder(r.Body).Decode(&dto); err != nil {
