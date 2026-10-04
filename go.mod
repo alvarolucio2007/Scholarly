@@ -8,6 +8,7 @@ require (
 	github.com/go-openapi/testify v0.0.0-20251001202347-e909893202bd
 	github.com/go-playground/validator/v10 v10.30.5
 	github.com/jackc/pgx/v5 v5.11.0
+	github.com/joho/godotenv v1.5.1
 	github.com/swaggo/http-swagger/v2 v2.0.2
 	github.com/swaggo/swag v1.16.6
 	golang.org/x/crypto v0.57.0
