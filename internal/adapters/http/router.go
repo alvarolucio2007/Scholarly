@@ -24,7 +24,7 @@ func (h *Handler) mount() http.Handler {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Get("/health", h.healthCheckHandler)
-	r.Get("/swagger/*", httpSwagger.Handler("%s/swagger/doc.json", addr))
+	r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL("localhost:8080/swagger/doc.json")))
 	// TODO: make it so that it gets user ID from path, all updates for that matter.(really gotta do this)
 	r.Route("/users", func(r chi.Router) {
 		r.Post("/", h.CreateUser)
@@ -42,7 +42,7 @@ func (h *Handler) mount() http.Handler {
 			r.Get("/", h.GetStudentByID)
 			r.Delete("/", h.DeleteStudent)
 		})
-		r.Route("/{enrollment}", func(r chi.Router) {
+		r.Route("/enrollment/{enrollment}", func(r chi.Router) {
 			r.Get("/", h.GetStudentByEnrollment)
 		})
 	})
@@ -63,7 +63,7 @@ func (h *Handler) mount() http.Handler {
 			r.Get("/", h.GetCourseByID)
 			r.Delete("/", h.DeleteCourse)
 		})
-		r.Route("/{student_id}", func(r chi.Router) {
+		r.Route("/enroll/{student_id}", func(r chi.Router) {
 			r.Post("/", h.EnrollStudent)
 		})
 	})
@@ -92,7 +92,7 @@ func (h *Handler) mount() http.Handler {
 			r.Get("/", h.GetGradeByID)
 			r.Delete("/", h.DeleteGrade)
 		})
-		r.Route("/{student_id}/enroll", func(r chi.Router) {
+		r.Route("/report/", func(r chi.Router) {
 			r.Post("/", h.ListReportCard)
 		})
 	})
