@@ -14,7 +14,7 @@ import (
 //
 //	@Summary		Create a grade
 //	@Description	Create a grade
-//	@Tags			users
+//	@Tags			grades
 //	@Accept			json
 //	@Produce		json
 //	@Param			payload	body		CreateGradeDTO	true	"Grade DTO"
