@@ -18,7 +18,7 @@ import (
 //	@Accept			json
 //	@Produce		json
 //	@Param			payload	body		CreateCourseDTO	true	"User DTO"
-//	@Success		201		{object}	domain.Course
+//	@Success		201		{object}	CourseResponseDTO
 //	@Failure		400		{object}	error
 //	@Failure		409		{object}	error
 //	@Failure		422		{object}	error
@@ -56,7 +56,7 @@ func (h *Handler) CreateCourse(w http.ResponseWriter, r *http.Request) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			id	path		int	true	"Course ID"
-//	@Success		200	{object}	domain.Course
+//	@Success		200	{object}	CourseResponseDTO
 //	@Failure		400	{object}	errorResponse
 //	@Failure		404	{object}	errorResponse
 //	@Failure		500	{object}	errorResponse
@@ -90,7 +90,7 @@ func (h *Handler) GetCourseByID(w http.ResponseWriter, r *http.Request) {
 //	@Param			name		query		string	false	"filter by name"
 //	@Param			code		query		string	false	"filter by code"
 //	@Param			semester	query		string	false	"filter by semester"
-//	@Success		200			{array}		domain.Course
+//	@Success		200			{array}		CourseResponseDTO
 //	@Failure		400			{object}	errorResponse
 //	@Failure		500			{object}	errorResponse
 //	@Router			/courses [get]
@@ -146,7 +146,7 @@ func (h *Handler) ListCourses(w http.ResponseWriter, r *http.Request) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			payload	body		UpdateCourseDTO	true	"Course DTO"
-//	@Success		201		{object}	domain.Course
+//	@Success		201		{object}	CourseResponseDTO
 //	@Failure		400		{object}	error
 //	@Failure		404		{object}	error
 //	@Failure		409		{object}	error
