@@ -182,7 +182,7 @@ func (h *Handler) UpdateCourse(w http.ResponseWriter, r *http.Request) {
 //
 //	@Summary		Deletes an course
 //	@Description	Deletes an course by ID
-//	@Tags			users
+//	@Tags			courses
 //	@Accept			json
 //	@Produce		json
 //	@Param			id	path	int	true	"Course ID"
