@@ -18,7 +18,7 @@ import (
 //	@Accept			json
 //	@Produce		json
 //	@Param			payload	body		CreateTeacherDTO	true	"User DTO"
-//	@Success		201		{object}	domain.Teacher
+//	@Success		201		{object}	TeacherResponseDTO
 //	@Failure		400		{object}	error
 //	@Failure		409		{object}	error
 //	@Failure		422		{object}	error
@@ -54,7 +54,7 @@ func (h *Handler) CreateTeacher(w http.ResponseWriter, r *http.Request) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			id	path		int	true	"Teacher ID"
-//	@Success		200	{object}	domain.Teacher
+//	@Success		200	{object}	TeacherResponseDTO
 //	@Failure		400	{object}	errorResponse
 //	@Failure		404	{object}	errorResponse
 //	@Failure		500	{object}	errorResponse
