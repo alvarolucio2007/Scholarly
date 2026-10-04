@@ -61,7 +61,6 @@ func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 //	@Failure		404	{object}	errorResponse
 //	@Failure		500	{object}	errorResponse
 //	@Router			/users/{id} [get]
-
 func (h *Handler) GetUserByID(w http.ResponseWriter, r *http.Request) {
 	userID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
 	if err != nil {
@@ -93,7 +92,7 @@ func (h *Handler) GetUserByID(w http.ResponseWriter, r *http.Request) {
 //	@Success		200		{array}		UserResponseDTO
 //	@Failure		400		{object}	errorResponse
 //	@Failure		500		{object}	errorResponse
-//	@Router			/users/{id} [get]
+//	@Router			/users/ [get]
 func (h *Handler) ListUsers(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	filter := ports.UserFilter{}
