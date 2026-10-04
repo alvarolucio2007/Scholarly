@@ -93,21 +93,21 @@ func (h *Handler) GetCourseByID(w http.ResponseWriter, r *http.Request) {
 //	@Success		200			{array}		domain.Course
 //	@Failure		400			{object}	errorResponse
 //	@Failure		500			{object}	errorResponse
-//	@Router			/courses/{id} [get]
+//	@Router			/courses [get]
 func (h *Handler) ListCourses(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	filter := ports.CourseFilter{}
 	if v := q.Get("teacher_id"); v != "" {
-		v_id, err := strconv.ParseInt(v, 10, 64)
+		vID, err := strconv.ParseInt(v, 10, 64)
 		if err != nil {
 			_ = writeJSONError(w, http.StatusBadRequest, err.Error())
 			return
 		}
-		if v_id <= 0 {
+		if vID <= 0 {
 			_ = writeJSONError(w, http.StatusBadRequest, "teacherID must be greater than 0")
 			return
 		}
-		filter.TeacherID = &v_id
+		filter.TeacherID = &vID
 	}
 	if v := q.Get("name"); v != "" {
 		if len(v) > 255 {
