@@ -17,6 +17,10 @@ type GradeRepo struct {
 	db *sql.DB
 }
 
+func NewGradeRepo(db *sql.DB) *GradeRepo {
+	return &GradeRepo{db: db}
+}
+
 func (r *GradeRepo) Create(ctx context.Context, grade *domain.Grade) error {
 	query := `INSERT INTO grades (test_id,enrollment_id,value) VALUES ($1,$2,$3) RETURNING id,created_at`
 	ctx, cancel := context.WithTimeout(ctx, PostgresQueryTimeout)
