@@ -10,6 +10,20 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
+// CreateGrade godoc
+//
+//	@Summary		Create a grade
+//	@Description	Create a grade
+//	@Tags			users
+//	@Accept			json
+//	@Produce		json
+//	@Param			payload	body		CreateGradeDTO	true	"Grade DTO"
+//	@Success		201		{object}	domain.Grade
+//	@Failure		400		{object}	error
+//	@Failure		409		{object}	error
+//	@Failure		422		{object}	error
+//	@Failure		500		{object}	error
+//	@Router			/grades [post]
 func (h *Handler) CreateGrade(w http.ResponseWriter, r *http.Request) {
 	var dto CreateGradeDTO
 	if err := json.NewDecoder(r.Body).Decode(&dto); err != nil {
@@ -32,6 +46,20 @@ func (h *Handler) CreateGrade(w http.ResponseWriter, r *http.Request) {
 	_ = writeJSONData(w, http.StatusCreated, grade)
 }
 
+// GetGradeByID godoc
+//
+//	@Summary		Fetch a grade by its ID
+//	@Description	Fetch a grade by its ID
+//	@Tags			grades
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		int	true	"Grade ID"
+//	@Success		200	{object}	domain.Grade
+//	@Failure		400	{object}	errorResponse
+//	@Failure		404	{object}	errorResponse
+//	@Failure		500	{object}	errorResponse
+//	@Router			/grades/{id} [get]
+
 func (h *Handler) GetGradeByID(w http.ResponseWriter, r *http.Request) {
 	gradeID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
 	if err != nil {
@@ -50,6 +78,19 @@ func (h *Handler) GetGradeByID(w http.ResponseWriter, r *http.Request) {
 	_ = writeJSONData(w, http.StatusOK, grade)
 }
 
+// ListGrades godoc
+//
+//	@Summary		List grades by parameters
+//	@Description	List grades by test_id and enrollment_id
+//	@Tags			grades
+//	@Accept			json
+//	@Produce		json
+//	@Param			test_id			query		int	false	"filter by name"
+//	@Param			enrollment_id	query		int	false	"filter by cpf"
+//	@Success		200				{array}		domain.Grade
+//	@Failure		400				{object}	errorResponse
+//	@Failure		500				{object}	errorResponse
+//	@Router			/grades/{id} [get]
 func (h *Handler) ListGrades(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	filter := ports.GradeFilter{}
@@ -85,6 +126,21 @@ func (h *Handler) ListGrades(w http.ResponseWriter, r *http.Request) {
 	_ = writeJSONData(w, http.StatusOK, &grades)
 }
 
+// UpdateGrade godoc
+//
+//	@Summary		Update a grade
+//	@Description	Update a grade
+//	@Tags			grades
+//	@Accept			json
+//	@Produce		json
+//	@Param			payload	body		UpdateGradeDTO	true	"Grade DTO"
+//	@Success		201		{object}	domain.Grade
+//	@Failure		400		{object}	error
+//	@Failure		404		{object}	error
+//	@Failure		409		{object}	error
+//	@Failure		422		{object}	error
+//	@Failure		500		{object}	error
+//	@Router			/grades [put]
 func (h *Handler) UpdateGrade(w http.ResponseWriter, r *http.Request) {
 	var dto UpdateGradeDTO
 	if err := json.NewDecoder(r.Body).Decode(&dto); err != nil {
@@ -108,6 +164,20 @@ func (h *Handler) UpdateGrade(w http.ResponseWriter, r *http.Request) {
 	_ = writeJSONData(w, http.StatusOK, grade)
 }
 
+// DeleteGrade godoc
+//
+//	@Summary		Deletes a grade
+//	@Description	Deletes a grade by ID
+//	@Tags			grades
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path	int	true	"Grade ID"
+//	@Success		204
+//	@Failure		400	{object}	error
+//	@Failure		404	{object}	error
+//	@Failure		500	{object}	error
+//	@Router			/grades/{id} [delete]
+
 func (h *Handler) DeleteGrade(w http.ResponseWriter, r *http.Request) {
 	gradeID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
 	if err != nil {
@@ -125,6 +195,18 @@ func (h *Handler) DeleteGrade(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// ListReportCard godoc
+//
+//	@Summary		List report cards
+//	@Description	List report cards by studentID
+//	@Tags			grades
+//	@Accept			json
+//	@Produce		json
+//	@Param			student_id	query		int	false	"filter by studentID"
+//	@Success		200			{array}		UserResponseDTO
+//	@Failure		400			{object}	errorResponse
+//	@Failure		500			{object}	errorResponse
+//	@Router			/report/ [get]
 func (h *Handler) ListReportCard(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	filter := ports.ReportCardFilter{}
