@@ -88,7 +88,7 @@ func (h *Handler) GetTestByID(w http.ResponseWriter, r *http.Request) {
 //	@Produce		json
 //	@Param			course_id	query		int		false	"filter by course ID"
 //	@Param			name		query		string	false	"filter by name"
-//	@Success		200			{array}		Test
+//	@Success		200			{array}		domain.Test
 //	@Failure		400			{object}	errorResponse
 //	@Failure		500			{object}	errorResponse
 //	@Router			/tests/{id} [get]
