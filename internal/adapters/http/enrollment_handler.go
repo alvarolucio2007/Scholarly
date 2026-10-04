@@ -55,7 +55,7 @@ func (h *Handler) GetEnrollmentByID(w http.ResponseWriter, r *http.Request) {
 //	@Success		200			{array}		EnrollmentResponseDTO
 //	@Failure		400			{object}	errorResponse
 //	@Failure		500			{object}	errorResponse
-//	@Router			/enrollments/{id} [get]
+//	@Router			/enrollments [get]
 func (h *Handler) ListEnrollments(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	filter := ports.EnrollmentFilter{}
@@ -134,6 +134,20 @@ func (h *Handler) UpdateEnrollment(w http.ResponseWriter, r *http.Request) {
 	}
 	_ = writeJSONData(w, http.StatusOK, enrollment)
 }
+
+// DeleteEnrollment godoc
+//
+//	@Summary		Deletes an enrollment
+//	@Description	Deletes an grade by ID
+//	@Tags			enrollments
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path	int	true	"Enrollment ID"
+//	@Success		204
+//	@Failure		400	{object}	error
+//	@Failure		404	{object}	error
+//	@Failure		500	{object}	error
+//	@Router			/enrollments/{id} [delete]
 
 func (h *Handler) DeleteEnrollment(w http.ResponseWriter, r *http.Request) {
 	enrollmentID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
