@@ -17,7 +17,7 @@ import (
 
 const addr string = "localhost:8080"
 
-func (h *Handler) mount() http.Handler {
+func (h *Handler) Mount() http.Handler {
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
 	r.Use(middleware.ClientIPFromRemoteAddr)
@@ -100,7 +100,7 @@ func (h *Handler) mount() http.Handler {
 	return r
 }
 
-func (h *Handler) run(mux http.Handler) error {
+func (h *Handler) Run(mux http.Handler) error {
 	docs.SwaggerInfo.Version = "0.0.1"
 	docs.SwaggerInfo.Host = addr
 	srv := &http.Server{
