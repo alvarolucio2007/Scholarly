@@ -1,0 +1,1285 @@
+definitions:
+  domain.Course:
+    properties:
+      code:
+        type: string
+      createdAt:
+        type: string
+      id:
+        format: int64
+        type: integer
+      maxStudents:
+        format: int32
+        type: integer
+      name:
+        type: string
+      semester:
+        type: string
+      teacherID:
+        format: int64
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  domain.Grade:
+    properties:
+      createdAt:
+        type: string
+      enrollmentID:
+        format: int64
+        type: integer
+      id:
+        format: int64
+        type: integer
+      testID:
+        format: int64
+        type: integer
+      updatedAt:
+        type: string
+      value:
+        format: float64
+        type: number
+    type: object
+  domain.Student:
+    properties:
+      enrollmentNumber:
+        type: string
+      userID:
+        format: int64
+        type: integer
+    type: object
+  domain.Teacher:
+    properties:
+      department:
+        type: string
+      userID:
+        format: int64
+        type: integer
+    type: object
+  domain.Test:
+    properties:
+      courseID:
+        format: int64
+        type: integer
+      createdAt:
+        type: string
+      id:
+        format: int64
+        type: integer
+      name:
+        type: string
+      testDate:
+        type: string
+      updatedAt:
+        type: string
+      weight:
+        format: float64
+        type: number
+    type: object
+  http.CreateCourseDTO:
+    properties:
+      code:
+        maxLength: 50
+        type: string
+      max_students:
+        minimum: 1
+        type: integer
+      name:
+        maxLength: 255
+        type: string
+      semester:
+        maxLength: 50
+        type: string
+      teacher_id:
+        minimum: 1
+        type: integer
+    required:
+    - code
+    - max_students
+    - name
+    - semester
+    - teacher_id
+    type: object
+  http.CreateGradeDTO:
+    properties:
+      enrollment_id:
+        minimum: 1
+        type: integer
+      test_id:
+        minimum: 1
+        type: integer
+      value:
+        maximum: 10
+        minimum: 0
+        type: number
+    required:
+    - enrollment_id
+    - test_id
+    - value
+    type: object
+  http.CreateStudentDTO:
+    properties:
+      enrollment_number:
+        type: string
+      user_id:
+        minimum: 1
+        type: integer
+    required:
+    - enrollment_number
+    - user_id
+    type: object
+  http.CreateTestDTO:
+    properties:
+      course_id:
+        minimum: 1
+        type: integer
+      name:
+        type: string
+      test_date:
+        type: string
+      weight:
+        type: number
+    required:
+    - course_id
+    - name
+    - test_date
+    type: object
+  http.CreateUserDTO:
+    properties:
+      cpf:
+        maxLength: 14
+        type: string
+      email:
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      password:
+        type: string
+    required:
+    - cpf
+    - email
+    - name
+    - password
+    type: object
+  http.EnrollmentResponseDTO:
+    properties:
+      course_id:
+        type: integer
+      enrolled_at:
+        type: string
+      id:
+        type: integer
+      status:
+        type: string
+      student_id:
+        type: integer
+    type: object
+  http.UpdateCourseDTO:
+    properties:
+      code:
+        maxLength: 50
+        type: string
+      id:
+        minimum: 1
+        type: integer
+      max_students:
+        maximum: 50
+        type: integer
+      name:
+        maxLength: 50
+        type: string
+      semester:
+        maxLength: 50
+        type: string
+      teacher_id:
+        minimum: 1
+        type: integer
+    required:
+    - id
+    type: object
+  http.UpdateEnrollmentDTO:
+    properties:
+      course_id:
+        minimum: 1
+        type: integer
+      id:
+        minimum: 1
+        type: integer
+      student_id:
+        minimum: 1
+        type: integer
+    type: object
+  http.UpdateGradeDTO:
+    properties:
+      enrollment_id:
+        minimum: 1
+        type: integer
+      id:
+        minimum: 1
+        type: integer
+      test_id:
+        minimum: 1
+        type: integer
+      value:
+        maximum: 10
+        minimum: 0
+        type: number
+    required:
+    - id
+    type: object
+  http.UpdateStudentDTO:
+    properties:
+      enrollment_number:
+        type: string
+      user_id:
+        minimum: 1
+        type: integer
+    required:
+    - user_id
+    type: object
+  http.UpdateTeacherDTO:
+    properties:
+      department:
+        maxLength: 100
+        type: string
+      user_id:
+        minimum: 1
+        type: integer
+    required:
+    - user_id
+    type: object
+  http.UpdateTestDTO:
+    properties:
+      course_id:
+        minimum: 1
+        type: integer
+      id:
+        minimum: 1
+        type: integer
+      name:
+        minLength: 1
+        type: string
+      test_date:
+        type: string
+      weight:
+        type: number
+    required:
+    - id
+    - name
+    type: object
+  http.UpdateUserDTO:
+    properties:
+      cpf:
+        maxLength: 14
+        type: string
+      email:
+        type: string
+      id:
+        minimum: 1
+        type: integer
+      name:
+        maxLength: 255
+        type: string
+      password:
+        type: string
+    required:
+    - id
+    type: object
+  http.UserResponseDTO:
+    properties:
+      cpf:
+        type: string
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  http.errorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /courses:
+    get:
+      consumes:
+      - application/json
+      description: List courses by name,cpf and email
+      parameters:
+      - description: filter by teacher ID
+        in: query
+        name: teacher_id
+        type: integer
+      - description: filter by name
+        in: query
+        name: name
+        type: string
+      - description: filter by code
+        in: query
+        name: code
+        type: string
+      - description: filter by semester
+        in: query
+        name: semester
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Course'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      summary: List courses by parameters
+      tags:
+      - courses
+    post:
+      consumes:
+      - application/json
+      description: Create a course
+      parameters:
+      - description: User DTO
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/http.CreateCourseDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Course'
+        "400":
+          description: Bad Request
+          schema: {}
+        "409":
+          description: Conflict
+          schema: {}
+        "422":
+          description: Unprocessable Entity
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Create a course
+      tags:
+      - courses
+    put:
+      consumes:
+      - application/json
+      description: Update a course
+      parameters:
+      - description: Course DTO
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/http.UpdateCourseDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Course'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "409":
+          description: Conflict
+          schema: {}
+        "422":
+          description: Unprocessable Entity
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Update a course
+      tags:
+      - courses
+  /courses/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes an course by ID
+      parameters:
+      - description: Course ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Deletes an course
+      tags:
+      - users
+    get:
+      consumes:
+      - application/json
+      description: Fetch a course by its ID
+      parameters:
+      - description: Course ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Course'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      summary: Fetch a course by its ID
+      tags:
+      - courses
+  /courses/enroll/{student_id}:
+    post:
+      consumes:
+      - application/json
+      description: Enroll a student
+      parameters:
+      - description: Student ID
+        in: path
+        name: student_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema: {}
+        "409":
+          description: Conflict
+          schema: {}
+        "422":
+          description: Unprocessable Entity
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Enroll a student
+      tags:
+      - courses
+  /enrollments:
+    get:
+      consumes:
+      - application/json
+      description: List enrollments by courseID,status and studentID
+      parameters:
+      - description: filter by course id
+        in: query
+        name: course_id
+        type: integer
+      - description: filter by status
+        in: query
+        name: status
+        type: string
+      - description: filter by student id
+        in: query
+        name: student_id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/http.EnrollmentResponseDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      summary: List enrollments by parameters
+      tags:
+      - enrollments
+    put:
+      consumes:
+      - application/json
+      description: Update an enrollment by its ID
+      parameters:
+      - description: enrollment DTO
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/http.UpdateEnrollmentDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/http.EnrollmentResponseDTO'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "409":
+          description: Conflict
+          schema: {}
+        "422":
+          description: Unprocessable Entity
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Update an enrollment
+      tags:
+      - enrollments
+  /enrollments/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Fetch an enrollment by it's ID
+      parameters:
+      - description: Enrollment ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.EnrollmentResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      summary: Fetch an enrollment by it's ID
+      tags:
+      - enrollments
+  /grades:
+    post:
+      consumes:
+      - application/json
+      description: Create a grade
+      parameters:
+      - description: Grade DTO
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/http.CreateGradeDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Grade'
+        "400":
+          description: Bad Request
+          schema: {}
+        "409":
+          description: Conflict
+          schema: {}
+        "422":
+          description: Unprocessable Entity
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Create a grade
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: Update a grade
+      parameters:
+      - description: Grade DTO
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/http.UpdateGradeDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Grade'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "409":
+          description: Conflict
+          schema: {}
+        "422":
+          description: Unprocessable Entity
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Update a grade
+      tags:
+      - grades
+  /grades/{id}:
+    get:
+      consumes:
+      - application/json
+      description: List grades by test_id and enrollment_id
+      parameters:
+      - description: filter by name
+        in: query
+        name: test_id
+        type: integer
+      - description: filter by cpf
+        in: query
+        name: enrollment_id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Grade'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      summary: List grades by parameters
+      tags:
+      - grades
+  /report/:
+    get:
+      consumes:
+      - application/json
+      description: List report cards by studentID
+      parameters:
+      - description: filter by studentID
+        in: query
+        name: student_id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/http.UserResponseDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      summary: List report cards
+      tags:
+      - grades
+  /students:
+    post:
+      consumes:
+      - application/json
+      description: Create an user account with user_id and enrollment_number
+      parameters:
+      - description: User DTO
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/http.CreateStudentDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Student'
+        "400":
+          description: Bad Request
+          schema: {}
+        "409":
+          description: Conflict
+          schema: {}
+        "422":
+          description: Unprocessable Entity
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Create an student account
+      tags:
+      - students
+    put:
+      consumes:
+      - application/json
+      description: Update a student account
+      parameters:
+      - description: StudentDTO
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/http.UpdateStudentDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Student'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "409":
+          description: Conflict
+          schema: {}
+        "422":
+          description: Unprocessable Entity
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Update a student account
+      tags:
+      - students
+  /students/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes an student account by ID
+      parameters:
+      - description: Student ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Deletes an student account
+      tags:
+      - students
+    get:
+      consumes:
+      - application/json
+      description: Fetch a student by it's ID
+      parameters:
+      - description: Student ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Student'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      summary: Fetch a student by it's ID
+      tags:
+      - students
+  /students/enrollments/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Fetch a student by it's enrollment
+      parameters:
+      - description: Student Enrollment
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Student'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      summary: Fetch a student by it's enrollment
+      tags:
+      - students
+  /teachers:
+    get:
+      consumes:
+      - application/json
+      description: List teachers by department
+      parameters:
+      - description: filter by department
+        in: query
+        name: department
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/http.UserResponseDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      summary: List teachers by department
+      tags:
+      - teachers
+    put:
+      consumes:
+      - application/json
+      description: Update an teacher account
+      parameters:
+      - description: Teacher DTO
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/http.UpdateTeacherDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/http.UserResponseDTO'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "409":
+          description: Conflict
+          schema: {}
+        "422":
+          description: Unprocessable Entity
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Update an teacher account
+      tags:
+      - teachers
+  /teachers/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Fetch a teacher by its ID
+      parameters:
+      - description: Teacher ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Teacher'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      summary: Fetch a teacher by its ID
+      tags:
+      - teachers
+  /tests:
+    post:
+      consumes:
+      - application/json
+      description: Create a test
+      parameters:
+      - description: Test DTO
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/http.CreateTestDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Test'
+        "400":
+          description: Bad Request
+          schema: {}
+        "409":
+          description: Conflict
+          schema: {}
+        "422":
+          description: Unprocessable Entity
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Create a test
+      tags:
+      - tests
+    put:
+      consumes:
+      - application/json
+      description: Update a test
+      parameters:
+      - description: Test DTO
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/http.UpdateTestDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Test'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "409":
+          description: Conflict
+          schema: {}
+        "422":
+          description: Unprocessable Entity
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Update a test
+      tags:
+      - tests
+  /tests/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes an test by ID
+      parameters:
+      - description: Test ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Deletes a test
+      tags:
+      - Test
+    get:
+      consumes:
+      - application/json
+      description: List tests by courseID and name
+      parameters:
+      - description: filter by course ID
+        in: query
+        name: course_id
+        type: integer
+      - description: filter by name
+        in: query
+        name: name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Test'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      summary: List tests by parameters
+      tags:
+      - Test
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: Create an user account
+      parameters:
+      - description: User DTO
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/http.CreateUserDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/http.UserResponseDTO'
+        "400":
+          description: Bad Request
+          schema: {}
+        "409":
+          description: Conflict
+          schema: {}
+        "422":
+          description: Unprocessable Entity
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Create an user account
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: Update an user account
+      parameters:
+      - description: User DTO
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/http.UpdateUserDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/http.UserResponseDTO'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "409":
+          description: Conflict
+          schema: {}
+        "422":
+          description: Unprocessable Entity
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Update an user account
+      tags:
+      - users
+  /users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes an user account by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Deletes an user account
+      tags:
+      - users
+    get:
+      consumes:
+      - application/json
+      description: List users by name,cpf and email
+      parameters:
+      - description: filter by name
+        in: query
+        name: name
+        type: string
+      - description: filter by cpf
+        in: query
+        name: cpf
+        type: string
+      - description: filter by email
+        in: query
+        name: email
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/http.UserResponseDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      summary: List users by parameters
+      tags:
+      - users
+swagger: "2.0"
