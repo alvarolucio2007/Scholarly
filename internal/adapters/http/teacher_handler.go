@@ -91,7 +91,7 @@ func (h *Handler) GetTeacherByID(w http.ResponseWriter, r *http.Request) {
 //	@Success		200			{array}		UserResponseDTO
 //	@Failure		400			{object}	errorResponse
 //	@Failure		500			{object}	errorResponse
-//	@Router			/teachers/{id} [get]
+//	@Router			/teachers [get]
 func (h *Handler) ListTeachers(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	filter := ports.TeacherFilter{}

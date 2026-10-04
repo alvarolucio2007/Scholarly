@@ -90,7 +90,7 @@ func (h *Handler) GetStudentByID(w http.ResponseWriter, r *http.Request) {
 //	@Failure		400	{object}	errorResponse
 //	@Failure		404	{object}	errorResponse
 //	@Failure		500	{object}	errorResponse
-//	@Router			/students/{id} [get]
+//	@Router			/students/enrollments/{id} [get]
 func (h *Handler) GetStudentByEnrollment(w http.ResponseWriter, r *http.Request) {
 	studentEnrollment := chi.URLParam(r, "enrollment")
 	if studentEnrollment == "" {
