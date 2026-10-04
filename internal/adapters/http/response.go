@@ -3,6 +3,7 @@ package http
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/alvarolucio2007/Scholarly/internal/domain"
@@ -70,6 +71,6 @@ func respondDomainError(w http.ResponseWriter, err error) {
 		_ = writeJSONError(w, http.StatusConflict, err.Error())
 
 	default:
-		_ = writeJSONError(w, http.StatusInternalServerError, "internal error")
+		_ = writeJSONError(w, http.StatusInternalServerError, fmt.Sprintf("internal error: %v", err.Error()))
 	}
 }
