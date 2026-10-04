@@ -15,3 +15,12 @@ type UpdateTestDTO struct {
 	Weight   *float64   `json:"weight" validate:"gt=0" `
 	TestDate *time.Time `json:"test_date" validate:"datetime"`
 }
+type TestResponseDTO struct {
+	ID        int64      `json:"id"`
+	CourseID  int64      `json:"course_id"`
+	Name      string     `json:"name"`
+	Weight    float64    `json:"weight"`
+	TestDate  time.Time  `json:"test_date"`
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
+}
