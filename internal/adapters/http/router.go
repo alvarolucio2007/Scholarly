@@ -9,10 +9,12 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/alvarolucio2007/Scholarly/docs"
+	"github.com/alvarolucio2007/Scholarly/internal/env"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 	httpSwagger "github.com/swaggo/http-swagger/v2"
-	"github.com/swaggo/swag/example/basic/docs"
 )
 
 const addr string = "localhost:8080"
@@ -23,8 +25,17 @@ func (h *Handler) Mount() http.Handler {
 	r.Use(middleware.ClientIPFromRemoteAddr)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{env.GetString("CORS_ALLOWED_ORIGIN", "http://localhost:5174")},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: false,
+		MaxAge:           300,
+	}))
+
 	r.Get("/health", h.healthCheckHandler)
-	r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL("localhost:8080/swagger/doc.json")))
+	r.Get("/swagger/*", httpSwagger.Handler())
 	// TODO: make it so that it gets user ID from path, all updates for that matter.(really gotta do this)
 	r.Route("/users", func(r chi.Router) {
 		r.Post("/", h.CreateUser)
@@ -114,6 +125,7 @@ func (h *Handler) Run(mux http.Handler) error {
 	go func() {
 		quit := make(chan os.Signal, 1)
 		signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+		<-quit
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 		shutdown <- srv.Shutdown(ctx)
