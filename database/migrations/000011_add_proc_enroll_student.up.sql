@@ -21,3 +21,4 @@ CREATE PROCEDURE sp_enroll_student(
     END IF;
     INSERT INTO enrollments (student_id,course_id) VALUES (p_student_id,p_course_id) RETURNING id INTO p_enrollment_id;
   END;
+  $$
