@@ -83,6 +83,9 @@ func (s *UserService) UpdateUser(ctx context.Context, payload UpdateUserPayload)
 		}
 	}
 	if payload.Email != nil {
+		if err := user.ValidateEmail(); err != nil {
+			return nil, err
+		}
 		user.Email = *payload.Email
 	}
 	if payload.Password != nil {
