@@ -8,3 +8,7 @@ type UpdateStudentDTO struct {
 	UserID           int64   `json:"user_id" validate:"required,gte=1"`
 	EnrollmentNumber *string `json:"enrollment_number" `
 }
+type StudentResponseDTO struct {
+	UserID           int64  `json:"user_id"`
+	EnrollmentNumber string `json:"enrollment_number"`
+}
