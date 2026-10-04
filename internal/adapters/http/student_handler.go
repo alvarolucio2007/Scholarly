@@ -17,7 +17,7 @@ import (
 //	@Accept			json
 //	@Produce		json
 //	@Param			payload	body		CreateStudentDTO	true	"User DTO"
-//	@Success		201		{object}	domain.Student
+//	@Success		201		{object}	StudentResponseDTO
 //	@Failure		400		{object}	error
 //	@Failure		409		{object}	error
 //	@Failure		422		{object}	error
@@ -52,7 +52,7 @@ func (h *Handler) CreateStudent(w http.ResponseWriter, r *http.Request) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			id	path		int	true	"Student ID"
-//	@Success		200	{object}	domain.Student
+//	@Success		200	{object}	StudentResponseDTO
 //	@Failure		400	{object}	errorResponse
 //	@Failure		404	{object}	errorResponse
 //	@Failure		500	{object}	errorResponse
@@ -86,7 +86,7 @@ func (h *Handler) GetStudentByID(w http.ResponseWriter, r *http.Request) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			id	path		int	true	"Student Enrollment"
-//	@Success		200	{object}	domain.Student
+//	@Success		200	{object}	StudentResponseDTO
 //	@Failure		400	{object}	errorResponse
 //	@Failure		404	{object}	errorResponse
 //	@Failure		500	{object}	errorResponse
@@ -116,7 +116,7 @@ func (h *Handler) GetStudentByEnrollment(w http.ResponseWriter, r *http.Request)
 //	@Accept			json
 //	@Produce		json
 //	@Param			payload	body		UpdateStudentDTO	true	"StudentDTO"
-//	@Success		201		{object}	domain.Student
+//	@Success		201		{object}	StudentResponseDTO
 //	@Failure		400		{object}	error
 //	@Failure		404		{object}	error
 //	@Failure		409		{object}	error
