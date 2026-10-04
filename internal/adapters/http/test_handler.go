@@ -17,7 +17,7 @@ import (
 //	@Tags			tests
 //	@Accept			json
 //	@Produce		json
-//	@Param			payload	body		CreateTestDTO	true	"User DTO"
+//	@Param			payload	body		CreateTestDTO	true	"Test DTO"
 //	@Success		201		{object}	domain.Test
 //	@Failure		400		{object}	error
 //	@Failure		409		{object}	error
@@ -51,7 +51,7 @@ func (h *Handler) CreateTest(w http.ResponseWriter, r *http.Request) {
 //
 //	@Summary		Fetch a test by its ID
 //	@Description	Fetch a test by its ID
-//	@Tags			users
+//	@Tags			Test
 //	@Accept			json
 //	@Produce		json
 //	@Param			id	path		int	true	"Test ID"
@@ -82,15 +82,15 @@ func (h *Handler) GetTestByID(w http.ResponseWriter, r *http.Request) {
 // ListTests godoc
 //
 //	@Summary		List tests by parameters
-//	@Description	List tests by name,cpf and email
-//	@Tags			users
+//	@Description	List tests by courseID and name
+//	@Tags			Test
 //	@Accept			json
 //	@Produce		json
-//	@Param			course_id	query		int	false	"filter by course ID"
-//	@Param			name	query		string	false	"filter by name"
-//	@Success		200		{array}		UserResponseDTO
-//	@Failure		400		{object}	errorResponse
-//	@Failure		500		{object}	errorResponse
+//	@Param			course_id	query		int		false	"filter by course ID"
+//	@Param			name		query		string	false	"filter by name"
+//	@Success		200			{array}		Test
+//	@Failure		400			{object}	errorResponse
+//	@Failure		500			{object}	errorResponse
 //	@Router			/tests/{id} [get]
 func (h *Handler) ListTests(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
@@ -165,7 +165,7 @@ func (h *Handler) UpdateTest(w http.ResponseWriter, r *http.Request) {
 //
 //	@Summary		Deletes a test
 //	@Description	Deletes an test by ID
-//	@Tags			users
+//	@Tags			Test
 //	@Accept			json
 //	@Produce		json
 //	@Param			id	path	int	true	"Test ID"
