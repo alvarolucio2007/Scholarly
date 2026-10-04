@@ -33,7 +33,7 @@ func (h *Handler) Mount() http.Handler {
 		AllowCredentials: false,
 		MaxAge:           300,
 	}))
-
+	// TODO: ADD ALL 3 REQUIREMENTS PLEASE DO NOT FORGET MAN
 	r.Get("/health", h.healthCheckHandler)
 	r.Get("/swagger/*", httpSwagger.Handler())
 	// TODO: make it so that it gets user ID from path, all updates for that matter.(really gotta do this)
