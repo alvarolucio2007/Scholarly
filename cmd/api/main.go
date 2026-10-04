@@ -13,10 +13,13 @@ import (
 const DBUrl string = "postgres://admin:root@localhost:5432/scholarly?sslmode=disable"
 
 func main() {
+	log.Printf("starting app...")
+	log.Printf("trying to connect to DB")
 	db, err := postgres.NewConn(DBUrl, 30, 30, time.Minute)
 	if err != nil {
 		log.Fatalf("main: error while connecting to db: %v", err)
 	}
+	log.Printf("DB connection successful")
 	userRepo := postgres.NewUserRepo(db)
 	studentRepo := postgres.NewStudentRepo(db)
 	teacherRepo := postgres.NewTeacherRepo(db)
@@ -25,9 +28,9 @@ func main() {
 	testRepo := postgres.NewTestRepo(db)
 	gradeRepo := postgres.NewGradeRepo(db)
 
-	argon2Repo := argon2.NewArgon2Hasher(64*1024, 3, 2)
+	hasher := argon2.NewArgon2Hasher(64*1024, 3, 2)
 
-	userSvc := services.NewUserService(userRepo, argon2Repo)
+	userSvc := services.NewUserService(userRepo, hasher)
 	studentSvc := services.NewStudentService(studentRepo)
 	teacherSvc := services.NewTeacherService(teacherRepo)
 	courseSvc := services.NewCourseService(courseRepo)
@@ -37,8 +40,9 @@ func main() {
 
 	handler := http.NewHandler(userSvc, studentSvc, teacherSvc,
 		courseSvc, enrollmentSvc, testSvc, gradeSvc)
-
+	log.Printf("trying to create API")
 	if err := handler.Run(handler.Mount()); err != nil {
 		log.Fatalf("main: error while booting HTTP server: %v", err)
 	}
+	log.Printf("server is up")
 }
