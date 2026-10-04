@@ -33,3 +33,10 @@ func NewHandler(
 		grades:      grades,
 	}
 }
+
+func nilIfEmpty(s string) *string {
+	if s == "" {
+		return nil
+	}
+	return &s
+}
