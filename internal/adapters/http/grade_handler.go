@@ -18,7 +18,7 @@ import (
 //	@Accept			json
 //	@Produce		json
 //	@Param			payload	body		CreateGradeDTO	true	"Grade DTO"
-//	@Success		201		{object}	domain.Grade
+//	@Success		201		{object}	GradeResponseDTO
 //	@Failure		400		{object}	error
 //	@Failure		409		{object}	error
 //	@Failure		422		{object}	error
@@ -54,7 +54,7 @@ func (h *Handler) CreateGrade(w http.ResponseWriter, r *http.Request) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			id	path		int	true	"Grade ID"
-//	@Success		200	{object}	domain.Grade
+//	@Success		200	{object}	GradeResponseDTO
 //	@Failure		400	{object}	errorResponse
 //	@Failure		404	{object}	errorResponse
 //	@Failure		500	{object}	errorResponse
@@ -87,7 +87,7 @@ func (h *Handler) GetGradeByID(w http.ResponseWriter, r *http.Request) {
 //	@Produce		json
 //	@Param			test_id			query		int	false	"filter by name"
 //	@Param			enrollment_id	query		int	false	"filter by cpf"
-//	@Success		200				{array}		domain.Grade
+//	@Success		200				{array}		GradeResponseDTO
 //	@Failure		400				{object}	errorResponse
 //	@Failure		500				{object}	errorResponse
 //	@Router			/grades/{id} [get]
@@ -134,7 +134,7 @@ func (h *Handler) ListGrades(w http.ResponseWriter, r *http.Request) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			payload	body		UpdateGradeDTO	true	"Grade DTO"
-//	@Success		201		{object}	domain.Grade
+//	@Success		201		{object}	GradeResponseDTO
 //	@Failure		400		{object}	error
 //	@Failure		404		{object}	error
 //	@Failure		409		{object}	error
