@@ -215,12 +215,12 @@ func (h *Handler) DeleteCourse(w http.ResponseWriter, r *http.Request) {
 //	@Tags			courses
 //	@Accept			json
 //	@Produce		json
-//	@Param		student_id	path		int	true	"Student ID"
-//	@Success		201		{object}	int
-//	@Failure		400		{object}	error
-//	@Failure		409		{object}	error
-//	@Failure		422		{object}	error
-//	@Failure		500		{object}	error
+//	@Param			student_id	path		int	true	"Student ID"
+//	@Success		201			{object}	int
+//	@Failure		400			{object}	error
+//	@Failure		409			{object}	error
+//	@Failure		422			{object}	error
+//	@Failure		500			{object}	error
 //	@Router			/courses/enroll/{student_id} [post]
 func (h *Handler) EnrollStudent(w http.ResponseWriter, r *http.Request) {
 	studentID, err := strconv.ParseInt(chi.URLParam(r, "student_id"), 10, 64)
