@@ -18,7 +18,7 @@ import (
 //	@Accept			json
 //	@Produce		json
 //	@Param			payload	body		CreateTestDTO	true	"Test DTO"
-//	@Success		201		{object}	domain.Test
+//	@Success		201		{object}	TestResponseDTO
 //	@Failure		400		{object}	error
 //	@Failure		409		{object}	error
 //	@Failure		422		{object}	error
@@ -51,11 +51,11 @@ func (h *Handler) CreateTest(w http.ResponseWriter, r *http.Request) {
 //
 //	@Summary		Fetch a test by its ID
 //	@Description	Fetch a test by its ID
-//	@Tags			Test
+//	@Tags			tests
 //	@Accept			json
 //	@Produce		json
 //	@Param			id	path		int	true	"Test ID"
-//	@Success		200	{object}	domain.Test
+//	@Success		200	{object}	TestResponseDTO
 //	@Failure		400	{object}	errorResponse
 //	@Failure		404	{object}	errorResponse
 //	@Failure		500	{object}	errorResponse
@@ -83,12 +83,12 @@ func (h *Handler) GetTestByID(w http.ResponseWriter, r *http.Request) {
 //
 //	@Summary		List tests by parameters
 //	@Description	List tests by courseID and name
-//	@Tags			Test
+//	@Tags			tests
 //	@Accept			json
 //	@Produce		json
 //	@Param			course_id	query		int		false	"filter by course ID"
 //	@Param			name		query		string	false	"filter by name"
-//	@Success		200			{array}		domain.Test
+//	@Success		200			{array}		TestResponseDTO
 //	@Failure		400			{object}	errorResponse
 //	@Failure		500			{object}	errorResponse
 //	@Router			/tests/{id} [get]
@@ -130,7 +130,7 @@ func (h *Handler) ListTests(w http.ResponseWriter, r *http.Request) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			payload	body		UpdateTestDTO	true	"Test DTO"
-//	@Success		201		{object}	domain.Test
+//	@Success		201		{object}	TestResponseDTO
 //	@Failure		400		{object}	error
 //	@Failure		404		{object}	error
 //	@Failure		409		{object}	error
@@ -165,7 +165,7 @@ func (h *Handler) UpdateTest(w http.ResponseWriter, r *http.Request) {
 //
 //	@Summary		Deletes a test
 //	@Description	Deletes an test by ID
-//	@Tags			Test
+//	@Tags			tests
 //	@Accept			json
 //	@Produce		json
 //	@Param			id	path	int	true	"Test ID"
