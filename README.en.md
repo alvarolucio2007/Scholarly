@@ -1,5 +1,41 @@
 [Ler em Português](README.md)
+
 # Scholarly
+
+<!--toc:start-->
+- [Scholarly](#scholarly)
+  - [Overview](#overview)
+  - [Project highlights](#project-highlights)
+  - [Tech stack](#tech-stack)
+  - [Architecture](#architecture)
+    - [Project structure](#project-structure)
+  - [Database](#database)
+    - [DBMS](#dbms)
+    - [Main tables](#main-tables)
+    - [View](#view)
+    - [Function](#function)
+    - [Procedure](#procedure)
+  - [API endpoints](#api-endpoints)
+    - [Infrastructure](#infrastructure)
+    - [Users](#users)
+    - [Students](#students)
+    - [Teachers](#teachers)
+    - [Courses](#courses)
+    - [Enrollments](#enrollments)
+    - [Tests](#tests)
+    - [Grades](#grades)
+    - [Reports](#reports)
+  - [Getting started](#getting-started)
+    - [Requirements](#requirements)
+    - [Steps](#steps)
+  - [Design decisions](#design-decisions)
+    - [Hexagonal architecture](#hexagonal-architecture)
+    - [Input and output DTOs](#input-and-output-dtos)
+    - [Domain errors](#domain-errors)
+    - [Use of PostgreSQL features](#use-of-postgresql-features)
+  - [Evolution from the previous semester](#evolution-from-the-previous-semester)
+  - [License](#license)
+<!--toc:end-->
 
 Academic management system built with Go and PostgreSQL.
 
@@ -32,7 +68,7 @@ Beyond the minimum requirements, the project was built following practices commo
 ## Tech stack
 
 | Layer | Technology |
-|---|---|
+| --- | --- |
 | Language | Go 1.27 |
 | Database | PostgreSQL 17 |
 | HTTP router | chi |
@@ -106,7 +142,7 @@ Scholarly/
 ### Main tables
 
 | Table | Description |
-|---|---|
+| --- | --- |
 | `users` | Central identity for students, teachers, and administrators |
 | `students` | Student-specific data (table inheritance from `users`) |
 | `teachers` | Teacher-specific data (table inheritance from `users`) |
@@ -132,6 +168,7 @@ Consolidates, in a single row per student and course, the academic report data: 
 Calculates the weighted average of a student in a course, taking into account the weight of each test. Returns a `NUMERIC` value — `0` when the student has no grades, or raises an exception (`P0S01`, `P0C01`) when the student or course does not exist.
 
 **Usage in the application:**
+
 - Directly through the endpoint `GET /students/{student_id}/courses/{course_id}/average`
 - Internally through the View `vw_student_report_card`
 
@@ -157,14 +194,14 @@ Returns the created enrollment `id` through an `OUT` parameter.
 ### Infrastructure
 
 | Method | Route | Description |
-|---|---|---|
+| --- | --- | --- |
 | GET | `/health` | Health check |
 | GET | `/swagger/*` | Swagger UI |
 
 ### Users
 
 | Method | Route | Description |
-|---|---|---|
+| --- | --- | --- |
 | POST | `/users` | Create user |
 | GET | `/users` | List users with filters |
 | GET | `/users/{id}` | Get user by ID |
@@ -174,7 +211,7 @@ Returns the created enrollment `id` through an `OUT` parameter.
 ### Students
 
 | Method | Route | Description |
-|---|---|---|
+| --- | --- | --- |
 | POST | `/students` | Create student |
 | GET | `/students/enrollment/{enrollment}` | Get student by enrollment number |
 | GET | `/students/{id}` | Get student by ID |
@@ -184,7 +221,7 @@ Returns the created enrollment `id` through an `OUT` parameter.
 ### Teachers
 
 | Method | Route | Description |
-|---|---|---|
+| --- | --- | --- |
 | POST | `/teachers` | Create teacher |
 | GET | `/teachers` | List teachers |
 | GET | `/teachers/{id}` | Get teacher by ID |
@@ -194,13 +231,13 @@ Returns the created enrollment `id` through an `OUT` parameter.
 ### Courses
 
 | Method | Route | Description |
-|---|---|---|
+| --- | --- | --- |
 | POST | `/courses` | Create course |
 | GET | `/courses` | List courses |
 | GET | `/courses/{id}` | Get course by ID |
 | PUT | `/courses/{id}` | Update course |
 | DELETE | `/courses/{id}` | Delete course |
-| POST | `/courses/enroll/`| Enrolls student in a course (utilizing a procedure)| 
+| POST | `/courses/enroll/` | Enrolls student in a course (utilizing a procedure) |
 
 ### Enrollments
 
@@ -215,7 +252,7 @@ Returns the created enrollment `id` through an `OUT` parameter.
 ### Tests
 
 | Method | Route | Description |
-|---|---|---|
+| --- | --- | --- |
 | POST | `/tests` | Create test |
 | GET | `/tests` | List tests |
 | GET | `/tests/{id}` | Get test by ID |
@@ -225,7 +262,7 @@ Returns the created enrollment `id` through an `OUT` parameter.
 ### Grades
 
 | Method | Route | Description |
-|---|---|---|
+| --- | --- | --- |
 | POST | `/grades` | Create grade |
 | GET | `/grades` | List grades |
 | GET | `/grades/{id}` | Get grade by ID |
@@ -235,7 +272,7 @@ Returns the created enrollment `id` through an `OUT` parameter.
 ### Reports
 
 | Method | Route | Database resource |
-|---|---|---|
+| --- | --- | --- |
 | GET | `/students/{student_id}/report` | View `vw_student_report_card` |
 | GET | `/students/{student_id}/courses/{course_id}/average` | Function `fn_weighted_average` |
 
@@ -250,7 +287,7 @@ Full documentation with payloads and response codes is available through Swagger
 - Go 1.27 or later
 - Docker and Docker Compose
 - Make
-- golang-migrate (https://github.com/golang-migrate/migrate)
+- golang-migrate (<https://github.com/golang-migrate/migrate>)
 
 ### Steps
 
@@ -326,7 +363,7 @@ The View, Function, and Procedure were chosen to solve problems that make sense 
 This project is a rewrite of an academic system developed in the previous semester, now focused on architectural quality and advanced database usage.
 
 | Aspect | Previous version | Current version |
-|---|---|---|
+| --- | --- | --- |
 | Architecture | Layered Architecture | Hexagonal (ports and adapters) |
 | Persistence | No foreign keys, no indexes | Foreign keys, indexes, constraints |
 | SQL features | No View, Function, or Procedure | View, Function, and Procedure integrated |

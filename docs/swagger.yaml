@@ -927,7 +927,7 @@ paths:
       summary: Gets an student average
       tags:
       - grades
-  /grades/average/list/:
+  /grades/average/list:
     get:
       consumes:
       - application/json

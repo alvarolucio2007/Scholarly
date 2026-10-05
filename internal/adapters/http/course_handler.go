@@ -237,5 +237,5 @@ func (h *Handler) EnrollStudent(w http.ResponseWriter, r *http.Request) {
 		respondDomainError(w, err)
 		return
 	}
-	_ = writeJSONData(w, http.StatusOK, enrollmentID)
+	_ = writeJSONData(w, http.StatusCreated, enrollmentID)
 }

@@ -15,5 +15,31 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+  migrate:
+    image: migrate/migrate
+    volumes:
+      - ./database/migrations:/migrations
+    command:
+      [
+        "-path=/migrations",
+        "-database=postgres://admin:root@db:5432/scholarly?sslmode=disable",
+        "up",
+      ]
+    depends_on:
+      db:
+        condition: service_healthy
+
+  api:
+    build: .
+    container_name: api
+    environment:
+      DATABASE_URL: postgres://admin:root@db:5432/scholarly?sslmode=disable
+      SERVER_ADDR: "0.0.0.0:8080"
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
 volumes:
   db-data:

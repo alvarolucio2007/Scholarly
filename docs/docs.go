@@ -735,7 +735,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/grades/average/list/": {
+        "/grades/average/list": {
             "get": {
                 "description": "List averages by studentID",
                 "consumes": [

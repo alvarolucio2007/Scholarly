@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 	"time"
 
 	"github.com/alvarolucio2007/Scholarly/internal/adapters/argon2"
@@ -10,9 +11,11 @@ import (
 	"github.com/alvarolucio2007/Scholarly/internal/services"
 )
 
-const DBUrl string = "postgres://admin:root@localhost:5432/scholarly?sslmode=disable"
-
 func main() {
+	DBUrl := os.Getenv("DATABASE_URL")
+	if DBUrl == "" {
+		DBUrl = "postgres://admin:root@localhost:5432/scholarly?sslmode=disable"
+	}
 	log.Printf("starting app...")
 	log.Printf("trying to connect to DB")
 	db, err := postgres.NewConn(DBUrl, 30, 30, time.Minute)
@@ -46,7 +49,12 @@ func main() {
 	handler := http.NewHandler(userSvc, studentSvc, teacherSvc,
 		courseSvc, enrollmentSvc, testSvc, gradeSvc)
 	log.Printf("trying to create API")
-	if err := handler.Run(handler.Mount()); err != nil {
+
+	addr := os.Getenv("SERVER_ADDR")
+	if addr == "" {
+		addr = "127.0.0.1:8080"
+	}
+	if err := handler.Run(handler.Mount(), addr); err != nil {
 		log.Fatalf("main: error while booting HTTP server: %v", err)
 	}
 	log.Printf("server is up")
