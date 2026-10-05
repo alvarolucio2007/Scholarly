@@ -312,7 +312,7 @@ docker compose up db -d
 air
 ```
 
-**5. Acesse o Swagger UI**
+**3. Acesse o Swagger UI**
 
 ```
 http://127.0.0.1:8080/swagger/index.html
