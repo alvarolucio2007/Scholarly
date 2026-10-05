@@ -1,82 +1,24 @@
 definitions:
-  domain.Course:
+  internal_adapters_http.CourseResponseDTO:
     properties:
       code:
         type: string
-      createdAt:
+      created_at:
         type: string
       id:
-        format: int64
         type: integer
-      maxStudents:
-        format: int32
+      max_students:
         type: integer
       name:
         type: string
       semester:
         type: string
-      teacherID:
-        format: int64
+      teacher_id:
         type: integer
-      updatedAt:
+      updated_at:
         type: string
     type: object
-  domain.Grade:
-    properties:
-      createdAt:
-        type: string
-      enrollmentID:
-        format: int64
-        type: integer
-      id:
-        format: int64
-        type: integer
-      testID:
-        format: int64
-        type: integer
-      updatedAt:
-        type: string
-      value:
-        format: float64
-        type: number
-    type: object
-  domain.Student:
-    properties:
-      enrollmentNumber:
-        type: string
-      userID:
-        format: int64
-        type: integer
-    type: object
-  domain.Teacher:
-    properties:
-      department:
-        type: string
-      userID:
-        format: int64
-        type: integer
-    type: object
-  domain.Test:
-    properties:
-      courseID:
-        format: int64
-        type: integer
-      createdAt:
-        type: string
-      id:
-        format: int64
-        type: integer
-      name:
-        type: string
-      testDate:
-        type: string
-      updatedAt:
-        type: string
-      weight:
-        format: float64
-        type: number
-    type: object
-  http.CreateCourseDTO:
+  internal_adapters_http.CreateCourseDTO:
     properties:
       code:
         maxLength: 50
@@ -100,7 +42,7 @@ definitions:
     - semester
     - teacher_id
     type: object
-  http.CreateGradeDTO:
+  internal_adapters_http.CreateGradeDTO:
     properties:
       enrollment_id:
         minimum: 1
@@ -117,7 +59,7 @@ definitions:
     - test_id
     - value
     type: object
-  http.CreateStudentDTO:
+  internal_adapters_http.CreateStudentDTO:
     properties:
       enrollment_number:
         type: string
@@ -128,14 +70,28 @@ definitions:
     - enrollment_number
     - user_id
     type: object
-  http.CreateTestDTO:
+  internal_adapters_http.CreateTeacherDTO:
+    properties:
+      department:
+        maxLength: 100
+        type: string
+      user_id:
+        minimum: 1
+        type: integer
+    required:
+    - department
+    - user_id
+    type: object
+  internal_adapters_http.CreateTestDTO:
     properties:
       course_id:
         minimum: 1
         type: integer
       name:
+        maxLength: 255
         type: string
       test_date:
+        example: "2026-03-15T00:00:00Z"
         type: string
       weight:
         type: number
@@ -143,8 +99,9 @@ definitions:
     - course_id
     - name
     - test_date
+    - weight
     type: object
-  http.CreateUserDTO:
+  internal_adapters_http.CreateUserDTO:
     properties:
       cpf:
         maxLength: 14
@@ -162,7 +119,19 @@ definitions:
     - name
     - password
     type: object
-  http.EnrollmentResponseDTO:
+  internal_adapters_http.EnrollStudentDTO:
+    properties:
+      course_id:
+        minimum: 1
+        type: integer
+      student_id:
+        minimum: 1
+        type: integer
+    required:
+    - course_id
+    - student_id
+    type: object
+  internal_adapters_http.EnrollmentResponseDTO:
     properties:
       course_id:
         type: integer
@@ -175,7 +144,72 @@ definitions:
       student_id:
         type: integer
     type: object
-  http.UpdateCourseDTO:
+  internal_adapters_http.GradeResponseDTO:
+    properties:
+      created_at:
+        type: string
+      enrollment_id:
+        type: integer
+      id:
+        type: integer
+      test_id:
+        type: integer
+      updated_at:
+        type: string
+      value:
+        type: number
+    type: object
+  internal_adapters_http.ListAverageResponseDTO:
+    properties:
+      average:
+        type: number
+      course_code:
+        type: string
+      course_id:
+        type: integer
+      course_name:
+        type: string
+      situation:
+        type: string
+      student_id:
+        type: integer
+      student_name:
+        type: string
+      teacher_name:
+        type: string
+    type: object
+  internal_adapters_http.StudentResponseDTO:
+    properties:
+      enrollment_number:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  internal_adapters_http.TeacherResponseDTO:
+    properties:
+      department:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  internal_adapters_http.TestResponseDTO:
+    properties:
+      course_id:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      test_date:
+        type: string
+      updated_at:
+        type: string
+      weight:
+        type: number
+    type: object
+  internal_adapters_http.UpdateCourseDTO:
     properties:
       code:
         maxLength: 50
@@ -184,7 +218,7 @@ definitions:
         minimum: 1
         type: integer
       max_students:
-        maximum: 50
+        maximum: 200
         type: integer
       name:
         maxLength: 50
@@ -198,7 +232,7 @@ definitions:
     required:
     - id
     type: object
-  http.UpdateEnrollmentDTO:
+  internal_adapters_http.UpdateEnrollmentDTO:
     properties:
       course_id:
         minimum: 1
@@ -210,25 +244,23 @@ definitions:
         minimum: 1
         type: integer
     type: object
-  http.UpdateGradeDTO:
+  internal_adapters_http.UpdateGradeDTO:
     properties:
       enrollment_id:
-        minimum: 1
+        minimum: 0
         type: integer
       id:
         minimum: 1
         type: integer
       test_id:
-        minimum: 1
+        minimum: 0
         type: integer
       value:
+        example: 0
         maximum: 10
-        minimum: 0
         type: number
-    required:
-    - id
     type: object
-  http.UpdateStudentDTO:
+  internal_adapters_http.UpdateStudentDTO:
     properties:
       enrollment_number:
         type: string
@@ -238,7 +270,7 @@ definitions:
     required:
     - user_id
     type: object
-  http.UpdateTeacherDTO:
+  internal_adapters_http.UpdateTeacherDTO:
     properties:
       department:
         maxLength: 100
@@ -249,44 +281,53 @@ definitions:
     required:
     - user_id
     type: object
-  http.UpdateTestDTO:
+  internal_adapters_http.UpdateTestDTO:
     properties:
       course_id:
-        minimum: 1
+        example: 0
+        minimum: 0
         type: integer
       id:
+        example: 1
         minimum: 1
         type: integer
       name:
-        minLength: 1
+        example: ""
+        minLength: 0
         type: string
       test_date:
+        example: ""
         type: string
       weight:
+        example: 0
+        minimum: 0
         type: number
     required:
     - id
-    - name
     type: object
-  http.UpdateUserDTO:
+  internal_adapters_http.UpdateUserDTO:
     properties:
       cpf:
+        example: ""
         maxLength: 14
         type: string
       email:
+        example: ""
         type: string
       id:
         minimum: 1
         type: integer
       name:
+        example: ""
         maxLength: 255
         type: string
       password:
+        example: ""
         type: string
     required:
     - id
     type: object
-  http.UserResponseDTO:
+  internal_adapters_http.UserResponseDTO:
     properties:
       cpf:
         type: string
@@ -301,7 +342,7 @@ definitions:
       updated_at:
         type: string
     type: object
-  http.errorResponse:
+  internal_adapters_http.errorResponse:
     properties:
       error:
         type: string
@@ -338,16 +379,16 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/domain.Course'
+              $ref: '#/definitions/internal_adapters_http.CourseResponseDTO'
             type: array
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
       summary: List courses by parameters
       tags:
       - courses
@@ -361,14 +402,14 @@ paths:
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/http.CreateCourseDTO'
+          $ref: '#/definitions/internal_adapters_http.CreateCourseDTO'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/domain.Course'
+            $ref: '#/definitions/internal_adapters_http.CourseResponseDTO'
         "400":
           description: Bad Request
           schema: {}
@@ -394,14 +435,14 @@ paths:
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/http.UpdateCourseDTO'
+          $ref: '#/definitions/internal_adapters_http.UpdateCourseDTO'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/domain.Course'
+            $ref: '#/definitions/internal_adapters_http.CourseResponseDTO'
         "400":
           description: Bad Request
           schema: {}
@@ -447,7 +488,7 @@ paths:
           schema: {}
       summary: Deletes an course
       tags:
-      - users
+      - courses
     get:
       consumes:
       - application/json
@@ -464,33 +505,34 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.Course'
+            $ref: '#/definitions/internal_adapters_http.CourseResponseDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
       summary: Fetch a course by its ID
       tags:
       - courses
-  /courses/enroll/{student_id}:
+  /courses/enroll/:
     post:
       consumes:
       - application/json
       description: Enroll a student
       parameters:
-      - description: Student ID
-        in: path
-        name: student_id
+      - description: Enroll Student DTO
+        in: body
+        name: payload
         required: true
-        type: integer
+        schema:
+          $ref: '#/definitions/internal_adapters_http.EnrollStudentDTO'
       produces:
       - application/json
       responses:
@@ -538,16 +580,16 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/http.EnrollmentResponseDTO'
+              $ref: '#/definitions/internal_adapters_http.EnrollmentResponseDTO'
             type: array
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
       summary: List enrollments by parameters
       tags:
       - enrollments
@@ -561,14 +603,14 @@ paths:
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/http.UpdateEnrollmentDTO'
+          $ref: '#/definitions/internal_adapters_http.UpdateEnrollmentDTO'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/http.EnrollmentResponseDTO'
+            $ref: '#/definitions/internal_adapters_http.EnrollmentResponseDTO'
         "400":
           description: Bad Request
           schema: {}
@@ -588,6 +630,33 @@ paths:
       tags:
       - enrollments
   /enrollments/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes an grade by ID
+      parameters:
+      - description: Enrollment ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Deletes an enrollment
+      tags:
+      - enrollments
     get:
       consumes:
       - application/json
@@ -604,23 +673,56 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/http.EnrollmentResponseDTO'
+            $ref: '#/definitions/internal_adapters_http.EnrollmentResponseDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
       summary: Fetch an enrollment by it's ID
       tags:
       - enrollments
   /grades:
+    get:
+      consumes:
+      - application/json
+      description: List grades by test_id and enrollment_id
+      parameters:
+      - description: filter by test ID
+        in: query
+        name: test_id
+        type: integer
+      - description: filter by enrollment ID
+        in: query
+        name: enrollment_id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/internal_adapters_http.GradeResponseDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
+      summary: List grades by parameters
+      tags:
+      - grades
     post:
       consumes:
       - application/json
@@ -631,14 +733,14 @@ paths:
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/http.CreateGradeDTO'
+          $ref: '#/definitions/internal_adapters_http.CreateGradeDTO'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/domain.Grade'
+            $ref: '#/definitions/internal_adapters_http.GradeResponseDTO'
         "400":
           description: Bad Request
           schema: {}
@@ -653,7 +755,7 @@ paths:
           schema: {}
       summary: Create a grade
       tags:
-      - users
+      - grades
     put:
       consumes:
       - application/json
@@ -664,14 +766,14 @@ paths:
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/http.UpdateGradeDTO'
+          $ref: '#/definitions/internal_adapters_http.UpdateGradeDTO'
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
+        "200":
+          description: OK
           schema:
-            $ref: '#/definitions/domain.Grade'
+            $ref: '#/definitions/internal_adapters_http.GradeResponseDTO'
         "400":
           description: Bad Request
           schema: {}
@@ -691,18 +793,42 @@ paths:
       tags:
       - grades
   /grades/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a grade by ID
+      parameters:
+      - description: Grade ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Deletes a grade
+      tags:
+      - grades
     get:
       consumes:
       - application/json
-      description: List grades by test_id and enrollment_id
+      description: Fetch a grade by its ID
       parameters:
-      - description: filter by name
-        in: query
-        name: test_id
-        type: integer
-      - description: filter by cpf
-        in: query
-        name: enrollment_id
+      - description: Grade ID
+        in: path
+        name: id
+        required: true
         type: integer
       produces:
       - application/json
@@ -710,25 +836,66 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/domain.Grade'
-            type: array
+            $ref: '#/definitions/internal_adapters_http.GradeResponseDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/http.errorResponse'
-      summary: List grades by parameters
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
+      summary: Fetch a grade by its ID
       tags:
       - grades
-  /report/:
+  /grades/average/{student_id}/{course_id}:
     get:
       consumes:
       - application/json
-      description: List report cards by studentID
+      description: Gets an student average by userID and courseID
+      parameters:
+      - description: Student ID
+        in: path
+        name: student_id
+        required: true
+        type: integer
+      - description: Course ID
+        in: path
+        name: course_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            format: float64
+            type: number
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
+      summary: Gets an student average
+      tags:
+      - grades
+  /grades/average/list/:
+    get:
+      consumes:
+      - application/json
+      description: List averages by studentID
       parameters:
       - description: filter by studentID
         in: query
@@ -741,17 +908,17 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/http.UserResponseDTO'
+              $ref: '#/definitions/internal_adapters_http.ListAverageResponseDTO'
             type: array
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/http.errorResponse'
-      summary: List report cards
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
+      summary: List averages
       tags:
       - grades
   /students:
@@ -765,14 +932,14 @@ paths:
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/http.CreateStudentDTO'
+          $ref: '#/definitions/internal_adapters_http.CreateStudentDTO'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/domain.Student'
+            $ref: '#/definitions/internal_adapters_http.StudentResponseDTO'
         "400":
           description: Bad Request
           schema: {}
@@ -798,14 +965,14 @@ paths:
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/http.UpdateStudentDTO'
+          $ref: '#/definitions/internal_adapters_http.UpdateStudentDTO'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/domain.Student'
+            $ref: '#/definitions/internal_adapters_http.StudentResponseDTO'
         "400":
           description: Bad Request
           schema: {}
@@ -868,23 +1035,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.Student'
+            $ref: '#/definitions/internal_adapters_http.StudentResponseDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
       summary: Fetch a student by it's ID
       tags:
       - students
-  /students/enrollments/{id}:
+  /students/enrollment/{id}:
     get:
       consumes:
       - application/json
@@ -901,19 +1068,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.Student'
+            $ref: '#/definitions/internal_adapters_http.StudentResponseDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
       summary: Fetch a student by it's enrollment
       tags:
       - students
@@ -934,17 +1101,50 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/http.UserResponseDTO'
+              $ref: '#/definitions/internal_adapters_http.TeacherResponseDTO'
             type: array
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
       summary: List teachers by department
+      tags:
+      - teachers
+    post:
+      consumes:
+      - application/json
+      description: Create an teacher account
+      parameters:
+      - description: Teacher DTO
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/internal_adapters_http.CreateTeacherDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/internal_adapters_http.TeacherResponseDTO'
+        "400":
+          description: Bad Request
+          schema: {}
+        "409":
+          description: Conflict
+          schema: {}
+        "422":
+          description: Unprocessable Entity
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Create an teacher account
       tags:
       - teachers
     put:
@@ -957,14 +1157,14 @@ paths:
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/http.UpdateTeacherDTO'
+          $ref: '#/definitions/internal_adapters_http.UpdateTeacherDTO'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/http.UserResponseDTO'
+            $ref: '#/definitions/internal_adapters_http.TeacherResponseDTO'
         "400":
           description: Bad Request
           schema: {}
@@ -984,6 +1184,33 @@ paths:
       tags:
       - teachers
   /teachers/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes an teacher account by ID
+      parameters:
+      - description: Teacher ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Deletes an teacher account
+      tags:
+      - teachers
     get:
       consumes:
       - application/json
@@ -1000,23 +1227,56 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.Teacher'
+            $ref: '#/definitions/internal_adapters_http.TeacherResponseDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
       summary: Fetch a teacher by its ID
       tags:
       - teachers
   /tests:
+    get:
+      consumes:
+      - application/json
+      description: List tests by courseID and name
+      parameters:
+      - description: filter by course ID
+        in: query
+        name: course_id
+        type: integer
+      - description: filter by name
+        in: query
+        name: name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/internal_adapters_http.TestResponseDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
+      summary: List tests by parameters
+      tags:
+      - tests
     post:
       consumes:
       - application/json
@@ -1027,14 +1287,14 @@ paths:
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/http.CreateTestDTO'
+          $ref: '#/definitions/internal_adapters_http.CreateTestDTO'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/domain.Test'
+            $ref: '#/definitions/internal_adapters_http.TestResponseDTO'
         "400":
           description: Bad Request
           schema: {}
@@ -1060,14 +1320,14 @@ paths:
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/http.UpdateTestDTO'
+          $ref: '#/definitions/internal_adapters_http.UpdateTestDTO'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/domain.Test'
+            $ref: '#/definitions/internal_adapters_http.TestResponseDTO'
         "400":
           description: Bad Request
           schema: {}
@@ -1113,40 +1373,39 @@ paths:
           schema: {}
       summary: Deletes a test
       tags:
-      - Test
+      - tests
     get:
       consumes:
       - application/json
-      description: List tests by courseID and name
+      description: Fetch a test by its ID
       parameters:
-      - description: filter by course ID
-        in: query
-        name: course_id
+      - description: Test ID
+        in: path
+        name: id
+        required: true
         type: integer
-      - description: filter by name
-        in: query
-        name: name
-        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/domain.Test'
-            type: array
+            $ref: '#/definitions/internal_adapters_http.TestResponseDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/http.errorResponse'
-      summary: List tests by parameters
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
+      summary: Fetch a test by its ID
       tags:
-      - Test
+      - tests
   /users:
     post:
       consumes:
@@ -1158,14 +1417,14 @@ paths:
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/http.CreateUserDTO'
+          $ref: '#/definitions/internal_adapters_http.CreateUserDTO'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/http.UserResponseDTO'
+            $ref: '#/definitions/internal_adapters_http.UserResponseDTO'
         "400":
           description: Bad Request
           schema: {}
@@ -1191,14 +1450,14 @@ paths:
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/http.UpdateUserDTO'
+          $ref: '#/definitions/internal_adapters_http.UpdateUserDTO'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/http.UserResponseDTO'
+            $ref: '#/definitions/internal_adapters_http.UserResponseDTO'
         "400":
           description: Bad Request
           schema: {}
@@ -1215,6 +1474,44 @@ paths:
           description: Internal Server Error
           schema: {}
       summary: Update an user account
+      tags:
+      - users
+  /users/:
+    get:
+      consumes:
+      - application/json
+      description: List users by name,cpf and email
+      parameters:
+      - description: filter by name
+        in: query
+        name: name
+        type: string
+      - description: filter by cpf
+        in: query
+        name: cpf
+        type: string
+      - description: filter by email
+        in: query
+        name: email
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/internal_adapters_http.UserResponseDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
+      summary: List users by parameters
       tags:
       - users
   /users/{id}:
@@ -1248,38 +1545,33 @@ paths:
     get:
       consumes:
       - application/json
-      description: List users by name,cpf and email
+      description: Fetch an user by it's ID
       parameters:
-      - description: filter by name
-        in: query
-        name: name
-        type: string
-      - description: filter by cpf
-        in: query
-        name: cpf
-        type: string
-      - description: filter by email
-        in: query
-        name: email
-        type: string
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/http.UserResponseDTO'
-            type: array
+            $ref: '#/definitions/internal_adapters_http.UserResponseDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/http.errorResponse'
-      summary: List users by parameters
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
+      summary: Fetch an user by it's ID
       tags:
       - users
 swagger: "2.0"

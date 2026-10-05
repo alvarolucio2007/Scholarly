@@ -20,9 +20,9 @@ import (
 //	@Produce		json
 //	@Param			id	path		int	true	"Enrollment ID"
 //	@Success		200	{object}	EnrollmentResponseDTO
-//	@Failure		400	{object}	errorResponse
-//	@Failure		404	{object}	errorResponse
-//	@Failure		500	{object}	errorResponse
+//	@Failure		400	{object}	ErrorResponse
+//	@Failure		404	{object}	ErrorResponse
+//	@Failure		500	{object}	ErrorResponse
 //	@Router			/enrollments/{id} [get]
 func (h *Handler) GetEnrollmentByID(w http.ResponseWriter, r *http.Request) {
 	courseID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
@@ -53,8 +53,8 @@ func (h *Handler) GetEnrollmentByID(w http.ResponseWriter, r *http.Request) {
 //	@Param			status		query		string	false	"filter by status"
 //	@Param			student_id	query		int		false	"filter by student id"
 //	@Success		200			{array}		EnrollmentResponseDTO
-//	@Failure		400			{object}	errorResponse
-//	@Failure		500			{object}	errorResponse
+//	@Failure		400			{object}	ErrorResponse
+//	@Failure		500			{object}	ErrorResponse
 //	@Router			/enrollments [get]
 func (h *Handler) ListEnrollments(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
@@ -107,11 +107,11 @@ func (h *Handler) ListEnrollments(w http.ResponseWriter, r *http.Request) {
 //	@Produce		json
 //	@Param			payload	body		UpdateEnrollmentDTO	true	"enrollment DTO"
 //	@Success		201		{object}	EnrollmentResponseDTO
-//	@Failure		400		{object}	error
-//	@Failure		404		{object}	error
-//	@Failure		409		{object}	error
-//	@Failure		422		{object}	error
-//	@Failure		500		{object}	error
+//	@Failure		400		{object}	ErrorResponse
+//	@Failure		404		{object}	ErrorResponse
+//	@Failure		409		{object}	ErrorResponse
+//	@Failure		422		{object}	ErrorResponse
+//	@Failure		500		{object}	ErrorResponse
 //	@Router			/enrollments [put]
 func (h *Handler) UpdateEnrollment(w http.ResponseWriter, r *http.Request) {
 	var dto UpdateEnrollmentDTO
@@ -144,11 +144,10 @@ func (h *Handler) UpdateEnrollment(w http.ResponseWriter, r *http.Request) {
 //	@Produce		json
 //	@Param			id	path	int	true	"Enrollment ID"
 //	@Success		204
-//	@Failure		400	{object}	error
-//	@Failure		404	{object}	error
-//	@Failure		500	{object}	error
+//	@Failure		400	{object}	ErrorResponse
+//	@Failure		404	{object}	ErrorResponse
+//	@Failure		500	{object}	ErrorResponse
 //	@Router			/enrollments/{id} [delete]
-
 func (h *Handler) DeleteEnrollment(w http.ResponseWriter, r *http.Request) {
 	enrollmentID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
 	if err != nil {

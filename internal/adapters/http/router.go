@@ -9,22 +9,33 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/alvarolucio2007/Scholarly/docs"
+	"github.com/alvarolucio2007/Scholarly/internal/env"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 	httpSwagger "github.com/swaggo/http-swagger/v2"
-	"github.com/swaggo/swag/example/basic/docs"
 )
 
 const addr string = "localhost:8080"
 
-func (h *Handler) mount() http.Handler {
+func (h *Handler) Mount() http.Handler {
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
 	r.Use(middleware.ClientIPFromRemoteAddr)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{env.GetString("CORS_ALLOWED_ORIGIN", "http://localhost:5174")},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: false,
+		MaxAge:           300,
+	}))
+	// TODO: ADD ALL 3 REQUIREMENTS PLEASE DO NOT FORGET MAN
 	r.Get("/health", h.healthCheckHandler)
-	r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL("localhost:8080/swagger/doc.json")))
+	r.Get("/swagger/*", httpSwagger.Handler())
 	// TODO: make it so that it gets user ID from path, all updates for that matter.(really gotta do this)
 	r.Route("/users", func(r chi.Router) {
 		r.Post("/", h.CreateUser)
@@ -42,9 +53,7 @@ func (h *Handler) mount() http.Handler {
 			r.Get("/", h.GetStudentByID)
 			r.Delete("/", h.DeleteStudent)
 		})
-		r.Route("/enrollment/{enrollment}", func(r chi.Router) {
-			r.Get("/", h.GetStudentByEnrollment)
-		})
+		r.Get("/enrollment/{id}", h.GetStudentByEnrollment)
 	})
 	r.Route("/teachers", func(r chi.Router) {
 		r.Post("/", h.CreateTeacher)
@@ -63,7 +72,7 @@ func (h *Handler) mount() http.Handler {
 			r.Get("/", h.GetCourseByID)
 			r.Delete("/", h.DeleteCourse)
 		})
-		r.Route("/enroll/{student_id}", func(r chi.Router) {
+		r.Route("/enroll/", func(r chi.Router) {
 			r.Post("/", h.EnrollStudent)
 		})
 	})
@@ -92,15 +101,16 @@ func (h *Handler) mount() http.Handler {
 			r.Get("/", h.GetGradeByID)
 			r.Delete("/", h.DeleteGrade)
 		})
-		r.Route("/report/", func(r chi.Router) {
-			r.Post("/", h.ListReportCard)
+		r.Route("/average", func(r chi.Router) {
+			r.Get("/list", h.ListAverages)
+			r.Get("/{student_id}/{course_id}", h.GetAverage)
 		})
 	})
 
 	return r
 }
 
-func (h *Handler) run(mux http.Handler) error {
+func (h *Handler) Run(mux http.Handler) error {
 	docs.SwaggerInfo.Version = "0.0.1"
 	docs.SwaggerInfo.Host = addr
 	srv := &http.Server{
@@ -114,6 +124,7 @@ func (h *Handler) run(mux http.Handler) error {
 	go func() {
 		quit := make(chan os.Signal, 1)
 		signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+		<-quit
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 		shutdown <- srv.Shutdown(ctx)

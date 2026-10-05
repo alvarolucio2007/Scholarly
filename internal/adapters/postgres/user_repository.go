@@ -27,6 +27,10 @@ func (r *UserRepo) Create(ctx context.Context, user *domain.User) error {
 	ctx, cancel := context.WithTimeout(ctx, PostgresQueryTimeout)
 	defer cancel()
 	if err := r.db.QueryRowContext(ctx, query, user.Name, user.CPF, user.Email, user.PasswordHash).Scan(&user.ID, &user.CreatedAt); err != nil {
+		translated := translateError(err)
+		if !errors.Is(err, translated) {
+			return translated
+		}
 		return fmt.Errorf("postgres: create user: %w", err)
 	}
 	return nil
@@ -42,7 +46,11 @@ func (r *UserRepo) GetByID(ctx context.Context, userID int64) (*domain.User, err
 		return nil, domain.ErrNotFound
 	}
 	if err != nil {
-		return nil, fmt.Errorf("postgres: get user by id %w", err)
+		translated := translateError(err)
+		if !errors.Is(err, translated) {
+			return nil, translated
+		}
+		return nil, fmt.Errorf("postgres: getByID user: %w", err)
 	}
 	return &u, nil
 }

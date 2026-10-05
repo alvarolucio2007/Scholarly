@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"net/mail"
 	"regexp"
 	"time"
 )
@@ -16,8 +17,16 @@ type User struct {
 }
 
 func (u *User) ValidateCPF() error {
+	u.CPF = reCPF.ReplaceAllString(u.CPF, "")
 	if !isValidCPF(u.CPF) {
 		return ErrInvalidCPF
+	}
+	return nil
+}
+
+func (u *User) ValidateEmail() error {
+	if _, err := mail.ParseAddress(u.Email); err != nil {
+		return ErrInvalidEmail
 	}
 	return nil
 }
@@ -34,7 +43,6 @@ func allSame(s string) bool {
 }
 
 func isValidCPF(cpf string) bool {
-	cpf = reCPF.ReplaceAllString(cpf, "")
 	if len(cpf) != 11 || allSame(cpf) {
 		return false
 	}

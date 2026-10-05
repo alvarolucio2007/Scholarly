@@ -2,8 +2,10 @@ package http
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/alvarolucio2007/Scholarly/internal/ports"
 	"github.com/alvarolucio2007/Scholarly/internal/services"
@@ -18,27 +20,32 @@ import (
 //	@Accept			json
 //	@Produce		json
 //	@Param			payload	body		CreateTestDTO	true	"Test DTO"
-//	@Success		201		{object}	domain.Test
-//	@Failure		400		{object}	error
-//	@Failure		409		{object}	error
-//	@Failure		422		{object}	error
-//	@Failure		500		{object}	error
+//	@Success		201		{object}	TestResponseDTO
+//	@Failure		400		{object}	ErrorResponse
+//	@Failure		409		{object}	ErrorResponse
+//	@Failure		422		{object}	ErrorResponse
+//	@Failure		500		{object}	ErrorResponse
 //	@Router			/tests [post]
 func (h *Handler) CreateTest(w http.ResponseWriter, r *http.Request) {
 	var dto CreateTestDTO
 	if err := json.NewDecoder(r.Body).Decode(&dto); err != nil {
-		_ = writeJSONError(w, http.StatusBadRequest, "invalid JSON")
+		_ = writeJSONError(w, http.StatusBadRequest, fmt.Sprintf("Invalid JSON: %v", err))
 		return
 	}
 	if err := validate.Struct(dto); err != nil {
 		_ = writeJSONError(w, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
+	testDate, err := time.Parse("2006-01-02T15:04:05Z07:00", dto.TestDate)
+	if err != nil {
+		_ = writeJSONError(w, http.StatusBadRequest, err.Error())
+		return
+	}
 	test, err := h.tests.CreateTest(r.Context(), services.CreateTestPayload{
 		CourseID: dto.CourseID,
 		Name:     dto.Name,
 		Weight:   dto.Weight,
-		TestDate: dto.TestDate,
+		TestDate: testDate,
 	})
 	if err != nil {
 		respondDomainError(w, err)
@@ -51,16 +58,15 @@ func (h *Handler) CreateTest(w http.ResponseWriter, r *http.Request) {
 //
 //	@Summary		Fetch a test by its ID
 //	@Description	Fetch a test by its ID
-//	@Tags			Test
+//	@Tags			tests
 //	@Accept			json
 //	@Produce		json
 //	@Param			id	path		int	true	"Test ID"
-//	@Success		200	{object}	domain.Test
-//	@Failure		400	{object}	errorResponse
-//	@Failure		404	{object}	errorResponse
-//	@Failure		500	{object}	errorResponse
+//	@Success		200	{object}	TestResponseDTO
+//	@Failure		400	{object}	ErrorResponse
+//	@Failure		404	{object}	ErrorResponse
+//	@Failure		500	{object}	ErrorResponse
 //	@Router			/tests/{id} [get]
-
 func (h *Handler) GetTestByID(w http.ResponseWriter, r *http.Request) {
 	testID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
 	if err != nil {
@@ -83,15 +89,15 @@ func (h *Handler) GetTestByID(w http.ResponseWriter, r *http.Request) {
 //
 //	@Summary		List tests by parameters
 //	@Description	List tests by courseID and name
-//	@Tags			Test
+//	@Tags			tests
 //	@Accept			json
 //	@Produce		json
 //	@Param			course_id	query		int		false	"filter by course ID"
 //	@Param			name		query		string	false	"filter by name"
-//	@Success		200			{array}		domain.Test
-//	@Failure		400			{object}	errorResponse
-//	@Failure		500			{object}	errorResponse
-//	@Router			/tests/{id} [get]
+//	@Success		200			{array}		TestResponseDTO
+//	@Failure		400			{object}	ErrorResponse
+//	@Failure		500			{object}	ErrorResponse
+//	@Router			/tests [get]
 func (h *Handler) ListTests(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	filter := ports.TestFilter{}
@@ -130,12 +136,12 @@ func (h *Handler) ListTests(w http.ResponseWriter, r *http.Request) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			payload	body		UpdateTestDTO	true	"Test DTO"
-//	@Success		201		{object}	domain.Test
-//	@Failure		400		{object}	error
-//	@Failure		404		{object}	error
-//	@Failure		409		{object}	error
-//	@Failure		422		{object}	error
-//	@Failure		500		{object}	error
+//	@Success		201		{object}	TestResponseDTO
+//	@Failure		400		{object}	ErrorResponse
+//	@Failure		404		{object}	ErrorResponse
+//	@Failure		409		{object}	ErrorResponse
+//	@Failure		422		{object}	ErrorResponse
+//	@Failure		500		{object}	ErrorResponse
 //	@Router			/tests [put]
 func (h *Handler) UpdateTest(w http.ResponseWriter, r *http.Request) {
 	var dto UpdateTestDTO
@@ -147,12 +153,21 @@ func (h *Handler) UpdateTest(w http.ResponseWriter, r *http.Request) {
 		_ = writeJSONError(w, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
+	var testDate time.Time
+	var err error
+	if dto.TestDate != "" {
+		testDate, err = time.Parse("2006-01-02T15:04:05Z07:00", dto.TestDate)
+		if err != nil {
+			_ = writeJSONError(w, http.StatusBadRequest, err.Error())
+			return
+		}
+	}
 	test, err := h.tests.UpdateTest(r.Context(), services.UpdateTestPayload{
 		ID:       dto.ID,
-		CourseID: dto.CourseID,
-		Name:     dto.Name,
-		Weight:   dto.Weight,
-		TestDate: dto.TestDate,
+		CourseID: nilIfZeroInt(dto.CourseID),
+		Name:     nilIfEmpty(dto.Name),
+		Weight:   nilIfZeroFloat(dto.Weight),
+		TestDate: &testDate,
 	})
 	if err != nil {
 		respondDomainError(w, err)
@@ -165,14 +180,14 @@ func (h *Handler) UpdateTest(w http.ResponseWriter, r *http.Request) {
 //
 //	@Summary		Deletes a test
 //	@Description	Deletes an test by ID
-//	@Tags			Test
+//	@Tags			tests
 //	@Accept			json
 //	@Produce		json
 //	@Param			id	path	int	true	"Test ID"
 //	@Success		204
-//	@Failure		400	{object}	error
-//	@Failure		404	{object}	error
-//	@Failure		500	{object}	error
+//	@Failure		400	{object}	ErrorResponse
+//	@Failure		404	{object}	ErrorResponse
+//	@Failure		500	{object}	ErrorResponse
 //	@Router			/tests/{id} [delete]
 func (h *Handler) DeleteTest(w http.ResponseWriter, r *http.Request) {
 	testID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)

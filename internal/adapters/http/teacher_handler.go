@@ -17,14 +17,13 @@ import (
 //	@Tags			teachers
 //	@Accept			json
 //	@Produce		json
-//	@Param			payload	body		CreateTeacherDTO	true	"User DTO"
-//	@Success		201		{object}	domain.Teacher
-//	@Failure		400		{object}	error
-//	@Failure		409		{object}	error
-//	@Failure		422		{object}	error
-//	@Failure		500		{object}	error
+//	@Param			payload	body		CreateTeacherDTO	true	"Teacher DTO"
+//	@Success		201		{object}	TeacherResponseDTO
+//	@Failure		400		{object}	ErrorResponse
+//	@Failure		409		{object}	ErrorResponse
+//	@Failure		422		{object}	ErrorResponse
+//	@Failure		500		{object}	ErrorResponse
 //	@Router			/teachers [post]
-
 func (h *Handler) CreateTeacher(w http.ResponseWriter, r *http.Request) {
 	var dto CreateTeacherDTO
 	if err := json.NewDecoder(r.Body).Decode(&dto); err != nil {
@@ -54,10 +53,10 @@ func (h *Handler) CreateTeacher(w http.ResponseWriter, r *http.Request) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			id	path		int	true	"Teacher ID"
-//	@Success		200	{object}	domain.Teacher
-//	@Failure		400	{object}	errorResponse
-//	@Failure		404	{object}	errorResponse
-//	@Failure		500	{object}	errorResponse
+//	@Success		200	{object}	TeacherResponseDTO
+//	@Failure		400	{object}	ErrorResponse
+//	@Failure		404	{object}	ErrorResponse
+//	@Failure		500	{object}	ErrorResponse
 //	@Router			/teachers/{id} [get]
 func (h *Handler) GetTeacherByID(w http.ResponseWriter, r *http.Request) {
 	userID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
@@ -88,9 +87,9 @@ func (h *Handler) GetTeacherByID(w http.ResponseWriter, r *http.Request) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			department	query		string	false	"filter by department"
-//	@Success		200			{array}		UserResponseDTO
-//	@Failure		400			{object}	errorResponse
-//	@Failure		500			{object}	errorResponse
+//	@Success		200			{array}		TeacherResponseDTO
+//	@Failure		400			{object}	ErrorResponse
+//	@Failure		500			{object}	ErrorResponse
 //	@Router			/teachers [get]
 func (h *Handler) ListTeachers(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
@@ -118,12 +117,12 @@ func (h *Handler) ListTeachers(w http.ResponseWriter, r *http.Request) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			payload	body		UpdateTeacherDTO	true	"Teacher DTO"
-//	@Success		201		{object}	UserResponseDTO
-//	@Failure		400		{object}	error
-//	@Failure		404		{object}	error
-//	@Failure		409		{object}	error
-//	@Failure		422		{object}	error
-//	@Failure		500		{object}	error
+//	@Success		201		{object}	TeacherResponseDTO
+//	@Failure		400		{object}	ErrorResponse
+//	@Failure		404		{object}	ErrorResponse
+//	@Failure		409		{object}	ErrorResponse
+//	@Failure		422		{object}	ErrorResponse
+//	@Failure		500		{object}	ErrorResponse
 //	@Router			/teachers [put]
 func (h *Handler) UpdateTeacher(w http.ResponseWriter, r *http.Request) {
 	var dto UpdateTeacherDTO
@@ -155,11 +154,10 @@ func (h *Handler) UpdateTeacher(w http.ResponseWriter, r *http.Request) {
 //	@Produce		json
 //	@Param			id	path	int	true	"Teacher ID"
 //	@Success		204
-//	@Failure		400	{object}	error
-//	@Failure		404	{object}	error
-//	@Failure		500	{object}	error
+//	@Failure		400	{object}	ErrorResponse
+//	@Failure		404	{object}	ErrorResponse
+//	@Failure		500	{object}	ErrorResponse
 //	@Router			/teachers/{id} [delete]
-
 func (h *Handler) DeleteTeacher(w http.ResponseWriter, r *http.Request) {
 	teacherID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
 	if err != nil {

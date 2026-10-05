@@ -60,20 +60,20 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/domain.Course"
+                                "$ref": "#/definitions/internal_adapters_http.CourseResponseDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     }
                 }
@@ -97,7 +97,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.UpdateCourseDTO"
+                            "$ref": "#/definitions/internal_adapters_http.UpdateCourseDTO"
                         }
                     }
                 ],
@@ -105,7 +105,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/domain.Course"
+                            "$ref": "#/definitions/internal_adapters_http.CourseResponseDTO"
                         }
                     },
                     "400": {
@@ -149,7 +149,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.CreateCourseDTO"
+                            "$ref": "#/definitions/internal_adapters_http.CreateCourseDTO"
                         }
                     }
                 ],
@@ -157,7 +157,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/domain.Course"
+                            "$ref": "#/definitions/internal_adapters_http.CourseResponseDTO"
                         }
                     },
                     "400": {
@@ -179,7 +179,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/courses/enroll/{student_id}": {
+        "/courses/enroll/": {
             "post": {
                 "description": "Enroll a student",
                 "consumes": [
@@ -194,11 +194,13 @@ const docTemplate = `{
                 "summary": "Enroll a student",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "Student ID",
-                        "name": "student_id",
-                        "in": "path",
-                        "required": true
+                        "description": "Enroll Student DTO",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.EnrollStudentDTO"
+                        }
                     }
                 ],
                 "responses": {
@@ -253,25 +255,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Course"
+                            "$ref": "#/definitions/internal_adapters_http.CourseResponseDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     }
                 }
@@ -285,7 +287,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "users"
+                    "courses"
                 ],
                 "summary": "Deletes an course",
                 "parameters": [
@@ -355,20 +357,20 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/http.EnrollmentResponseDTO"
+                                "$ref": "#/definitions/internal_adapters_http.EnrollmentResponseDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     }
                 }
@@ -392,7 +394,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.UpdateEnrollmentDTO"
+                            "$ref": "#/definitions/internal_adapters_http.UpdateEnrollmentDTO"
                         }
                     }
                 ],
@@ -400,7 +402,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/http.EnrollmentResponseDTO"
+                            "$ref": "#/definitions/internal_adapters_http.EnrollmentResponseDTO"
                         }
                     },
                     "400": {
@@ -452,31 +454,120 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/http.EnrollmentResponseDTO"
+                            "$ref": "#/definitions/internal_adapters_http.EnrollmentResponseDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes an grade by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "enrollments"
+                ],
+                "summary": "Deletes an enrollment",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Enrollment ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {}
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
                     }
                 }
             }
         },
         "/grades": {
+            "get": {
+                "description": "List grades by test_id and enrollment_id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "grades"
+                ],
+                "summary": "List grades by parameters",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "filter by test ID",
+                        "name": "test_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "filter by enrollment ID",
+                        "name": "enrollment_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/internal_adapters_http.GradeResponseDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                        }
+                    }
+                }
+            },
             "put": {
                 "description": "Update a grade",
                 "consumes": [
@@ -496,15 +587,15 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.UpdateGradeDTO"
+                            "$ref": "#/definitions/internal_adapters_http.UpdateGradeDTO"
                         }
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "Created",
+                    "200": {
+                        "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Grade"
+                            "$ref": "#/definitions/internal_adapters_http.GradeResponseDTO"
                         }
                     },
                     "400": {
@@ -538,7 +629,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "users"
+                    "grades"
                 ],
                 "summary": "Create a grade",
                 "parameters": [
@@ -548,7 +639,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.CreateGradeDTO"
+                            "$ref": "#/definitions/internal_adapters_http.CreateGradeDTO"
                         }
                     }
                 ],
@@ -556,7 +647,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/domain.Grade"
+                            "$ref": "#/definitions/internal_adapters_http.GradeResponseDTO"
                         }
                     },
                     "400": {
@@ -578,9 +669,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/grades/{id}": {
+        "/grades/average/list/": {
             "get": {
-                "description": "List grades by test_id and enrollment_id",
+                "description": "List averages by studentID",
                 "consumes": [
                     "application/json"
                 ],
@@ -590,59 +681,7 @@ const docTemplate = `{
                 "tags": [
                     "grades"
                 ],
-                "summary": "List grades by parameters",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "filter by name",
-                        "name": "test_id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "filter by cpf",
-                        "name": "enrollment_id",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/domain.Grade"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/report/": {
-            "get": {
-                "description": "List report cards by studentID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "grades"
-                ],
-                "summary": "List report cards",
+                "summary": "List averages",
                 "parameters": [
                     {
                         "type": "integer",
@@ -657,21 +696,168 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/http.UserResponseDTO"
+                                "$ref": "#/definitions/internal_adapters_http.ListAverageResponseDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
+                    }
+                }
+            }
+        },
+        "/grades/average/{student_id}/{course_id}": {
+            "get": {
+                "description": "Gets an student average by userID and courseID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "grades"
+                ],
+                "summary": "Gets an student average",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Student ID",
+                        "name": "student_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Course ID",
+                        "name": "course_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "number",
+                            "format": "float64"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/grades/{id}": {
+            "get": {
+                "description": "Fetch a grade by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "grades"
+                ],
+                "summary": "Fetch a grade by its ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Grade ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.GradeResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes a grade by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "grades"
+                ],
+                "summary": "Deletes a grade",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Grade ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {}
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
                     }
                 }
             }
@@ -696,7 +882,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.UpdateStudentDTO"
+                            "$ref": "#/definitions/internal_adapters_http.UpdateStudentDTO"
                         }
                     }
                 ],
@@ -704,7 +890,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/domain.Student"
+                            "$ref": "#/definitions/internal_adapters_http.StudentResponseDTO"
                         }
                     },
                     "400": {
@@ -748,7 +934,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.CreateStudentDTO"
+                            "$ref": "#/definitions/internal_adapters_http.CreateStudentDTO"
                         }
                     }
                 ],
@@ -756,7 +942,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/domain.Student"
+                            "$ref": "#/definitions/internal_adapters_http.StudentResponseDTO"
                         }
                     },
                     "400": {
@@ -778,7 +964,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/students/enrollments/{id}": {
+        "/students/enrollment/{id}": {
             "get": {
                 "description": "Fetch a student by it's enrollment",
                 "consumes": [
@@ -804,25 +990,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Student"
+                            "$ref": "#/definitions/internal_adapters_http.StudentResponseDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     }
                 }
@@ -854,25 +1040,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Student"
+                            "$ref": "#/definitions/internal_adapters_http.StudentResponseDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     }
                 }
@@ -944,20 +1130,20 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/http.UserResponseDTO"
+                                "$ref": "#/definitions/internal_adapters_http.TeacherResponseDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     }
                 }
@@ -981,7 +1167,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.UpdateTeacherDTO"
+                            "$ref": "#/definitions/internal_adapters_http.UpdateTeacherDTO"
                         }
                     }
                 ],
@@ -989,7 +1175,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/http.UserResponseDTO"
+                            "$ref": "#/definitions/internal_adapters_http.TeacherResponseDTO"
                         }
                     },
                     "400": {
@@ -998,6 +1184,54 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {}
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {}
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            },
+            "post": {
+                "description": "Create an teacher account",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "teachers"
+                ],
+                "summary": "Create an teacher account",
+                "parameters": [
+                    {
+                        "description": "Teacher DTO",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.CreateTeacherDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.TeacherResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {}
                     },
                     "409": {
@@ -1041,31 +1275,120 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Teacher"
+                            "$ref": "#/definitions/internal_adapters_http.TeacherResponseDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes an teacher account by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "teachers"
+                ],
+                "summary": "Deletes an teacher account",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Teacher ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {}
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
                     }
                 }
             }
         },
         "/tests": {
+            "get": {
+                "description": "List tests by courseID and name",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tests"
+                ],
+                "summary": "List tests by parameters",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "filter by course ID",
+                        "name": "course_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "filter by name",
+                        "name": "name",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/internal_adapters_http.TestResponseDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                        }
+                    }
+                }
+            },
             "put": {
                 "description": "Update a test",
                 "consumes": [
@@ -1085,7 +1408,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.UpdateTestDTO"
+                            "$ref": "#/definitions/internal_adapters_http.UpdateTestDTO"
                         }
                     }
                 ],
@@ -1093,7 +1416,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/domain.Test"
+                            "$ref": "#/definitions/internal_adapters_http.TestResponseDTO"
                         }
                     },
                     "400": {
@@ -1137,7 +1460,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.CreateTestDTO"
+                            "$ref": "#/definitions/internal_adapters_http.CreateTestDTO"
                         }
                     }
                 ],
@@ -1145,7 +1468,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/domain.Test"
+                            "$ref": "#/definitions/internal_adapters_http.TestResponseDTO"
                         }
                     },
                     "400": {
@@ -1169,7 +1492,7 @@ const docTemplate = `{
         },
         "/tests/{id}": {
             "get": {
-                "description": "List tests by courseID and name",
+                "description": "Fetch a test by its ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -1177,43 +1500,41 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Test"
+                    "tests"
                 ],
-                "summary": "List tests by parameters",
+                "summary": "Fetch a test by its ID",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "filter by course ID",
-                        "name": "course_id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "filter by name",
-                        "name": "name",
-                        "in": "query"
+                        "description": "Test ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/domain.Test"
-                            }
+                            "$ref": "#/definitions/internal_adapters_http.TestResponseDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     }
                 }
@@ -1227,7 +1548,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Test"
+                    "tests"
                 ],
                 "summary": "Deletes a test",
                 "parameters": [
@@ -1278,7 +1599,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.UpdateUserDTO"
+                            "$ref": "#/definitions/internal_adapters_http.UpdateUserDTO"
                         }
                     }
                 ],
@@ -1286,7 +1607,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/http.UserResponseDTO"
+                            "$ref": "#/definitions/internal_adapters_http.UserResponseDTO"
                         }
                     },
                     "400": {
@@ -1330,7 +1651,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.CreateUserDTO"
+                            "$ref": "#/definitions/internal_adapters_http.CreateUserDTO"
                         }
                     }
                 ],
@@ -1338,7 +1659,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/http.UserResponseDTO"
+                            "$ref": "#/definitions/internal_adapters_http.UserResponseDTO"
                         }
                     },
                     "400": {
@@ -1360,7 +1681,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/users/{id}": {
+        "/users/": {
             "get": {
                 "description": "List users by name,cpf and email",
                 "consumes": [
@@ -1399,20 +1720,70 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/http.UserResponseDTO"
+                                "$ref": "#/definitions/internal_adapters_http.UserResponseDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "get": {
+                "description": "Fetch an user by it's ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Fetch an user by it's ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.UserResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     }
                 }
@@ -1459,22 +1830,20 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "domain.Course": {
+        "internal_adapters_http.CourseResponseDTO": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "string"
                 },
-                "createdAt": {
+                "created_at": {
                     "type": "string"
                 },
                 "id": {
-                    "type": "integer",
-                    "format": "int64"
+                    "type": "integer"
                 },
-                "maxStudents": {
-                    "type": "integer",
-                    "format": "int32"
+                "max_students": {
+                    "type": "integer"
                 },
                 "name": {
                     "type": "string"
@@ -1482,96 +1851,15 @@ const docTemplate = `{
                 "semester": {
                     "type": "string"
                 },
-                "teacherID": {
-                    "type": "integer",
-                    "format": "int64"
+                "teacher_id": {
+                    "type": "integer"
                 },
-                "updatedAt": {
+                "updated_at": {
                     "type": "string"
                 }
             }
         },
-        "domain.Grade": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "enrollmentID": {
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "id": {
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "testID": {
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "value": {
-                    "type": "number",
-                    "format": "float64"
-                }
-            }
-        },
-        "domain.Student": {
-            "type": "object",
-            "properties": {
-                "enrollmentNumber": {
-                    "type": "string"
-                },
-                "userID": {
-                    "type": "integer",
-                    "format": "int64"
-                }
-            }
-        },
-        "domain.Teacher": {
-            "type": "object",
-            "properties": {
-                "department": {
-                    "type": "string"
-                },
-                "userID": {
-                    "type": "integer",
-                    "format": "int64"
-                }
-            }
-        },
-        "domain.Test": {
-            "type": "object",
-            "properties": {
-                "courseID": {
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "testDate": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "weight": {
-                    "type": "number",
-                    "format": "float64"
-                }
-            }
-        },
-        "http.CreateCourseDTO": {
+        "internal_adapters_http.CreateCourseDTO": {
             "type": "object",
             "required": [
                 "code",
@@ -1603,7 +1891,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.CreateGradeDTO": {
+        "internal_adapters_http.CreateGradeDTO": {
             "type": "object",
             "required": [
                 "enrollment_id",
@@ -1626,7 +1914,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.CreateStudentDTO": {
+        "internal_adapters_http.CreateStudentDTO": {
             "type": "object",
             "required": [
                 "enrollment_number",
@@ -1642,12 +1930,30 @@ const docTemplate = `{
                 }
             }
         },
-        "http.CreateTestDTO": {
+        "internal_adapters_http.CreateTeacherDTO": {
+            "type": "object",
+            "required": [
+                "department",
+                "user_id"
+            ],
+            "properties": {
+                "department": {
+                    "type": "string",
+                    "maxLength": 100
+                },
+                "user_id": {
+                    "type": "integer",
+                    "minimum": 1
+                }
+            }
+        },
+        "internal_adapters_http.CreateTestDTO": {
             "type": "object",
             "required": [
                 "course_id",
                 "name",
-                "test_date"
+                "test_date",
+                "weight"
             ],
             "properties": {
                 "course_id": {
@@ -1655,17 +1961,19 @@ const docTemplate = `{
                     "minimum": 1
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "test_date": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2026-03-15T00:00:00Z"
                 },
                 "weight": {
                     "type": "number"
                 }
             }
         },
-        "http.CreateUserDTO": {
+        "internal_adapters_http.CreateUserDTO": {
             "type": "object",
             "required": [
                 "cpf",
@@ -1690,7 +1998,24 @@ const docTemplate = `{
                 }
             }
         },
-        "http.EnrollmentResponseDTO": {
+        "internal_adapters_http.EnrollStudentDTO": {
+            "type": "object",
+            "required": [
+                "course_id",
+                "student_id"
+            ],
+            "properties": {
+                "course_id": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "student_id": {
+                    "type": "integer",
+                    "minimum": 1
+                }
+            }
+        },
+        "internal_adapters_http.EnrollmentResponseDTO": {
             "type": "object",
             "properties": {
                 "course_id": {
@@ -1710,7 +2035,107 @@ const docTemplate = `{
                 }
             }
         },
-        "http.UpdateCourseDTO": {
+        "internal_adapters_http.GradeResponseDTO": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "enrollment_id": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "test_id": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "number"
+                }
+            }
+        },
+        "internal_adapters_http.ListAverageResponseDTO": {
+            "type": "object",
+            "properties": {
+                "average": {
+                    "type": "number"
+                },
+                "course_code": {
+                    "type": "string"
+                },
+                "course_id": {
+                    "type": "integer"
+                },
+                "course_name": {
+                    "type": "string"
+                },
+                "situation": {
+                    "type": "string"
+                },
+                "student_id": {
+                    "type": "integer"
+                },
+                "student_name": {
+                    "type": "string"
+                },
+                "teacher_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_adapters_http.StudentResponseDTO": {
+            "type": "object",
+            "properties": {
+                "enrollment_number": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "internal_adapters_http.TeacherResponseDTO": {
+            "type": "object",
+            "properties": {
+                "department": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "internal_adapters_http.TestResponseDTO": {
+            "type": "object",
+            "properties": {
+                "course_id": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "test_date": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "weight": {
+                    "type": "number"
+                }
+            }
+        },
+        "internal_adapters_http.UpdateCourseDTO": {
             "type": "object",
             "required": [
                 "id"
@@ -1726,7 +2151,7 @@ const docTemplate = `{
                 },
                 "max_students": {
                     "type": "integer",
-                    "maximum": 50
+                    "maximum": 200
                 },
                 "name": {
                     "type": "string",
@@ -1742,7 +2167,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.UpdateEnrollmentDTO": {
+        "internal_adapters_http.UpdateEnrollmentDTO": {
             "type": "object",
             "properties": {
                 "course_id": {
@@ -1759,15 +2184,12 @@ const docTemplate = `{
                 }
             }
         },
-        "http.UpdateGradeDTO": {
+        "internal_adapters_http.UpdateGradeDTO": {
             "type": "object",
-            "required": [
-                "id"
-            ],
             "properties": {
                 "enrollment_id": {
                     "type": "integer",
-                    "minimum": 1
+                    "minimum": 0
                 },
                 "id": {
                     "type": "integer",
@@ -1775,16 +2197,16 @@ const docTemplate = `{
                 },
                 "test_id": {
                     "type": "integer",
-                    "minimum": 1
+                    "minimum": 0
                 },
                 "value": {
                     "type": "number",
                     "maximum": 10,
-                    "minimum": 0
+                    "example": 0
                 }
             }
         },
-        "http.UpdateStudentDTO": {
+        "internal_adapters_http.UpdateStudentDTO": {
             "type": "object",
             "required": [
                 "user_id"
@@ -1799,7 +2221,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.UpdateTeacherDTO": {
+        "internal_adapters_http.UpdateTeacherDTO": {
             "type": "object",
             "required": [
                 "user_id"
@@ -1815,34 +2237,39 @@ const docTemplate = `{
                 }
             }
         },
-        "http.UpdateTestDTO": {
+        "internal_adapters_http.UpdateTestDTO": {
             "type": "object",
             "required": [
-                "id",
-                "name"
+                "id"
             ],
             "properties": {
                 "course_id": {
                     "type": "integer",
-                    "minimum": 1
+                    "minimum": 0,
+                    "example": 0
                 },
                 "id": {
                     "type": "integer",
-                    "minimum": 1
+                    "minimum": 1,
+                    "example": 1
                 },
                 "name": {
                     "type": "string",
-                    "minLength": 1
+                    "minLength": 0,
+                    "example": ""
                 },
                 "test_date": {
-                    "type": "string"
+                    "type": "string",
+                    "example": ""
                 },
                 "weight": {
-                    "type": "number"
+                    "type": "number",
+                    "minimum": 0,
+                    "example": 0
                 }
             }
         },
-        "http.UpdateUserDTO": {
+        "internal_adapters_http.UpdateUserDTO": {
             "type": "object",
             "required": [
                 "id"
@@ -1850,10 +2277,12 @@ const docTemplate = `{
             "properties": {
                 "cpf": {
                     "type": "string",
-                    "maxLength": 14
+                    "maxLength": 14,
+                    "example": ""
                 },
                 "email": {
-                    "type": "string"
+                    "type": "string",
+                    "example": ""
                 },
                 "id": {
                     "type": "integer",
@@ -1861,14 +2290,16 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string",
-                    "maxLength": 255
+                    "maxLength": 255,
+                    "example": ""
                 },
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "example": ""
                 }
             }
         },
-        "http.UserResponseDTO": {
+        "internal_adapters_http.UserResponseDTO": {
             "type": "object",
             "properties": {
                 "cpf": {
@@ -1891,7 +2322,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.errorResponse": {
+        "internal_adapters_http.errorResponse": {
             "type": "object",
             "properties": {
                 "error": {

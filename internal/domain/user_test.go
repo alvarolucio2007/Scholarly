@@ -39,7 +39,7 @@ func Test_isValidCPF(t *testing.T) {
 		{
 			"valid CPF with punctuation",
 			"014.808.178-99",
-			true,
+			false,
 		},
 		{
 			"valid CPF, no punctuation",
@@ -58,7 +58,7 @@ func Test_isValidCPF(t *testing.T) {
 		},
 		{
 			"CPF with incorrect amount of characters (!=11)",
-			"9999999999",
+			"9999999999", // 10 characters btw
 			false,
 		},
 	}

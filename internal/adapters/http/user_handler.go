@@ -11,6 +11,10 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
+func newUserResponse(user *domain.User) *UserResponseDTO {
+	return &UserResponseDTO{ID: user.ID, Name: user.Name, CPF: user.CPF, Email: user.Email, CreatedAt: user.CreatedAt, UpdatedAt: user.UpdatedAt}
+}
+
 // CreateUser godoc
 //
 //	@Summary		Create an user account
@@ -20,10 +24,10 @@ import (
 //	@Produce		json
 //	@Param			payload	body		CreateUserDTO	true	"User DTO"
 //	@Success		201		{object}	UserResponseDTO
-//	@Failure		400		{object}	error
-//	@Failure		409		{object}	error
-//	@Failure		422		{object}	error
-//	@Failure		500		{object}	error
+//	@Failure		400		{object}	ErrorResponse
+//	@Failure		409		{object}	ErrorResponse
+//	@Failure		422		{object}	ErrorResponse
+//	@Failure		500		{object}	ErrorResponse
 //	@Router			/users [post]
 func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var dto CreateUserDTO
@@ -45,7 +49,8 @@ func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		respondDomainError(w, err)
 		return
 	}
-	_ = writeJSONData(w, http.StatusCreated, user)
+	response := newUserResponse(user)
+	_ = writeJSONData(w, http.StatusCreated, response)
 }
 
 // GetUserByID godoc
@@ -57,11 +62,10 @@ func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 //	@Produce		json
 //	@Param			id	path		int	true	"User ID"
 //	@Success		200	{object}	UserResponseDTO
-//	@Failure		400	{object}	errorResponse
-//	@Failure		404	{object}	errorResponse
-//	@Failure		500	{object}	errorResponse
+//	@Failure		400	{object}	ErrorResponse
+//	@Failure		404	{object}	ErrorResponse
+//	@Failure		500	{object}	ErrorResponse
 //	@Router			/users/{id} [get]
-
 func (h *Handler) GetUserByID(w http.ResponseWriter, r *http.Request) {
 	userID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
 	if err != nil {
@@ -77,7 +81,8 @@ func (h *Handler) GetUserByID(w http.ResponseWriter, r *http.Request) {
 		respondDomainError(w, err)
 		return
 	}
-	_ = writeJSONData(w, http.StatusOK, user)
+	response := newUserResponse(user)
+	_ = writeJSONData(w, http.StatusOK, response)
 }
 
 // ListUsers godoc
@@ -91,9 +96,9 @@ func (h *Handler) GetUserByID(w http.ResponseWriter, r *http.Request) {
 //	@Param			cpf		query		string	false	"filter by cpf"
 //	@Param			email	query		string	false	"filter by email"
 //	@Success		200		{array}		UserResponseDTO
-//	@Failure		400		{object}	errorResponse
-//	@Failure		500		{object}	errorResponse
-//	@Router			/users/{id} [get]
+//	@Failure		400		{object}	ErrorResponse
+//	@Failure		500		{object}	ErrorResponse
+//	@Router			/users/ [get]
 func (h *Handler) ListUsers(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	filter := ports.UserFilter{}
@@ -120,7 +125,12 @@ func (h *Handler) ListUsers(w http.ResponseWriter, r *http.Request) {
 		respondDomainError(w, err)
 		return
 	}
-	_ = writeJSONData(w, http.StatusOK, users)
+	responses := make([]*UserResponseDTO, 0, len(users))
+	for _, u := range users {
+		response := newUserResponse(u)
+		responses = append(responses, response)
+	}
+	_ = writeJSONData(w, http.StatusOK, responses)
 }
 
 // UpdateUser godoc
@@ -132,11 +142,11 @@ func (h *Handler) ListUsers(w http.ResponseWriter, r *http.Request) {
 //	@Produce		json
 //	@Param			payload	body		UpdateUserDTO	true	"User DTO"
 //	@Success		201		{object}	UserResponseDTO
-//	@Failure		400		{object}	error
-//	@Failure		404		{object}	error
-//	@Failure		409		{object}	error
-//	@Failure		422		{object}	error
-//	@Failure		500		{object}	error
+//	@Failure		400		{object}	ErrorResponse
+//	@Failure		404		{object}	ErrorResponse
+//	@Failure		409		{object}	ErrorResponse
+//	@Failure		422		{object}	ErrorResponse
+//	@Failure		500		{object}	ErrorResponse
 //	@Router			/users [put]
 func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	var dto UpdateUserDTO
@@ -148,18 +158,20 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		_ = writeJSONError(w, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
-	user, err := h.users.UpdateUser(r.Context(), services.UpdateUserPayload{
+	updateUserPayload := services.UpdateUserPayload{
 		ID:       dto.ID,
-		Name:     dto.Name,
-		CPF:      dto.CPF,
-		Email:    dto.Email,
-		Password: dto.Password,
-	})
+		Name:     nilIfEmpty(dto.Name),
+		CPF:      nilIfEmpty(dto.CPF),
+		Email:    nilIfEmpty(dto.Email),
+		Password: nilIfEmpty(dto.Password),
+	}
+	user, err := h.users.UpdateUser(r.Context(), updateUserPayload)
 	if err != nil {
 		respondDomainError(w, err)
 		return
 	}
-	_ = writeJSONData(w, http.StatusOK, user)
+	response := newUserResponse(user)
+	_ = writeJSONData(w, http.StatusOK, response)
 }
 
 // DeleteUser godoc
@@ -171,9 +183,9 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 //	@Produce		json
 //	@Param			id	path	int	true	"User ID"
 //	@Success		204
-//	@Failure		400	{object}	error
-//	@Failure		404	{object}	error
-//	@Failure		500	{object}	error
+//	@Failure		400	{object}	ErrorResponse
+//	@Failure		404	{object}	ErrorResponse
+//	@Failure		500	{object}	ErrorResponse
 //	@Router			/users/{id} [delete]
 func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	userID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)

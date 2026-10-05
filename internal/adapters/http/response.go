@@ -3,6 +3,7 @@ package http
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/alvarolucio2007/Scholarly/internal/domain"
@@ -11,7 +12,7 @@ import (
 
 var validate *validator.Validate
 
-type errorResponse struct {
+type ErrorResponse struct {
 	Error string `json:"error"`
 }
 
@@ -52,6 +53,10 @@ func respondDomainError(w http.ResponseWriter, err error) {
 		_ = writeJSONError(w, http.StatusNotFound, err.Error())
 	case errors.Is(err, domain.ErrConflict):
 		_ = writeJSONError(w, http.StatusConflict, err.Error())
+	case errors.Is(err, domain.ErrInvalidEmail):
+		_ = writeJSONError(w, http.StatusBadRequest, err.Error())
+	case errors.Is(err, domain.ErrInvalidCPF):
+		_ = writeJSONError(w, http.StatusBadRequest, err.Error())
 	case errors.Is(err, domain.ErrEmailAlreadyExists):
 		_ = writeJSONError(w, http.StatusConflict, err.Error())
 	case errors.Is(err, domain.ErrCPFAlreadyExists):
@@ -64,7 +69,8 @@ func respondDomainError(w http.ResponseWriter, err error) {
 		_ = writeJSONError(w, http.StatusConflict, err.Error())
 	case errors.Is(err, domain.ErrCourseFull):
 		_ = writeJSONError(w, http.StatusConflict, err.Error())
+
 	default:
-		_ = writeJSONError(w, http.StatusInternalServerError, "internal error")
+		_ = writeJSONError(w, http.StatusInternalServerError, fmt.Sprintf("internal error: %v", err.Error()))
 	}
 }

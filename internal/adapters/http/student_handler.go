@@ -17,11 +17,11 @@ import (
 //	@Accept			json
 //	@Produce		json
 //	@Param			payload	body		CreateStudentDTO	true	"User DTO"
-//	@Success		201		{object}	domain.Student
-//	@Failure		400		{object}	error
-//	@Failure		409		{object}	error
-//	@Failure		422		{object}	error
-//	@Failure		500		{object}	error
+//	@Success		201		{object}	StudentResponseDTO
+//	@Failure		400		{object}	ErrorResponse
+//	@Failure		409		{object}	ErrorResponse
+//	@Failure		422		{object}	ErrorResponse
+//	@Failure		500		{object}	ErrorResponse
 //	@Router			/students [post]
 func (h *Handler) CreateStudent(w http.ResponseWriter, r *http.Request) {
 	var dto CreateStudentDTO
@@ -52,10 +52,10 @@ func (h *Handler) CreateStudent(w http.ResponseWriter, r *http.Request) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			id	path		int	true	"Student ID"
-//	@Success		200	{object}	domain.Student
-//	@Failure		400	{object}	errorResponse
-//	@Failure		404	{object}	errorResponse
-//	@Failure		500	{object}	errorResponse
+//	@Success		200	{object}	StudentResponseDTO
+//	@Failure		400	{object}	ErrorResponse
+//	@Failure		404	{object}	ErrorResponse
+//	@Failure		500	{object}	ErrorResponse
 //	@Router			/students/{id} [get]
 func (h *Handler) GetStudentByID(w http.ResponseWriter, r *http.Request) {
 	studentID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
@@ -86,13 +86,13 @@ func (h *Handler) GetStudentByID(w http.ResponseWriter, r *http.Request) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			id	path		int	true	"Student Enrollment"
-//	@Success		200	{object}	domain.Student
-//	@Failure		400	{object}	errorResponse
-//	@Failure		404	{object}	errorResponse
-//	@Failure		500	{object}	errorResponse
-//	@Router			/students/enrollments/{id} [get]
+//	@Success		200	{object}	StudentResponseDTO
+//	@Failure		400	{object}	ErrorResponse
+//	@Failure		404	{object}	ErrorResponse
+//	@Failure		500	{object}	ErrorResponse
+//	@Router			/students/enrollment/{id} [get]
 func (h *Handler) GetStudentByEnrollment(w http.ResponseWriter, r *http.Request) {
-	studentEnrollment := chi.URLParam(r, "enrollment")
+	studentEnrollment := chi.URLParam(r, "id")
 	if studentEnrollment == "" {
 		_ = writeJSONError(w, http.StatusBadRequest, "studentEnrollment is missing")
 		return
@@ -116,12 +116,12 @@ func (h *Handler) GetStudentByEnrollment(w http.ResponseWriter, r *http.Request)
 //	@Accept			json
 //	@Produce		json
 //	@Param			payload	body		UpdateStudentDTO	true	"StudentDTO"
-//	@Success		201		{object}	domain.Student
-//	@Failure		400		{object}	error
-//	@Failure		404		{object}	error
-//	@Failure		409		{object}	error
-//	@Failure		422		{object}	error
-//	@Failure		500		{object}	error
+//	@Success		201		{object}	StudentResponseDTO
+//	@Failure		400		{object}	ErrorResponse
+//	@Failure		404		{object}	ErrorResponse
+//	@Failure		409		{object}	ErrorResponse
+//	@Failure		422		{object}	ErrorResponse
+//	@Failure		500		{object}	ErrorResponse
 //	@Router			/students [put]
 func (h *Handler) UpdateStudent(w http.ResponseWriter, r *http.Request) {
 	var dto UpdateStudentDTO
@@ -153,9 +153,9 @@ func (h *Handler) UpdateStudent(w http.ResponseWriter, r *http.Request) {
 //	@Produce		json
 //	@Param			id	path	int	true	"Student ID"
 //	@Success		204
-//	@Failure		400	{object}	error
-//	@Failure		404	{object}	error
-//	@Failure		500	{object}	error
+//	@Failure		400	{object}	ErrorResponse
+//	@Failure		404	{object}	ErrorResponse
+//	@Failure		500	{object}	ErrorResponse
 //	@Router			/students/{id} [delete]
 func (h *Handler) DeleteStudent(w http.ResponseWriter, r *http.Request) {
 	studentID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
