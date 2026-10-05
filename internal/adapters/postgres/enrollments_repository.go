@@ -65,7 +65,7 @@ func (r *EnrollmentRepo) List(ctx context.Context, filter ports.EnrollmentFilter
 	query := `
     SELECT id,student_id,course_id,enrolled_at,status
     FROM enrollments
-` + where + `ORDER BY enrolled_at DESC`
+` + where + ` ORDER BY enrolled_at DESC`
 	ctx, cancel := context.WithTimeout(ctx, PostgresQueryTimeout)
 	defer cancel()
 
