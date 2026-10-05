@@ -17,7 +17,7 @@ import (
 //	@Tags			teachers
 //	@Accept			json
 //	@Produce		json
-//	@Param			payload	body		CreateTeacherDTO	true	"User DTO"
+//	@Param			payload	body		CreateTeacherDTO	true	"Teacher DTO"
 //	@Success		201		{object}	TeacherResponseDTO
 //	@Failure		400		{object}	error
 //	@Failure		409		{object}	error
@@ -87,7 +87,7 @@ func (h *Handler) GetTeacherByID(w http.ResponseWriter, r *http.Request) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			department	query		string	false	"filter by department"
-//	@Success		200			{array}		UserResponseDTO
+//	@Success		200			{array}		TeacherResponseDTO
 //	@Failure		400			{object}	errorResponse
 //	@Failure		500			{object}	errorResponse
 //	@Router			/teachers [get]
@@ -117,7 +117,7 @@ func (h *Handler) ListTeachers(w http.ResponseWriter, r *http.Request) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			payload	body		UpdateTeacherDTO	true	"Teacher DTO"
-//	@Success		201		{object}	UserResponseDTO
+//	@Success		201		{object}	TeacherResponseDTO
 //	@Failure		400		{object}	error
 //	@Failure		404		{object}	error
 //	@Failure		409		{object}	error
