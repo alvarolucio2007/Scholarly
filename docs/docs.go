@@ -60,20 +60,20 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/domain.Course"
+                                "$ref": "#/definitions/internal_adapters_http.CourseResponseDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     }
                 }
@@ -97,7 +97,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.UpdateCourseDTO"
+                            "$ref": "#/definitions/internal_adapters_http.UpdateCourseDTO"
                         }
                     }
                 ],
@@ -105,7 +105,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/domain.Course"
+                            "$ref": "#/definitions/internal_adapters_http.CourseResponseDTO"
                         }
                     },
                     "400": {
@@ -149,7 +149,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.CreateCourseDTO"
+                            "$ref": "#/definitions/internal_adapters_http.CreateCourseDTO"
                         }
                     }
                 ],
@@ -157,7 +157,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/domain.Course"
+                            "$ref": "#/definitions/internal_adapters_http.CourseResponseDTO"
                         }
                     },
                     "400": {
@@ -253,25 +253,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Course"
+                            "$ref": "#/definitions/internal_adapters_http.CourseResponseDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     }
                 }
@@ -285,7 +285,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "users"
+                    "courses"
                 ],
                 "summary": "Deletes an course",
                 "parameters": [
@@ -355,20 +355,20 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/http.EnrollmentResponseDTO"
+                                "$ref": "#/definitions/internal_adapters_http.EnrollmentResponseDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     }
                 }
@@ -392,7 +392,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.UpdateEnrollmentDTO"
+                            "$ref": "#/definitions/internal_adapters_http.UpdateEnrollmentDTO"
                         }
                     }
                 ],
@@ -400,7 +400,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/http.EnrollmentResponseDTO"
+                            "$ref": "#/definitions/internal_adapters_http.EnrollmentResponseDTO"
                         }
                     },
                     "400": {
@@ -452,25 +452,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/http.EnrollmentResponseDTO"
+                            "$ref": "#/definitions/internal_adapters_http.EnrollmentResponseDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     }
                 }
@@ -496,7 +496,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.UpdateGradeDTO"
+                            "$ref": "#/definitions/internal_adapters_http.UpdateGradeDTO"
                         }
                     }
                 ],
@@ -504,7 +504,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/domain.Grade"
+                            "$ref": "#/definitions/internal_adapters_http.GradeResponseDTO"
                         }
                     },
                     "400": {
@@ -538,7 +538,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "users"
+                    "grades"
                 ],
                 "summary": "Create a grade",
                 "parameters": [
@@ -548,7 +548,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.CreateGradeDTO"
+                            "$ref": "#/definitions/internal_adapters_http.CreateGradeDTO"
                         }
                     }
                 ],
@@ -556,7 +556,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/domain.Grade"
+                            "$ref": "#/definitions/internal_adapters_http.GradeResponseDTO"
                         }
                     },
                     "400": {
@@ -611,20 +611,20 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/domain.Grade"
+                                "$ref": "#/definitions/internal_adapters_http.GradeResponseDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     }
                 }
@@ -657,20 +657,20 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/http.UserResponseDTO"
+                                "$ref": "#/definitions/internal_adapters_http.UserResponseDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     }
                 }
@@ -696,7 +696,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.UpdateStudentDTO"
+                            "$ref": "#/definitions/internal_adapters_http.UpdateStudentDTO"
                         }
                     }
                 ],
@@ -704,7 +704,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/domain.Student"
+                            "$ref": "#/definitions/internal_adapters_http.StudentResponseDTO"
                         }
                     },
                     "400": {
@@ -748,7 +748,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.CreateStudentDTO"
+                            "$ref": "#/definitions/internal_adapters_http.CreateStudentDTO"
                         }
                     }
                 ],
@@ -756,7 +756,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/domain.Student"
+                            "$ref": "#/definitions/internal_adapters_http.StudentResponseDTO"
                         }
                     },
                     "400": {
@@ -804,25 +804,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Student"
+                            "$ref": "#/definitions/internal_adapters_http.StudentResponseDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     }
                 }
@@ -854,25 +854,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Student"
+                            "$ref": "#/definitions/internal_adapters_http.StudentResponseDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     }
                 }
@@ -944,20 +944,20 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/http.UserResponseDTO"
+                                "$ref": "#/definitions/internal_adapters_http.UserResponseDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     }
                 }
@@ -981,7 +981,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.UpdateTeacherDTO"
+                            "$ref": "#/definitions/internal_adapters_http.UpdateTeacherDTO"
                         }
                     }
                 ],
@@ -989,7 +989,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/http.UserResponseDTO"
+                            "$ref": "#/definitions/internal_adapters_http.UserResponseDTO"
                         }
                     },
                     "400": {
@@ -1041,25 +1041,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Teacher"
+                            "$ref": "#/definitions/internal_adapters_http.TeacherResponseDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     }
                 }
@@ -1085,7 +1085,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.UpdateTestDTO"
+                            "$ref": "#/definitions/internal_adapters_http.UpdateTestDTO"
                         }
                     }
                 ],
@@ -1093,7 +1093,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/domain.Test"
+                            "$ref": "#/definitions/internal_adapters_http.TestResponseDTO"
                         }
                     },
                     "400": {
@@ -1137,7 +1137,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.CreateTestDTO"
+                            "$ref": "#/definitions/internal_adapters_http.CreateTestDTO"
                         }
                     }
                 ],
@@ -1145,7 +1145,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/domain.Test"
+                            "$ref": "#/definitions/internal_adapters_http.TestResponseDTO"
                         }
                     },
                     "400": {
@@ -1177,7 +1177,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Test"
+                    "tests"
                 ],
                 "summary": "List tests by parameters",
                 "parameters": [
@@ -1200,20 +1200,20 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/domain.Test"
+                                "$ref": "#/definitions/internal_adapters_http.TestResponseDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     }
                 }
@@ -1227,7 +1227,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Test"
+                    "tests"
                 ],
                 "summary": "Deletes a test",
                 "parameters": [
@@ -1278,7 +1278,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.UpdateUserDTO"
+                            "$ref": "#/definitions/internal_adapters_http.UpdateUserDTO"
                         }
                     }
                 ],
@@ -1286,7 +1286,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/http.UserResponseDTO"
+                            "$ref": "#/definitions/internal_adapters_http.UserResponseDTO"
                         }
                     },
                     "400": {
@@ -1330,7 +1330,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.CreateUserDTO"
+                            "$ref": "#/definitions/internal_adapters_http.CreateUserDTO"
                         }
                     }
                 ],
@@ -1338,7 +1338,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/http.UserResponseDTO"
+                            "$ref": "#/definitions/internal_adapters_http.UserResponseDTO"
                         }
                     },
                     "400": {
@@ -1360,7 +1360,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/users/{id}": {
+        "/users/": {
             "get": {
                 "description": "List users by name,cpf and email",
                 "consumes": [
@@ -1399,20 +1399,70 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/http.UserResponseDTO"
+                                "$ref": "#/definitions/internal_adapters_http.UserResponseDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "get": {
+                "description": "Fetch an user by it's ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Fetch an user by it's ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.UserResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
                     }
                 }
@@ -1459,22 +1509,20 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "domain.Course": {
+        "internal_adapters_http.CourseResponseDTO": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "string"
                 },
-                "createdAt": {
+                "created_at": {
                     "type": "string"
                 },
                 "id": {
-                    "type": "integer",
-                    "format": "int64"
+                    "type": "integer"
                 },
-                "maxStudents": {
-                    "type": "integer",
-                    "format": "int32"
+                "max_students": {
+                    "type": "integer"
                 },
                 "name": {
                     "type": "string"
@@ -1482,96 +1530,15 @@ const docTemplate = `{
                 "semester": {
                     "type": "string"
                 },
-                "teacherID": {
-                    "type": "integer",
-                    "format": "int64"
+                "teacher_id": {
+                    "type": "integer"
                 },
-                "updatedAt": {
+                "updated_at": {
                     "type": "string"
                 }
             }
         },
-        "domain.Grade": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "enrollmentID": {
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "id": {
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "testID": {
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "value": {
-                    "type": "number",
-                    "format": "float64"
-                }
-            }
-        },
-        "domain.Student": {
-            "type": "object",
-            "properties": {
-                "enrollmentNumber": {
-                    "type": "string"
-                },
-                "userID": {
-                    "type": "integer",
-                    "format": "int64"
-                }
-            }
-        },
-        "domain.Teacher": {
-            "type": "object",
-            "properties": {
-                "department": {
-                    "type": "string"
-                },
-                "userID": {
-                    "type": "integer",
-                    "format": "int64"
-                }
-            }
-        },
-        "domain.Test": {
-            "type": "object",
-            "properties": {
-                "courseID": {
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "testDate": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "weight": {
-                    "type": "number",
-                    "format": "float64"
-                }
-            }
-        },
-        "http.CreateCourseDTO": {
+        "internal_adapters_http.CreateCourseDTO": {
             "type": "object",
             "required": [
                 "code",
@@ -1603,7 +1570,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.CreateGradeDTO": {
+        "internal_adapters_http.CreateGradeDTO": {
             "type": "object",
             "required": [
                 "enrollment_id",
@@ -1626,7 +1593,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.CreateStudentDTO": {
+        "internal_adapters_http.CreateStudentDTO": {
             "type": "object",
             "required": [
                 "enrollment_number",
@@ -1642,7 +1609,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.CreateTestDTO": {
+        "internal_adapters_http.CreateTestDTO": {
             "type": "object",
             "required": [
                 "course_id",
@@ -1665,7 +1632,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.CreateUserDTO": {
+        "internal_adapters_http.CreateUserDTO": {
             "type": "object",
             "required": [
                 "cpf",
@@ -1690,7 +1657,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.EnrollmentResponseDTO": {
+        "internal_adapters_http.EnrollmentResponseDTO": {
             "type": "object",
             "properties": {
                 "course_id": {
@@ -1710,7 +1677,78 @@ const docTemplate = `{
                 }
             }
         },
-        "http.UpdateCourseDTO": {
+        "internal_adapters_http.GradeResponseDTO": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "enrollment_id": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "test_id": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "number"
+                }
+            }
+        },
+        "internal_adapters_http.StudentResponseDTO": {
+            "type": "object",
+            "properties": {
+                "enrollment_number": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "internal_adapters_http.TeacherResponseDTO": {
+            "type": "object",
+            "properties": {
+                "department": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "internal_adapters_http.TestResponseDTO": {
+            "type": "object",
+            "properties": {
+                "course_id": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "test_date": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "weight": {
+                    "type": "number"
+                }
+            }
+        },
+        "internal_adapters_http.UpdateCourseDTO": {
             "type": "object",
             "required": [
                 "id"
@@ -1742,7 +1780,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.UpdateEnrollmentDTO": {
+        "internal_adapters_http.UpdateEnrollmentDTO": {
             "type": "object",
             "properties": {
                 "course_id": {
@@ -1759,7 +1797,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.UpdateGradeDTO": {
+        "internal_adapters_http.UpdateGradeDTO": {
             "type": "object",
             "required": [
                 "id"
@@ -1784,7 +1822,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.UpdateStudentDTO": {
+        "internal_adapters_http.UpdateStudentDTO": {
             "type": "object",
             "required": [
                 "user_id"
@@ -1799,7 +1837,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.UpdateTeacherDTO": {
+        "internal_adapters_http.UpdateTeacherDTO": {
             "type": "object",
             "required": [
                 "user_id"
@@ -1815,7 +1853,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.UpdateTestDTO": {
+        "internal_adapters_http.UpdateTestDTO": {
             "type": "object",
             "required": [
                 "id",
@@ -1842,7 +1880,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.UpdateUserDTO": {
+        "internal_adapters_http.UpdateUserDTO": {
             "type": "object",
             "required": [
                 "id"
@@ -1850,10 +1888,12 @@ const docTemplate = `{
             "properties": {
                 "cpf": {
                     "type": "string",
-                    "maxLength": 14
+                    "maxLength": 14,
+                    "example": ""
                 },
                 "email": {
-                    "type": "string"
+                    "type": "string",
+                    "example": ""
                 },
                 "id": {
                     "type": "integer",
@@ -1861,14 +1901,16 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string",
-                    "maxLength": 255
+                    "maxLength": 255,
+                    "example": ""
                 },
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "example": ""
                 }
             }
         },
-        "http.UserResponseDTO": {
+        "internal_adapters_http.UserResponseDTO": {
             "type": "object",
             "properties": {
                 "cpf": {
@@ -1891,7 +1933,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.errorResponse": {
+        "internal_adapters_http.errorResponse": {
             "type": "object",
             "properties": {
                 "error": {
