@@ -20,6 +20,11 @@ func main() {
 		log.Fatalf("main: error while connecting to db: %v", err)
 	}
 	log.Printf("DB connection successful")
+	defer func() {
+		if err := db.Close(); err != nil {
+			log.Printf("error while closing DB: %v", err)
+		}
+	}()
 	userRepo := postgres.NewUserRepo(db)
 	studentRepo := postgres.NewStudentRepo(db)
 	teacherRepo := postgres.NewTeacherRepo(db)
