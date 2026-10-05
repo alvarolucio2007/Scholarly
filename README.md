@@ -1,4 +1,5 @@
 [Read in English](README.en.md)
+
 # Scholarly
 
 Sistema de gestão acadêmica desenvolvido em Go e PostgreSQL.
@@ -33,7 +34,7 @@ Além dos requisitos mínimos, o projeto foi construído seguindo práticas adot
 ## Stack de tecnologias
 
 | Camada | Tecnologia |
-|---|---|
+| --- | --- |
 | Linguagem | Go 1.27 |
 | Banco de dados | PostgreSQL 17 |
 | Roteador HTTP | chi |
@@ -107,7 +108,7 @@ Scholarly/
 ### Principais tabelas
 
 | Tabela | Descrição |
-|---|---|
+| --- | --- |
 | `users` | Identidade central de alunos, professores e administradores |
 | `students` | Dados específicos de alunos (herança de tabela a partir de `users`) |
 | `teachers` | Dados específicos de professores (herança de tabela a partir de `users`) |
@@ -133,6 +134,7 @@ Consolida, em uma única linha por aluno e disciplina, os dados do boletim acad�
 Calcula a média ponderada de um aluno em uma disciplina, considerando o peso de cada prova. Retorna um valor `NUMERIC` — `0` quando o aluno não possui notas, ou levanta uma exceção (`P0S01`, `P0C01`) quando o aluno ou a disciplina não existem.
 
 **Uso na aplicação:**
+
 - Diretamente pelo endpoint `GET /students/{student_id}/courses/{course_id}/average`
 - Internamente pela View `vw_student_report_card`
 
@@ -158,14 +160,14 @@ Retorna o `id` da matrícula criada via parâmetro `OUT`.
 ### Infraestrutura
 
 | Método | Rota | Descrição |
-|---|---|---|
+| --- | --- | --- |
 | GET | `/health` | Health check |
 | GET | `/swagger/*` | Swagger UI |
 
 ### Users
 
 | Método | Rota | Descrição |
-|---|---|---|
+| --- | --- | --- |
 | POST | `/users` | Cria usuário |
 | GET | `/users` | Lista usuários com filtros |
 | GET | `/users/{id}` | Busca usuário por ID |
@@ -175,7 +177,7 @@ Retorna o `id` da matrícula criada via parâmetro `OUT`.
 ### Students
 
 | Método | Rota | Descrição |
-|---|---|---|
+| --- | --- | --- |
 | POST | `/students` | Cria aluno |
 | GET | `/students/enrollment/{enrollment}` | Busca aluno por número de matrícula |
 | GET | `/students/{id}` | Busca aluno por ID |
@@ -185,7 +187,7 @@ Retorna o `id` da matrícula criada via parâmetro `OUT`.
 ### Teachers
 
 | Método | Rota | Descrição |
-|---|---|---|
+| --- | --- | --- |
 | POST | `/teachers` | Cria professor |
 | GET | `/teachers` | Lista professores |
 | GET | `/teachers/{id}` | Busca professor por ID |
@@ -195,7 +197,7 @@ Retorna o `id` da matrícula criada via parâmetro `OUT`.
 ### Courses
 
 | Método | Rota | Descrição |
-|---|---|---|
+| --- | --- | --- |
 | POST | `/courses` | Cria disciplina |
 | GET | `/courses` | Lista disciplinas |
 | GET | `/courses/{id}` | Busca disciplina por ID |
@@ -206,7 +208,7 @@ Retorna o `id` da matrícula criada via parâmetro `OUT`.
 ### Enrollments
 
 | Método | Rota | Descrição |
-|---|---|---|
+| --- | --- | --- |
 | GET | `/enrollments` | Lista matrículas |
 | GET | `/enrollments/{id}` | Busca matrícula por ID |
 | PUT | `/enrollments/{id}` | Atualiza matrícula |
@@ -215,7 +217,7 @@ Retorna o `id` da matrícula criada via parâmetro `OUT`.
 ### Tests
 
 | Método | Rota | Descrição |
-|---|---|---|
+| --- | --- | --- |
 | POST | `/tests` | Cria prova |
 | GET | `/tests` | Lista provas |
 | GET | `/tests/{id}` | Busca prova por ID |
@@ -225,7 +227,7 @@ Retorna o `id` da matrícula criada via parâmetro `OUT`.
 ### Grades
 
 | Método | Rota | Descrição |
-|---|---|---|
+| --- | --- | --- |
 | POST | `/grades` | Cria nota |
 | GET | `/grades` | Lista notas |
 | GET | `/grades/{id}` | Busca nota por ID |
@@ -235,7 +237,7 @@ Retorna o `id` da matrícula criada via parâmetro `OUT`.
 ### Relatórios
 
 | Método | Rota | Recurso do banco |
-|---|---|---|
+| --- | --- | --- |
 | GET | `/students/{student_id}/report` | View `vw_student_report_card` |
 | GET | `/students/{student_id}/courses/{course_id}/average` | Function `fn_weighted_average` |
 
@@ -247,10 +249,8 @@ A documentação completa, com payloads e códigos de resposta, está disponíve
 
 ### Requisitos
 
-- Go 1.27 ou superior
 - Docker e Docker Compose
 - Make
-- golang-migrate (https://github.com/golang-migrate/migrate)
 
 ### Passos
 
@@ -261,38 +261,25 @@ git clone https://github.com/alvarolucio2007/Scholarly.git
 cd Scholarly
 ```
 
-**2. Suba o banco de dados**
+**2. Suba a aplicação completa**
 
 ```bash
-docker compose up -d
+docker compose up --build
 ```
 
-O container inclui um healthcheck que valida a disponibilidade do banco antes de aceitar conexões.
-
-**3. Aplique o schema**
-
-```bash
-make migrateup
-```
-
-Isso executa os scripts de criação de tabelas, View, Function e Procedure na ordem correta.
-
-**4. Execute a aplicação**
-
-```bash
-make run
-```
+O docker compose já monta toda a aplicação, incluindo migrações de banco de dados.
 
 Em modo de desenvolvimento com hot reload:
 
 ```bash
+docker compose up db -d
 air
 ```
 
 **5. Acesse o Swagger UI**
 
 ```
-http://localhost:8080/swagger/index.html
+http://127.0.0.1:8080/swagger/index.html
 ```
 
 ---
@@ -326,7 +313,7 @@ A View, a Function e a Procedure foram escolhidas para resolver problemas que fa
 Este projeto é uma reescrita de um sistema acadêmico desenvolvido no semestre anterior, agora com foco em qualidade arquitetural e uso avançado de banco de dados.
 
 | Aspecto | Versão anterior | Versão atual |
-|---|---|---|
+| --- | --- | --- |
 | Arquitetura | Arquitetura em camadas | Hexagonal (ports and adapters) |
 | Persistência | Sem FKs, sem índices | FKs, índices e constraints |
 | Recursos SQL | Sem View, Function ou Procedure | View, Function e Procedure integrados |
