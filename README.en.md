@@ -1,3 +1,4 @@
+[Ler em Português](README.md)
 # Scholarly
 
 Academic management system built with Go and PostgreSQL.
