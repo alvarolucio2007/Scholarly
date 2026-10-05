@@ -159,6 +159,25 @@ definitions:
       value:
         type: number
     type: object
+  internal_adapters_http.ReportCardResponseDTO:
+    properties:
+      average:
+        type: number
+      course_code:
+        type: string
+      course_id:
+        type: integer
+      course_name:
+        type: string
+      situation:
+        type: string
+      student_id:
+        type: integer
+      student_name:
+        type: string
+      teacher_name:
+        type: string
+    type: object
   internal_adapters_http.StudentResponseDTO:
     properties:
       enrollment_number:
@@ -228,20 +247,18 @@ definitions:
   internal_adapters_http.UpdateGradeDTO:
     properties:
       enrollment_id:
-        minimum: 1
+        minimum: 0
         type: integer
       id:
         minimum: 1
         type: integer
       test_id:
-        minimum: 1
+        minimum: 0
         type: integer
       value:
+        example: 0
         maximum: 10
-        minimum: 0
         type: number
-    required:
-    - id
     type: object
   internal_adapters_http.UpdateStudentDTO:
     properties:
@@ -267,18 +284,22 @@ definitions:
   internal_adapters_http.UpdateTestDTO:
     properties:
       course_id:
-        minimum: 1
+        example: 0
+        minimum: 0
         type: integer
       id:
+        example: 1
         minimum: 1
         type: integer
       name:
-        minLength: 1
+        example: ""
+        minLength: 0
         type: string
       test_date:
-        example: "2026-03-15T00:00:00Z"
+        example: ""
         type: string
       weight:
+        example: 0
         minimum: 0
         type: number
     required:
@@ -669,6 +690,39 @@ paths:
       tags:
       - enrollments
   /grades:
+    get:
+      consumes:
+      - application/json
+      description: List grades by test_id and enrollment_id
+      parameters:
+      - description: filter by test ID
+        in: query
+        name: test_id
+        type: integer
+      - description: filter by enrollment ID
+        in: query
+        name: enrollment_id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/internal_adapters_http.GradeResponseDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
+      summary: List grades by parameters
+      tags:
+      - grades
     post:
       consumes:
       - application/json
@@ -716,8 +770,8 @@ paths:
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
+        "200":
+          description: OK
           schema:
             $ref: '#/definitions/internal_adapters_http.GradeResponseDTO'
         "400":
@@ -738,41 +792,7 @@ paths:
       summary: Update a grade
       tags:
       - grades
-  /grades/{id}:
-    get:
-      consumes:
-      - application/json
-      description: List grades by test_id and enrollment_id
-      parameters:
-      - description: filter by name
-        in: query
-        name: test_id
-        type: integer
-      - description: filter by cpf
-        in: query
-        name: enrollment_id
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/internal_adapters_http.GradeResponseDTO'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
-      summary: List grades by parameters
-      tags:
-      - grades
-  /report/:
+  /grades/report:
     get:
       consumes:
       - application/json
@@ -789,7 +809,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/internal_adapters_http.UserResponseDTO'
+              $ref: '#/definitions/internal_adapters_http.ReportCardResponseDTO'
             type: array
         "400":
           description: Bad Request
@@ -1125,6 +1145,39 @@ paths:
       tags:
       - teachers
   /tests:
+    get:
+      consumes:
+      - application/json
+      description: List tests by courseID and name
+      parameters:
+      - description: filter by course ID
+        in: query
+        name: course_id
+        type: integer
+      - description: filter by name
+        in: query
+        name: name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/internal_adapters_http.TestResponseDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
+      summary: List tests by parameters
+      tags:
+      - tests
     post:
       consumes:
       - application/json
@@ -1225,34 +1278,33 @@ paths:
     get:
       consumes:
       - application/json
-      description: List tests by courseID and name
+      description: Fetch a test by its ID
       parameters:
-      - description: filter by course ID
-        in: query
-        name: course_id
+      - description: Test ID
+        in: path
+        name: id
+        required: true
         type: integer
-      - description: filter by name
-        in: query
-        name: name
-        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/internal_adapters_http.TestResponseDTO'
-            type: array
+            $ref: '#/definitions/internal_adapters_http.TestResponseDTO'
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapters_http.errorResponse'
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/internal_adapters_http.errorResponse'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.errorResponse'
-      summary: List tests by parameters
+      summary: Fetch a test by its ID
       tags:
       - tests
   /users:
