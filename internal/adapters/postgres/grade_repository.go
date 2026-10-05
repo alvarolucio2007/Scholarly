@@ -45,6 +45,10 @@ func (r *GradeRepo) GetByID(ctx context.Context, gradeID int64) (*domain.Grade, 
 		return nil, domain.ErrNotFound
 	}
 	if err != nil {
+		translated := translateError(err)
+		if !errors.Is(err, translated) {
+			return nil, translated
+		}
 		return nil, fmt.Errorf("postgres: get grade by id: %w", err)
 	}
 	return &g, nil
@@ -68,6 +72,10 @@ func (r *GradeRepo) List(ctx context.Context, filter ports.GradeFilter) ([]*doma
 
 	rows, err := r.db.QueryContext(ctx, query, args...)
 	if err != nil {
+		translated := translateError(err)
+		if !errors.Is(err, translated) {
+			return nil, translated
+		}
 		return nil, fmt.Errorf("postgres: list grade: %w", err)
 	}
 	defer func() {
@@ -79,11 +87,19 @@ func (r *GradeRepo) List(ctx context.Context, filter ports.GradeFilter) ([]*doma
 	for rows.Next() {
 		var g domain.Grade
 		if err := rows.Scan(&g.ID, &g.TestID, &g.EnrollmentID, &g.Value, &g.CreatedAt, &g.UpdatedAt); err != nil {
+			translated := translateError(err)
+			if !errors.Is(err, translated) {
+				return nil, translated
+			}
 			return nil, fmt.Errorf("postgres: scan grade: %w", err)
 		}
 		grades = append(grades, &g)
 	}
 	if err := rows.Err(); err != nil {
+		translated := translateError(err)
+		if !errors.Is(err, translated) {
+			return nil, translated
+		}
 		return nil, fmt.Errorf("postgres: iterate grade: %w", err)
 	}
 	return grades, nil
@@ -102,6 +118,10 @@ func (r *GradeRepo) Update(ctx context.Context, grade *domain.Grade) error {
 	defer cancel()
 	res, err := r.db.ExecContext(ctx, query, grade.TestID, grade.EnrollmentID, grade.Value, grade.ID)
 	if err != nil {
+		translated := translateError(err)
+		if !errors.Is(err, translated) {
+			return translated
+		}
 		return fmt.Errorf("postgres: update grade: %w", err)
 	}
 	count, err := res.RowsAffected()
@@ -120,10 +140,18 @@ func (r *GradeRepo) Delete(ctx context.Context, gradeID int64) error {
 	defer cancel()
 	res, err := r.db.ExecContext(ctx, query, gradeID)
 	if err != nil {
+		translated := translateError(err)
+		if !errors.Is(err, translated) {
+			return translated
+		}
 		return fmt.Errorf("postgres: delete grade: %w", err)
 	}
 	count, err := res.RowsAffected()
 	if err != nil {
+		translated := translateError(err)
+		if !errors.Is(err, translated) {
+			return translated
+		}
 		return fmt.Errorf("postgres: rows affected delete grade: %w", err)
 	}
 	if count == 0 {
@@ -132,7 +160,7 @@ func (r *GradeRepo) Delete(ctx context.Context, gradeID int64) error {
 	return nil
 }
 
-func (r *GradeRepo) ListReportCard(ctx context.Context, filter ports.ReportCardFilter) ([]*domain.ReportCard, error) {
+func (r *GradeRepo) ListAverages(ctx context.Context, filter ports.ReportCardFilter) ([]*domain.ReportCard, error) {
 	var query string
 	var args []any
 	if filter.StudentID != nil {
@@ -156,12 +184,36 @@ func (r *GradeRepo) ListReportCard(ctx context.Context, filter ports.ReportCardF
 	for rows.Next() {
 		var rep domain.ReportCard
 		if err := rows.Scan(&rep.StudentID, &rep.StudentName, &rep.CourseID, &rep.CourseName, &rep.CourseCode, &rep.TeacherName, &rep.Average, &rep.Situation); err != nil {
+			translated := translateError(err)
+			if !errors.Is(err, translated) {
+				return nil, translated
+			}
 			return nil, fmt.Errorf("postgres: rows.scan report card: %w", err)
 		}
 		reportCards = append(reportCards, &rep)
 	}
 	if err := rows.Err(); err != nil {
+		translated := translateError(err)
+		if !errors.Is(err, translated) {
+			return nil, translated
+		}
 		return nil, fmt.Errorf("postgres: iterate report card: %w", err)
 	}
 	return reportCards, nil
+}
+
+func (r *GradeRepo) GetAverage(ctx context.Context, studentID, courseID int64) (*float64, error) {
+	query := `SELECT * FROM fn_weighted_average($1,$2)`
+	ctx, cancel := context.WithTimeout(ctx, PostgresQueryTimeout)
+	defer cancel()
+	var res float64
+	err := r.db.QueryRowContext(ctx, query, studentID, courseID).Scan(&res)
+	if err != nil {
+		translated := translateError(err)
+		if !errors.Is(err, translated) {
+			return nil, translated
+		}
+		return nil, fmt.Errorf("postgres: GetAverageReportCard: %w", err)
+	}
+	return &res, nil
 }
