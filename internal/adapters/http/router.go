@@ -101,8 +101,8 @@ func (h *Handler) Mount() http.Handler {
 			r.Get("/", h.GetGradeByID)
 			r.Delete("/", h.DeleteGrade)
 		})
-		r.Route("/report", func(r chi.Router) {
-			r.Get("/", h.ListReportCard)
+		r.Route("/average", func(r chi.Router) {
+			r.Get("/", h.ListAverages)
 		})
 	})
 
