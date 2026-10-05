@@ -45,6 +45,10 @@ func (r *EnrollmentRepo) GetByID(ctx context.Context, enrollmentID int64) (*doma
 		return nil, domain.ErrNotFound
 	}
 	if err != nil {
+		translated := translateError(err)
+		if !errors.Is(err, translated) {
+			return nil, translated
+		}
 		return nil, fmt.Errorf("postgres: get enrollment by id: %w", err)
 	}
 	return &e, nil
@@ -71,6 +75,10 @@ func (r *EnrollmentRepo) List(ctx context.Context, filter ports.EnrollmentFilter
 
 	rows, err := r.db.QueryContext(ctx, query, args...)
 	if err != nil {
+		translated := translateError(err)
+		if !errors.Is(err, translated) {
+			return nil, translated
+		}
 		return nil, fmt.Errorf("postgres: list enrollment: %w", err)
 	}
 	defer func() {
@@ -82,6 +90,10 @@ func (r *EnrollmentRepo) List(ctx context.Context, filter ports.EnrollmentFilter
 	for rows.Next() {
 		var e domain.Enrollment
 		if err := rows.Scan(&e.ID, &e.StudentID, &e.CourseID, &e.EnrolledAt, &e.Status); err != nil {
+			translated := translateError(err)
+			if !errors.Is(err, translated) {
+				return nil, translated
+			}
 			return nil, fmt.Errorf("postgres: scan enrollments: %w", err)
 		}
 		enrollments = append(enrollments, &e)
@@ -103,10 +115,18 @@ func (r *EnrollmentRepo) Update(ctx context.Context, enrollment *domain.Enrollme
 	defer cancel()
 	res, err := r.db.ExecContext(ctx, query, enrollment.StudentID, enrollment.CourseID, enrollment.ID)
 	if err != nil {
+		translated := translateError(err)
+		if !errors.Is(err, translated) {
+			return translated
+		}
 		return fmt.Errorf("postgres: update enrollment: %w", err)
 	}
 	count, err := res.RowsAffected()
 	if err != nil {
+		translated := translateError(err)
+		if !errors.Is(err, translated) {
+			return translated
+		}
 		return fmt.Errorf("postgres: rows affected update enrollment: %w", err)
 	}
 	if count == 0 {
@@ -121,10 +141,18 @@ func (r *EnrollmentRepo) Delete(ctx context.Context, enrollmentID int64) error {
 	defer cancel()
 	res, err := r.db.ExecContext(ctx, query, enrollmentID)
 	if err != nil {
+		translated := translateError(err)
+		if !errors.Is(err, translated) {
+			return translated
+		}
 		return fmt.Errorf("postgres: delete enrollment: %w", err)
 	}
 	count, err := res.RowsAffected()
 	if err != nil {
+		translated := translateError(err)
+		if !errors.Is(err, translated) {
+			return translated
+		}
 		return fmt.Errorf("postgres: rows affected delete enrollments: %w", err)
 	}
 	if count == 0 {
