@@ -70,6 +70,18 @@ definitions:
     - enrollment_number
     - user_id
     type: object
+  internal_adapters_http.CreateTeacherDTO:
+    properties:
+      department:
+        maxLength: 100
+        type: string
+      user_id:
+        minimum: 1
+        type: integer
+    required:
+    - department
+    - user_id
+    type: object
   internal_adapters_http.CreateTestDTO:
     properties:
       course_id:
@@ -103,6 +115,18 @@ definitions:
     - email
     - name
     - password
+    type: object
+  internal_adapters_http.EnrollStudentDTO:
+    properties:
+      course_id:
+        minimum: 1
+        type: integer
+      student_id:
+        minimum: 1
+        type: integer
+    required:
+    - course_id
+    - student_id
     type: object
   internal_adapters_http.EnrollmentResponseDTO:
     properties:
@@ -472,17 +496,18 @@ paths:
       summary: Fetch a course by its ID
       tags:
       - courses
-  /courses/enroll/{student_id}:
+  /courses/enroll/:
     post:
       consumes:
       - application/json
       description: Enroll a student
       parameters:
-      - description: Student ID
-        in: path
-        name: student_id
+      - description: Enroll Student DTO
+        in: body
+        name: payload
         required: true
-        type: integer
+        schema:
+          $ref: '#/definitions/internal_adapters_http.EnrollStudentDTO'
       produces:
       - application/json
       responses:
@@ -876,7 +901,7 @@ paths:
       summary: Fetch a student by it's ID
       tags:
       - students
-  /students/enrollments/{id}:
+  /students/enrollment/{id}:
     get:
       consumes:
       - application/json
@@ -926,7 +951,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/internal_adapters_http.UserResponseDTO'
+              $ref: '#/definitions/internal_adapters_http.TeacherResponseDTO'
             type: array
         "400":
           description: Bad Request
@@ -937,6 +962,39 @@ paths:
           schema:
             $ref: '#/definitions/internal_adapters_http.errorResponse'
       summary: List teachers by department
+      tags:
+      - teachers
+    post:
+      consumes:
+      - application/json
+      description: Create an teacher account
+      parameters:
+      - description: Teacher DTO
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/internal_adapters_http.CreateTeacherDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/internal_adapters_http.TeacherResponseDTO'
+        "400":
+          description: Bad Request
+          schema: {}
+        "409":
+          description: Conflict
+          schema: {}
+        "422":
+          description: Unprocessable Entity
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Create an teacher account
       tags:
       - teachers
     put:
@@ -956,7 +1014,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/internal_adapters_http.UserResponseDTO'
+            $ref: '#/definitions/internal_adapters_http.TeacherResponseDTO'
         "400":
           description: Bad Request
           schema: {}
@@ -976,6 +1034,33 @@ paths:
       tags:
       - teachers
   /teachers/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes an teacher account by ID
+      parameters:
+      - description: Teacher ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Deletes an teacher account
+      tags:
+      - teachers
     get:
       consumes:
       - application/json

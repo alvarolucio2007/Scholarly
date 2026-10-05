@@ -179,7 +179,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/courses/enroll/{student_id}": {
+        "/courses/enroll/": {
             "post": {
                 "description": "Enroll a student",
                 "consumes": [
@@ -194,11 +194,13 @@ const docTemplate = `{
                 "summary": "Enroll a student",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "Student ID",
-                        "name": "student_id",
-                        "in": "path",
-                        "required": true
+                        "description": "Enroll Student DTO",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.EnrollStudentDTO"
+                        }
                     }
                 ],
                 "responses": {
@@ -778,7 +780,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/students/enrollments/{id}": {
+        "/students/enrollment/{id}": {
             "get": {
                 "description": "Fetch a student by it's enrollment",
                 "consumes": [
@@ -944,7 +946,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/internal_adapters_http.UserResponseDTO"
+                                "$ref": "#/definitions/internal_adapters_http.TeacherResponseDTO"
                             }
                         }
                     },
@@ -989,7 +991,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.UserResponseDTO"
+                            "$ref": "#/definitions/internal_adapters_http.TeacherResponseDTO"
                         }
                     },
                     "400": {
@@ -998,6 +1000,54 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {}
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {}
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            },
+            "post": {
+                "description": "Create an teacher account",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "teachers"
+                ],
+                "summary": "Create an teacher account",
+                "parameters": [
+                    {
+                        "description": "Teacher DTO",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.CreateTeacherDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.TeacherResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {}
                     },
                     "409": {
@@ -1061,6 +1111,45 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/internal_adapters_http.errorResponse"
                         }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes an teacher account by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "teachers"
+                ],
+                "summary": "Deletes an teacher account",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Teacher ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {}
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
                     }
                 }
             }
@@ -1609,6 +1698,23 @@ const docTemplate = `{
                 }
             }
         },
+        "internal_adapters_http.CreateTeacherDTO": {
+            "type": "object",
+            "required": [
+                "department",
+                "user_id"
+            ],
+            "properties": {
+                "department": {
+                    "type": "string",
+                    "maxLength": 100
+                },
+                "user_id": {
+                    "type": "integer",
+                    "minimum": 1
+                }
+            }
+        },
         "internal_adapters_http.CreateTestDTO": {
             "type": "object",
             "required": [
@@ -1654,6 +1760,23 @@ const docTemplate = `{
                 },
                 "password": {
                     "type": "string"
+                }
+            }
+        },
+        "internal_adapters_http.EnrollStudentDTO": {
+            "type": "object",
+            "required": [
+                "course_id",
+                "student_id"
+            ],
+            "properties": {
+                "course_id": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "student_id": {
+                    "type": "integer",
+                    "minimum": 1
                 }
             }
         },
