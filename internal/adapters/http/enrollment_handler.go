@@ -148,7 +148,6 @@ func (h *Handler) UpdateEnrollment(w http.ResponseWriter, r *http.Request) {
 //	@Failure		404	{object}	error
 //	@Failure		500	{object}	error
 //	@Router			/enrollments/{id} [delete]
-
 func (h *Handler) DeleteEnrollment(w http.ResponseWriter, r *http.Request) {
 	enrollmentID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
 	if err != nil {
