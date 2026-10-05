@@ -94,5 +94,6 @@ type GradeRepository interface {
 	List(ctx context.Context, filter GradeFilter) ([]*domain.Grade, error)
 	Update(ctx context.Context, grade *domain.Grade) error
 	Delete(ctx context.Context, gradeID int64) error
-	ListReportCard(ctx context.Context, filter ReportCardFilter) ([]*domain.ReportCard, error)
+	ListAverages(ctx context.Context, filter ReportCardFilter) ([]*domain.ReportCard, error)
+	GetAverage(ctx context.Context, studentID, courseID int64) (*float64, error)
 }
