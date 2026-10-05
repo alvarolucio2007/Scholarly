@@ -156,8 +156,8 @@ func (h *Handler) UpdateTest(w http.ResponseWriter, r *http.Request) {
 	}
 	var testDate time.Time
 	var err error
-	if dto.TestDate != nil {
-		testDate, err = time.Parse("2006-01-02T15:04:05Z07:00", *dto.TestDate)
+	if dto.TestDate != "" {
+		testDate, err = time.Parse("2006-01-02T15:04:05Z07:00", dto.TestDate)
 		if err != nil {
 			_ = writeJSONError(w, http.StatusBadRequest, err.Error())
 			return
@@ -165,9 +165,9 @@ func (h *Handler) UpdateTest(w http.ResponseWriter, r *http.Request) {
 	}
 	test, err := h.tests.UpdateTest(r.Context(), services.UpdateTestPayload{
 		ID:       dto.ID,
-		CourseID: dto.CourseID,
-		Name:     dto.Name,
-		Weight:   dto.Weight,
+		CourseID: nilIfZeroInt(dto.CourseID),
+		Name:     nilIfEmpty(dto.Name),
+		Weight:   nilIfZeroFloat(dto.Weight),
 		TestDate: &testDate,
 	})
 	if err != nil {
