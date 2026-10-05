@@ -10,14 +10,11 @@ import (
 	"time"
 
 	"github.com/alvarolucio2007/Scholarly/docs"
-	"github.com/alvarolucio2007/Scholarly/internal/env"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	httpSwagger "github.com/swaggo/http-swagger/v2"
 )
-
-const addr string = "localhost:8080"
 
 func (h *Handler) Mount() http.Handler {
 	r := chi.NewRouter()
@@ -26,7 +23,7 @@ func (h *Handler) Mount() http.Handler {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{env.GetString("CORS_ALLOWED_ORIGIN", "http://localhost:5174")},
+		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		ExposedHeaders:   []string{"Link"},
@@ -109,9 +106,8 @@ func (h *Handler) Mount() http.Handler {
 	return r
 }
 
-func (h *Handler) Run(mux http.Handler) error {
+func (h *Handler) Run(mux http.Handler, addr string) error {
 	docs.SwaggerInfo.Version = "0.0.1"
-	docs.SwaggerInfo.Host = addr
 	srv := &http.Server{
 		Addr:         addr,
 		Handler:      mux,
