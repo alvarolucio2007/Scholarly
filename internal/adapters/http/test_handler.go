@@ -67,7 +67,6 @@ func (h *Handler) CreateTest(w http.ResponseWriter, r *http.Request) {
 //	@Failure		404	{object}	errorResponse
 //	@Failure		500	{object}	errorResponse
 //	@Router			/tests/{id} [get]
-
 func (h *Handler) GetTestByID(w http.ResponseWriter, r *http.Request) {
 	testID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
 	if err != nil {
