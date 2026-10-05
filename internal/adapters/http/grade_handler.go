@@ -59,7 +59,6 @@ func (h *Handler) CreateGrade(w http.ResponseWriter, r *http.Request) {
 //	@Failure		404	{object}	errorResponse
 //	@Failure		500	{object}	errorResponse
 //	@Router			/grades/{id} [get]
-
 func (h *Handler) GetGradeByID(w http.ResponseWriter, r *http.Request) {
 	gradeID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
 	if err != nil {
@@ -205,7 +204,7 @@ func (h *Handler) DeleteGrade(w http.ResponseWriter, r *http.Request) {
 //	@Success		200			{array}		ListAverageResponseDTO
 //	@Failure		400			{object}	errorResponse
 //	@Failure		500			{object}	errorResponse
-//	@Router			/grades/average/list [get]
+//	@Router			/grades/average/list/ [get]
 func (h *Handler) ListAverages(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	filter := ports.ReportCardFilter{}
@@ -227,4 +226,45 @@ func (h *Handler) ListAverages(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	_ = writeJSONData(w, http.StatusOK, reportCards)
+}
+
+// GetAverage godoc
+//
+//	@Summary		Gets an student average
+//	@Description	Gets an student average by userID and courseID
+//	@Tags			grades
+//	@Accept			json
+//	@Produce		json
+//	@Param			student_id	path		int	true	"Student ID"
+//	@Param			course_id	path		int	true	"Course ID"
+//	@Success		200			{object}	float64
+//	@Failure		400			{object}	errorResponse
+//	@Failure		404			{object}	errorResponse
+//	@Failure		500			{object}	errorResponse
+//	@Router			/grades/average/{student_id}/{course_id} [get]
+func (h *Handler) GetAverage(w http.ResponseWriter, r *http.Request) {
+	studentID, err := strconv.ParseInt(chi.URLParam(r, "student_id"), 10, 64)
+	if err != nil {
+		_ = writeJSONError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+	if studentID <= 0 {
+		_ = writeJSONError(w, http.StatusBadRequest, "student_id must be at least 1")
+		return
+	}
+	courseID, err := strconv.ParseInt(chi.URLParam(r, "course_id"), 10, 64)
+	if err != nil {
+		_ = writeJSONError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+	if courseID <= 0 {
+		_ = writeJSONError(w, http.StatusBadRequest, "course_id must be at least 1")
+		return
+	}
+	res, err := h.grades.GetAverage(r.Context(), studentID, courseID)
+	if err != nil {
+		respondDomainError(w, err)
+		return
+	}
+	_ = writeJSONData(w, 200, res)
 }
