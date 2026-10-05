@@ -59,10 +59,11 @@ Além dos requisitos mínimos, o projeto foi construído seguindo práticas adot
 - **DTOs específicos por camada**, isolando o contrato HTTP das entidades de domínio e evitando a exposição de campos sensíveis como `password_hash`.
 - **Tradução de erros do PostgreSQL**, mapeando códigos SQLSTATE (`23505`, `23503` e códigos customizados da aplicação como `P0S01`, `P0C01`) para erros de domínio.
 - **Documentação interativa com Swagger UI**, permitindo que todos os endpoints sejam explorados e testados sem ferramentas adicionais.
-- **Docker Compose** com healthcheck para orquestração confiável do banco de dados.
+- Orquestração completa com Docker Compose, incluindo banco de dados, migrações e aplicação. O projeto pode ser executado com apenas três comandos, sem necessidade de instalar Go ou PostgreSQL localmente.
 - **Integração contínua com GitHub Actions**, executando `go vet`, `staticcheck` e testes automatizados a cada push.
 - **Hot reload em desenvolvimento** com Air.
-- **Migrações de banco de dados com golang-migrate**, versionando a evolução do schema.
+- **Migrações de banco de dados com golang-migrate em docker**, versionando a evolução do schema.
+- Programa inteiramente containe
 
 ---
 
