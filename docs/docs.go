@@ -67,13 +67,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     }
                 }
@@ -110,23 +110,33 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "404": {
                         "description": "Not Found",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "409": {
                         "description": "Conflict",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "500": {
                         "description": "Internal Server Error",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     }
                 }
             },
@@ -162,19 +172,27 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "409": {
                         "description": "Conflict",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "500": {
                         "description": "Internal Server Error",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     }
                 }
             }
@@ -212,19 +230,27 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "409": {
                         "description": "Conflict",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "500": {
                         "description": "Internal Server Error",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     }
                 }
             }
@@ -261,19 +287,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     }
                 }
@@ -305,15 +331,21 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "404": {
                         "description": "Not Found",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "500": {
                         "description": "Internal Server Error",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     }
                 }
             }
@@ -364,13 +396,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     }
                 }
@@ -407,23 +439,33 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "404": {
                         "description": "Not Found",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "409": {
                         "description": "Conflict",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "500": {
                         "description": "Internal Server Error",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     }
                 }
             }
@@ -460,19 +502,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     }
                 }
@@ -504,15 +546,21 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "404": {
                         "description": "Not Found",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "500": {
                         "description": "Internal Server Error",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     }
                 }
             }
@@ -557,13 +605,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     }
                 }
@@ -600,23 +648,33 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "404": {
                         "description": "Not Found",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "409": {
                         "description": "Conflict",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "500": {
                         "description": "Internal Server Error",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     }
                 }
             },
@@ -652,19 +710,27 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "409": {
                         "description": "Conflict",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "500": {
                         "description": "Internal Server Error",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     }
                 }
             }
@@ -703,13 +769,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     }
                 }
@@ -755,19 +821,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     }
                 }
@@ -805,19 +871,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     }
                 }
@@ -849,15 +915,21 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "404": {
                         "description": "Not Found",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "500": {
                         "description": "Internal Server Error",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     }
                 }
             }
@@ -895,23 +967,33 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "404": {
                         "description": "Not Found",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "409": {
                         "description": "Conflict",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "500": {
                         "description": "Internal Server Error",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     }
                 }
             },
@@ -947,19 +1029,27 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "409": {
                         "description": "Conflict",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "500": {
                         "description": "Internal Server Error",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     }
                 }
             }
@@ -996,19 +1086,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     }
                 }
@@ -1046,19 +1136,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     }
                 }
@@ -1090,15 +1180,21 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "404": {
                         "description": "Not Found",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "500": {
                         "description": "Internal Server Error",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     }
                 }
             }
@@ -1137,13 +1233,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     }
                 }
@@ -1180,23 +1276,33 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "404": {
                         "description": "Not Found",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "409": {
                         "description": "Conflict",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "500": {
                         "description": "Internal Server Error",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     }
                 }
             },
@@ -1232,19 +1338,27 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "409": {
                         "description": "Conflict",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "500": {
                         "description": "Internal Server Error",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     }
                 }
             }
@@ -1281,19 +1395,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     }
                 }
@@ -1325,15 +1439,21 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "404": {
                         "description": "Not Found",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "500": {
                         "description": "Internal Server Error",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     }
                 }
             }
@@ -1378,13 +1498,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     }
                 }
@@ -1421,23 +1541,33 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "404": {
                         "description": "Not Found",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "409": {
                         "description": "Conflict",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "500": {
                         "description": "Internal Server Error",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     }
                 }
             },
@@ -1473,19 +1603,27 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "409": {
                         "description": "Conflict",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "500": {
                         "description": "Internal Server Error",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     }
                 }
             }
@@ -1522,19 +1660,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     }
                 }
@@ -1566,15 +1704,21 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "404": {
                         "description": "Not Found",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "500": {
                         "description": "Internal Server Error",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     }
                 }
             }
@@ -1612,23 +1756,33 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "404": {
                         "description": "Not Found",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "409": {
                         "description": "Conflict",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "500": {
                         "description": "Internal Server Error",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     }
                 }
             },
@@ -1664,19 +1818,27 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "409": {
                         "description": "Conflict",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "500": {
                         "description": "Internal Server Error",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     }
                 }
             }
@@ -1727,13 +1889,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     }
                 }
@@ -1771,19 +1933,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.errorResponse"
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
                     }
                 }
@@ -1815,15 +1977,21 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "404": {
                         "description": "Not Found",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     },
                     "500": {
                         "description": "Internal Server Error",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
                     }
                 }
             }
@@ -2032,6 +2200,14 @@ const docTemplate = `{
                 },
                 "student_id": {
                     "type": "integer"
+                }
+            }
+        },
+        "internal_adapters_http.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
                 }
             }
         },
@@ -2318,14 +2494,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "internal_adapters_http.errorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
                     "type": "string"
                 }
             }

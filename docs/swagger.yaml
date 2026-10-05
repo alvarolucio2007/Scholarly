@@ -144,6 +144,11 @@ definitions:
       student_id:
         type: integer
     type: object
+  internal_adapters_http.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
   internal_adapters_http.GradeResponseDTO:
     properties:
       created_at:
@@ -342,11 +347,6 @@ definitions:
       updated_at:
         type: string
     type: object
-  internal_adapters_http.errorResponse:
-    properties:
-      error:
-        type: string
-    type: object
 info:
   contact: {}
 paths:
@@ -384,11 +384,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: List courses by parameters
       tags:
       - courses
@@ -412,16 +412,20 @@ paths:
             $ref: '#/definitions/internal_adapters_http.CourseResponseDTO'
         "400":
           description: Bad Request
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "409":
           description: Conflict
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "422":
           description: Unprocessable Entity
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: Create a course
       tags:
       - courses
@@ -445,19 +449,24 @@ paths:
             $ref: '#/definitions/internal_adapters_http.CourseResponseDTO'
         "400":
           description: Bad Request
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "404":
           description: Not Found
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "409":
           description: Conflict
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "422":
           description: Unprocessable Entity
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: Update a course
       tags:
       - courses
@@ -479,13 +488,16 @@ paths:
           description: No Content
         "400":
           description: Bad Request
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "404":
           description: Not Found
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: Deletes an course
       tags:
       - courses
@@ -509,15 +521,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: Fetch a course by its ID
       tags:
       - courses
@@ -542,16 +554,20 @@ paths:
             type: integer
         "400":
           description: Bad Request
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "409":
           description: Conflict
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "422":
           description: Unprocessable Entity
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: Enroll a student
       tags:
       - courses
@@ -585,11 +601,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: List enrollments by parameters
       tags:
       - enrollments
@@ -613,19 +629,24 @@ paths:
             $ref: '#/definitions/internal_adapters_http.EnrollmentResponseDTO'
         "400":
           description: Bad Request
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "404":
           description: Not Found
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "409":
           description: Conflict
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "422":
           description: Unprocessable Entity
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: Update an enrollment
       tags:
       - enrollments
@@ -647,13 +668,16 @@ paths:
           description: No Content
         "400":
           description: Bad Request
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "404":
           description: Not Found
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: Deletes an enrollment
       tags:
       - enrollments
@@ -677,15 +701,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: Fetch an enrollment by it's ID
       tags:
       - enrollments
@@ -715,11 +739,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: List grades by parameters
       tags:
       - grades
@@ -743,16 +767,20 @@ paths:
             $ref: '#/definitions/internal_adapters_http.GradeResponseDTO'
         "400":
           description: Bad Request
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "409":
           description: Conflict
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "422":
           description: Unprocessable Entity
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: Create a grade
       tags:
       - grades
@@ -776,19 +804,24 @@ paths:
             $ref: '#/definitions/internal_adapters_http.GradeResponseDTO'
         "400":
           description: Bad Request
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "404":
           description: Not Found
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "409":
           description: Conflict
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "422":
           description: Unprocessable Entity
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: Update a grade
       tags:
       - grades
@@ -810,13 +843,16 @@ paths:
           description: No Content
         "400":
           description: Bad Request
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "404":
           description: Not Found
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: Deletes a grade
       tags:
       - grades
@@ -840,15 +876,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: Fetch a grade by its ID
       tags:
       - grades
@@ -879,15 +915,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: Gets an student average
       tags:
       - grades
@@ -913,11 +949,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: List averages
       tags:
       - grades
@@ -942,16 +978,20 @@ paths:
             $ref: '#/definitions/internal_adapters_http.StudentResponseDTO'
         "400":
           description: Bad Request
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "409":
           description: Conflict
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "422":
           description: Unprocessable Entity
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: Create an student account
       tags:
       - students
@@ -975,19 +1015,24 @@ paths:
             $ref: '#/definitions/internal_adapters_http.StudentResponseDTO'
         "400":
           description: Bad Request
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "404":
           description: Not Found
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "409":
           description: Conflict
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "422":
           description: Unprocessable Entity
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: Update a student account
       tags:
       - students
@@ -1009,13 +1054,16 @@ paths:
           description: No Content
         "400":
           description: Bad Request
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "404":
           description: Not Found
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: Deletes an student account
       tags:
       - students
@@ -1039,15 +1087,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: Fetch a student by it's ID
       tags:
       - students
@@ -1072,15 +1120,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: Fetch a student by it's enrollment
       tags:
       - students
@@ -1106,11 +1154,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: List teachers by department
       tags:
       - teachers
@@ -1134,16 +1182,20 @@ paths:
             $ref: '#/definitions/internal_adapters_http.TeacherResponseDTO'
         "400":
           description: Bad Request
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "409":
           description: Conflict
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "422":
           description: Unprocessable Entity
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: Create an teacher account
       tags:
       - teachers
@@ -1167,19 +1219,24 @@ paths:
             $ref: '#/definitions/internal_adapters_http.TeacherResponseDTO'
         "400":
           description: Bad Request
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "404":
           description: Not Found
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "409":
           description: Conflict
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "422":
           description: Unprocessable Entity
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: Update an teacher account
       tags:
       - teachers
@@ -1201,13 +1258,16 @@ paths:
           description: No Content
         "400":
           description: Bad Request
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "404":
           description: Not Found
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: Deletes an teacher account
       tags:
       - teachers
@@ -1231,15 +1291,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: Fetch a teacher by its ID
       tags:
       - teachers
@@ -1269,11 +1329,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: List tests by parameters
       tags:
       - tests
@@ -1297,16 +1357,20 @@ paths:
             $ref: '#/definitions/internal_adapters_http.TestResponseDTO'
         "400":
           description: Bad Request
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "409":
           description: Conflict
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "422":
           description: Unprocessable Entity
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: Create a test
       tags:
       - tests
@@ -1330,19 +1394,24 @@ paths:
             $ref: '#/definitions/internal_adapters_http.TestResponseDTO'
         "400":
           description: Bad Request
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "404":
           description: Not Found
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "409":
           description: Conflict
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "422":
           description: Unprocessable Entity
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: Update a test
       tags:
       - tests
@@ -1364,13 +1433,16 @@ paths:
           description: No Content
         "400":
           description: Bad Request
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "404":
           description: Not Found
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: Deletes a test
       tags:
       - tests
@@ -1394,15 +1466,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: Fetch a test by its ID
       tags:
       - tests
@@ -1427,16 +1499,20 @@ paths:
             $ref: '#/definitions/internal_adapters_http.UserResponseDTO'
         "400":
           description: Bad Request
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "409":
           description: Conflict
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "422":
           description: Unprocessable Entity
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: Create an user account
       tags:
       - users
@@ -1460,19 +1536,24 @@ paths:
             $ref: '#/definitions/internal_adapters_http.UserResponseDTO'
         "400":
           description: Bad Request
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "404":
           description: Not Found
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "409":
           description: Conflict
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "422":
           description: Unprocessable Entity
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: Update an user account
       tags:
       - users
@@ -1506,11 +1587,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: List users by parameters
       tags:
       - users
@@ -1532,13 +1613,16 @@ paths:
           description: No Content
         "400":
           description: Bad Request
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "404":
           description: Not Found
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
-          schema: {}
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: Deletes an user account
       tags:
       - users
@@ -1562,15 +1646,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/internal_adapters_http.errorResponse'
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
       summary: Fetch an user by it's ID
       tags:
       - users
