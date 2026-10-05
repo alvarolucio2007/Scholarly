@@ -2,8 +2,10 @@ package http
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/alvarolucio2007/Scholarly/internal/ports"
 	"github.com/alvarolucio2007/Scholarly/internal/services"
@@ -27,18 +29,23 @@ import (
 func (h *Handler) CreateTest(w http.ResponseWriter, r *http.Request) {
 	var dto CreateTestDTO
 	if err := json.NewDecoder(r.Body).Decode(&dto); err != nil {
-		_ = writeJSONError(w, http.StatusBadRequest, "invalid JSON")
+		_ = writeJSONError(w, http.StatusBadRequest, fmt.Sprintf("Invalid JSON: %v", err))
 		return
 	}
 	if err := validate.Struct(dto); err != nil {
 		_ = writeJSONError(w, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
+	testDate, err := time.Parse("2006-01-02T15:04:05Z07:00", dto.TestDate)
+	if err != nil {
+		_ = writeJSONError(w, http.StatusBadRequest, err.Error())
+		return
+	}
 	test, err := h.tests.CreateTest(r.Context(), services.CreateTestPayload{
 		CourseID: dto.CourseID,
 		Name:     dto.Name,
 		Weight:   dto.Weight,
-		TestDate: dto.TestDate,
+		TestDate: testDate,
 	})
 	if err != nil {
 		respondDomainError(w, err)
@@ -147,12 +154,21 @@ func (h *Handler) UpdateTest(w http.ResponseWriter, r *http.Request) {
 		_ = writeJSONError(w, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
+	var testDate time.Time
+	var err error
+	if dto.TestDate != nil {
+		testDate, err = time.Parse("2006-01-02T15:04:05Z07:00", *dto.TestDate)
+		if err != nil {
+			_ = writeJSONError(w, http.StatusBadRequest, err.Error())
+			return
+		}
+	}
 	test, err := h.tests.UpdateTest(r.Context(), services.UpdateTestPayload{
 		ID:       dto.ID,
 		CourseID: dto.CourseID,
 		Name:     dto.Name,
 		Weight:   dto.Weight,
-		TestDate: dto.TestDate,
+		TestDate: &testDate,
 	})
 	if err != nil {
 		respondDomainError(w, err)
