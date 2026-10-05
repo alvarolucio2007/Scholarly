@@ -177,7 +177,6 @@ func (h *Handler) UpdateGrade(w http.ResponseWriter, r *http.Request) {
 //	@Failure		404	{object}	error
 //	@Failure		500	{object}	error
 //	@Router			/grades/{id} [delete]
-
 func (h *Handler) DeleteGrade(w http.ResponseWriter, r *http.Request) {
 	gradeID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
 	if err != nil {
@@ -195,19 +194,19 @@ func (h *Handler) DeleteGrade(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// ListReportCard godoc
+// ListAverages godoc
 //
-//	@Summary		List report cards
-//	@Description	List report cards by studentID
+//	@Summary		List averages
+//	@Description	List averages by studentID
 //	@Tags			grades
 //	@Accept			json
 //	@Produce		json
 //	@Param			student_id	query		int	false	"filter by studentID"
-//	@Success		200			{array}		ReportCardResponseDTO
+//	@Success		200			{array}		ListAverageResponseDTO
 //	@Failure		400			{object}	errorResponse
 //	@Failure		500			{object}	errorResponse
-//	@Router			/grades/report [get]
-func (h *Handler) ListReportCard(w http.ResponseWriter, r *http.Request) {
+//	@Router			/grades/average/list [get]
+func (h *Handler) ListAverages(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	filter := ports.ReportCardFilter{}
 	if v := q.Get("student_id"); v != "" {
@@ -222,7 +221,7 @@ func (h *Handler) ListReportCard(w http.ResponseWriter, r *http.Request) {
 		}
 		filter.StudentID = &vID
 	}
-	reportCards, err := h.grades.ListReportCard(r.Context(), filter)
+	reportCards, err := h.grades.ListAverages(r.Context(), filter)
 	if err != nil {
 		respondDomainError(w, err)
 		return
