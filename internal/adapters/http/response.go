@@ -12,7 +12,7 @@ import (
 
 var validate *validator.Validate
 
-type errorResponse struct {
+type ErrorResponse struct {
 	Error string `json:"error"`
 }
 
