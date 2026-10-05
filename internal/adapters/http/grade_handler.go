@@ -85,12 +85,12 @@ func (h *Handler) GetGradeByID(w http.ResponseWriter, r *http.Request) {
 //	@Tags			grades
 //	@Accept			json
 //	@Produce		json
-//	@Param			test_id			query		int	false	"filter by name"
-//	@Param			enrollment_id	query		int	false	"filter by cpf"
+//	@Param			test_id			query		int	false	"filter by test ID"
+//	@Param			enrollment_id	query		int	false	"filter by enrollment ID"
 //	@Success		200				{array}		GradeResponseDTO
 //	@Failure		400				{object}	errorResponse
 //	@Failure		500				{object}	errorResponse
-//	@Router			/grades/{id} [get]
+//	@Router			/grades [get]
 func (h *Handler) ListGrades(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	filter := ports.GradeFilter{}
@@ -134,7 +134,7 @@ func (h *Handler) ListGrades(w http.ResponseWriter, r *http.Request) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			payload	body		UpdateGradeDTO	true	"Grade DTO"
-//	@Success		201		{object}	GradeResponseDTO
+//	@Success		200		{object}	GradeResponseDTO
 //	@Failure		400		{object}	error
 //	@Failure		404		{object}	error
 //	@Failure		409		{object}	error
@@ -153,9 +153,9 @@ func (h *Handler) UpdateGrade(w http.ResponseWriter, r *http.Request) {
 	}
 	grade, err := h.grades.Update(r.Context(), services.UpdateGradePayload{
 		ID:           dto.ID,
-		TestID:       dto.TestID,
-		EnrollmentID: dto.EnrollmentID,
-		Value:        dto.Value,
+		TestID:       nilIfZeroInt(dto.TestID),
+		EnrollmentID: nilIfZeroInt(dto.EnrollmentID),
+		Value:        nilIfZeroFloat(dto.Value),
 	})
 	if err != nil {
 		respondDomainError(w, err)
@@ -203,10 +203,10 @@ func (h *Handler) DeleteGrade(w http.ResponseWriter, r *http.Request) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			student_id	query		int	false	"filter by studentID"
-//	@Success		200			{array}		UserResponseDTO
+//	@Success		200			{array}		ReportCardResponseDTO
 //	@Failure		400			{object}	errorResponse
 //	@Failure		500			{object}	errorResponse
-//	@Router			/report/ [get]
+//	@Router			/grades/report [get]
 func (h *Handler) ListReportCard(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	filter := ports.ReportCardFilter{}
@@ -227,5 +227,5 @@ func (h *Handler) ListReportCard(w http.ResponseWriter, r *http.Request) {
 		respondDomainError(w, err)
 		return
 	}
-	_ = writeJSONData(w, http.StatusOK, &reportCards)
+	_ = writeJSONData(w, http.StatusOK, reportCards)
 }
