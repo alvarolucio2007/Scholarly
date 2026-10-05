@@ -88,8 +88,10 @@ definitions:
         minimum: 1
         type: integer
       name:
+        maxLength: 255
         type: string
       test_date:
+        example: "2026-03-15T00:00:00Z"
         type: string
       weight:
         type: number
@@ -97,6 +99,7 @@ definitions:
     - course_id
     - name
     - test_date
+    - weight
     type: object
   internal_adapters_http.CreateUserDTO:
     properties:
@@ -196,7 +199,7 @@ definitions:
         minimum: 1
         type: integer
       max_students:
-        maximum: 50
+        maximum: 200
         type: integer
       name:
         maxLength: 50
@@ -273,12 +276,13 @@ definitions:
         minLength: 1
         type: string
       test_date:
+        example: "2026-03-15T00:00:00Z"
         type: string
       weight:
+        minimum: 0
         type: number
     required:
     - id
-    - name
     type: object
   internal_adapters_http.UpdateUserDTO:
     properties:
@@ -605,6 +609,33 @@ paths:
       tags:
       - enrollments
   /enrollments/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes an grade by ID
+      parameters:
+      - description: Enrollment ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Deletes an enrollment
+      tags:
+      - enrollments
     get:
       consumes:
       - application/json

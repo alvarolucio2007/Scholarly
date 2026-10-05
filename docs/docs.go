@@ -476,6 +476,45 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "delete": {
+                "description": "Deletes an grade by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "enrollments"
+                ],
+                "summary": "Deletes an enrollment",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Enrollment ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {}
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
             }
         },
         "/grades": {
@@ -1720,7 +1759,8 @@ const docTemplate = `{
             "required": [
                 "course_id",
                 "name",
-                "test_date"
+                "test_date",
+                "weight"
             ],
             "properties": {
                 "course_id": {
@@ -1728,10 +1768,12 @@ const docTemplate = `{
                     "minimum": 1
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "test_date": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2026-03-15T00:00:00Z"
                 },
                 "weight": {
                     "type": "number"
@@ -1887,7 +1929,7 @@ const docTemplate = `{
                 },
                 "max_students": {
                     "type": "integer",
-                    "maximum": 50
+                    "maximum": 200
                 },
                 "name": {
                     "type": "string",
@@ -1979,8 +2021,7 @@ const docTemplate = `{
         "internal_adapters_http.UpdateTestDTO": {
             "type": "object",
             "required": [
-                "id",
-                "name"
+                "id"
             ],
             "properties": {
                 "course_id": {
@@ -1996,10 +2037,12 @@ const docTemplate = `{
                     "minLength": 1
                 },
                 "test_date": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2026-03-15T00:00:00Z"
                 },
                 "weight": {
-                    "type": "number"
+                    "type": "number",
+                    "minimum": 0
                 }
             }
         },
