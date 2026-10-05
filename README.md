@@ -2,6 +2,41 @@
 
 # Scholarly
 
+<!--toc:start-->
+- [Scholarly](#scholarly)
+  - [Visão geral](#visão-geral)
+  - [Diferenciais do projeto](#diferenciais-do-projeto)
+  - [Stack de tecnologias](#stack-de-tecnologias)
+  - [Arquitetura](#arquitetura)
+    - [Estrutura do projeto](#estrutura-do-projeto)
+  - [Banco de dados](#banco-de-dados)
+    - [SGBD](#sgbd)
+    - [Principais tabelas](#principais-tabelas)
+    - [View](#view)
+    - [Function](#function)
+    - [Procedure](#procedure)
+  - [Endpoints da API](#endpoints-da-api)
+    - [Infraestrutura](#infraestrutura)
+    - [Users](#users)
+    - [Students](#students)
+    - [Teachers](#teachers)
+    - [Courses](#courses)
+    - [Enrollments](#enrollments)
+    - [Tests](#tests)
+    - [Grades](#grades)
+    - [Relatórios](#relatórios)
+  - [Como executar](#como-executar)
+    - [Requisitos](#requisitos)
+    - [Passos](#passos)
+  - [Decisões de projeto](#decisões-de-projeto)
+    - [Arquitetura hexagonal](#arquitetura-hexagonal)
+    - [DTOs de entrada e saída](#dtos-de-entrada-e-saída)
+    - [Erros de domínio](#erros-de-domínio)
+    - [Uso dos recursos do PostgreSQL](#uso-dos-recursos-do-postgresql)
+  - [Evolução em relação ao semestre anterior](#evolução-em-relação-ao-semestre-anterior)
+  - [Licença](#licença)
+<!--toc:end-->
+
 Sistema de gestão acadêmica desenvolvido em Go e PostgreSQL.
 
 ---
