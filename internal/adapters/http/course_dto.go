@@ -15,7 +15,7 @@ type UpdateCourseDTO struct {
 	Name        *string `json:"name" validate:"max=50"`
 	Code        *string `json:"code" validate:"max=50"`
 	Semester    *string `json:"semester" validate:"max=50"`
-	MaxStudents *int16  `json:"max_students" validate:"max=50"`
+	MaxStudents *int16  `json:"max_students" validate:"max=200"`
 }
 type CourseResponseDTO struct {
 	ID          int64      `json:"id"`
