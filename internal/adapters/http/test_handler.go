@@ -98,7 +98,7 @@ func (h *Handler) GetTestByID(w http.ResponseWriter, r *http.Request) {
 //	@Success		200			{array}		TestResponseDTO
 //	@Failure		400			{object}	errorResponse
 //	@Failure		500			{object}	errorResponse
-//	@Router			/tests/{id} [get]
+//	@Router			/tests [get]
 func (h *Handler) ListTests(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	filter := ports.TestFilter{}
