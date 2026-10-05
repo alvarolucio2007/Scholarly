@@ -204,7 +204,7 @@ func (h *Handler) DeleteGrade(w http.ResponseWriter, r *http.Request) {
 //	@Success		200			{array}		ListAverageResponseDTO
 //	@Failure		400			{object}	ErrorResponse
 //	@Failure		500			{object}	ErrorResponse
-//	@Router			/grades/average/list/ [get]
+//	@Router			/grades/average/list [get]
 func (h *Handler) ListAverages(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	filter := ports.ReportCardFilter{}
