@@ -24,7 +24,6 @@ import (
 //	@Failure		422		{object}	error
 //	@Failure		500		{object}	error
 //	@Router			/teachers [post]
-
 func (h *Handler) CreateTeacher(w http.ResponseWriter, r *http.Request) {
 	var dto CreateTeacherDTO
 	if err := json.NewDecoder(r.Body).Decode(&dto); err != nil {
@@ -159,7 +158,6 @@ func (h *Handler) UpdateTeacher(w http.ResponseWriter, r *http.Request) {
 //	@Failure		404	{object}	error
 //	@Failure		500	{object}	error
 //	@Router			/teachers/{id} [delete]
-
 func (h *Handler) DeleteTeacher(w http.ResponseWriter, r *http.Request) {
 	teacherID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
 	if err != nil {
