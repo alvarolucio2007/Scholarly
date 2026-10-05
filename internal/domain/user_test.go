@@ -58,7 +58,7 @@ func Test_isValidCPF(t *testing.T) {
 		},
 		{
 			"CPF with incorrect amount of characters (!=11)",
-			"9999999999",
+			"9999999999", // 10 characters btw
 			false,
 		},
 	}
