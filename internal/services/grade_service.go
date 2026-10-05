@@ -68,3 +68,7 @@ func (s *GradeService) Delete(ctx context.Context, gradeID int64) error {
 func (s *GradeService) ListAverages(ctx context.Context, filter ports.ReportCardFilter) ([]*domain.ReportCard, error) {
 	return s.grades.ListAverages(ctx, filter)
 }
+
+func (s *GradeService) GetAverage(ctx context.Context, studentID, courseID int64) (*float64, error) {
+	return s.grades.GetAverage(ctx, studentID, courseID)
+}
