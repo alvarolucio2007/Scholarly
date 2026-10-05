@@ -363,7 +363,7 @@ Este projeto é uma reescrita de um sistema acadêmico desenvolvido no semestre 
 ## Vídeos
 
 - [Parte 1: Demonstração do sistema](https://youtu.be/W15-8AW7WaY)
-- [Parte 2: Recursos do banco de dados](link2)
+- [Parte 2: Recursos do banco de dados](https://youtu.be/InDuAxvD600)
 
 ---
 
