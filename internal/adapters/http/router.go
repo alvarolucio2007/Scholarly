@@ -53,9 +53,7 @@ func (h *Handler) Mount() http.Handler {
 			r.Get("/", h.GetStudentByID)
 			r.Delete("/", h.DeleteStudent)
 		})
-		r.Route("/enrollment/{enrollment}", func(r chi.Router) {
-			r.Get("/", h.GetStudentByEnrollment)
-		})
+		r.Get("/enrollment/{id}", h.GetStudentByEnrollment)
 	})
 	r.Route("/teachers", func(r chi.Router) {
 		r.Post("/", h.CreateTeacher)
