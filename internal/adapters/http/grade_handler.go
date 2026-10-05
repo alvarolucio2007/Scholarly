@@ -19,10 +19,10 @@ import (
 //	@Produce		json
 //	@Param			payload	body		CreateGradeDTO	true	"Grade DTO"
 //	@Success		201		{object}	GradeResponseDTO
-//	@Failure		400		{object}	error
-//	@Failure		409		{object}	error
-//	@Failure		422		{object}	error
-//	@Failure		500		{object}	error
+//	@Failure		400		{object}	ErrorResponse
+//	@Failure		409		{object}	ErrorResponse
+//	@Failure		422		{object}	ErrorResponse
+//	@Failure		500		{object}	ErrorResponse
 //	@Router			/grades [post]
 func (h *Handler) CreateGrade(w http.ResponseWriter, r *http.Request) {
 	var dto CreateGradeDTO
@@ -55,9 +55,9 @@ func (h *Handler) CreateGrade(w http.ResponseWriter, r *http.Request) {
 //	@Produce		json
 //	@Param			id	path		int	true	"Grade ID"
 //	@Success		200	{object}	GradeResponseDTO
-//	@Failure		400	{object}	errorResponse
-//	@Failure		404	{object}	errorResponse
-//	@Failure		500	{object}	errorResponse
+//	@Failure		400	{object}	ErrorResponse
+//	@Failure		404	{object}	ErrorResponse
+//	@Failure		500	{object}	ErrorResponse
 //	@Router			/grades/{id} [get]
 func (h *Handler) GetGradeByID(w http.ResponseWriter, r *http.Request) {
 	gradeID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
@@ -87,8 +87,8 @@ func (h *Handler) GetGradeByID(w http.ResponseWriter, r *http.Request) {
 //	@Param			test_id			query		int	false	"filter by test ID"
 //	@Param			enrollment_id	query		int	false	"filter by enrollment ID"
 //	@Success		200				{array}		GradeResponseDTO
-//	@Failure		400				{object}	errorResponse
-//	@Failure		500				{object}	errorResponse
+//	@Failure		400				{object}	ErrorResponse
+//	@Failure		500				{object}	ErrorResponse
 //	@Router			/grades [get]
 func (h *Handler) ListGrades(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
@@ -134,11 +134,11 @@ func (h *Handler) ListGrades(w http.ResponseWriter, r *http.Request) {
 //	@Produce		json
 //	@Param			payload	body		UpdateGradeDTO	true	"Grade DTO"
 //	@Success		200		{object}	GradeResponseDTO
-//	@Failure		400		{object}	error
-//	@Failure		404		{object}	error
-//	@Failure		409		{object}	error
-//	@Failure		422		{object}	error
-//	@Failure		500		{object}	error
+//	@Failure		400		{object}	ErrorResponse
+//	@Failure		404		{object}	ErrorResponse
+//	@Failure		409		{object}	ErrorResponse
+//	@Failure		422		{object}	ErrorResponse
+//	@Failure		500		{object}	ErrorResponse
 //	@Router			/grades [put]
 func (h *Handler) UpdateGrade(w http.ResponseWriter, r *http.Request) {
 	var dto UpdateGradeDTO
@@ -172,9 +172,9 @@ func (h *Handler) UpdateGrade(w http.ResponseWriter, r *http.Request) {
 //	@Produce		json
 //	@Param			id	path	int	true	"Grade ID"
 //	@Success		204
-//	@Failure		400	{object}	error
-//	@Failure		404	{object}	error
-//	@Failure		500	{object}	error
+//	@Failure		400	{object}	ErrorResponse
+//	@Failure		404	{object}	ErrorResponse
+//	@Failure		500	{object}	ErrorResponse
 //	@Router			/grades/{id} [delete]
 func (h *Handler) DeleteGrade(w http.ResponseWriter, r *http.Request) {
 	gradeID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
@@ -202,8 +202,8 @@ func (h *Handler) DeleteGrade(w http.ResponseWriter, r *http.Request) {
 //	@Produce		json
 //	@Param			student_id	query		int	false	"filter by studentID"
 //	@Success		200			{array}		ListAverageResponseDTO
-//	@Failure		400			{object}	errorResponse
-//	@Failure		500			{object}	errorResponse
+//	@Failure		400			{object}	ErrorResponse
+//	@Failure		500			{object}	ErrorResponse
 //	@Router			/grades/average/list/ [get]
 func (h *Handler) ListAverages(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
@@ -238,9 +238,9 @@ func (h *Handler) ListAverages(w http.ResponseWriter, r *http.Request) {
 //	@Param			student_id	path		int	true	"Student ID"
 //	@Param			course_id	path		int	true	"Course ID"
 //	@Success		200			{object}	float64
-//	@Failure		400			{object}	errorResponse
-//	@Failure		404			{object}	errorResponse
-//	@Failure		500			{object}	errorResponse
+//	@Failure		400			{object}	ErrorResponse
+//	@Failure		404			{object}	ErrorResponse
+//	@Failure		500			{object}	ErrorResponse
 //	@Router			/grades/average/{student_id}/{course_id} [get]
 func (h *Handler) GetAverage(w http.ResponseWriter, r *http.Request) {
 	studentID, err := strconv.ParseInt(chi.URLParam(r, "student_id"), 10, 64)

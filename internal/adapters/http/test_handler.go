@@ -21,10 +21,10 @@ import (
 //	@Produce		json
 //	@Param			payload	body		CreateTestDTO	true	"Test DTO"
 //	@Success		201		{object}	TestResponseDTO
-//	@Failure		400		{object}	error
-//	@Failure		409		{object}	error
-//	@Failure		422		{object}	error
-//	@Failure		500		{object}	error
+//	@Failure		400		{object}	ErrorResponse
+//	@Failure		409		{object}	ErrorResponse
+//	@Failure		422		{object}	ErrorResponse
+//	@Failure		500		{object}	ErrorResponse
 //	@Router			/tests [post]
 func (h *Handler) CreateTest(w http.ResponseWriter, r *http.Request) {
 	var dto CreateTestDTO
@@ -63,9 +63,9 @@ func (h *Handler) CreateTest(w http.ResponseWriter, r *http.Request) {
 //	@Produce		json
 //	@Param			id	path		int	true	"Test ID"
 //	@Success		200	{object}	TestResponseDTO
-//	@Failure		400	{object}	errorResponse
-//	@Failure		404	{object}	errorResponse
-//	@Failure		500	{object}	errorResponse
+//	@Failure		400	{object}	ErrorResponse
+//	@Failure		404	{object}	ErrorResponse
+//	@Failure		500	{object}	ErrorResponse
 //	@Router			/tests/{id} [get]
 func (h *Handler) GetTestByID(w http.ResponseWriter, r *http.Request) {
 	testID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
@@ -95,8 +95,8 @@ func (h *Handler) GetTestByID(w http.ResponseWriter, r *http.Request) {
 //	@Param			course_id	query		int		false	"filter by course ID"
 //	@Param			name		query		string	false	"filter by name"
 //	@Success		200			{array}		TestResponseDTO
-//	@Failure		400			{object}	errorResponse
-//	@Failure		500			{object}	errorResponse
+//	@Failure		400			{object}	ErrorResponse
+//	@Failure		500			{object}	ErrorResponse
 //	@Router			/tests [get]
 func (h *Handler) ListTests(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
@@ -137,11 +137,11 @@ func (h *Handler) ListTests(w http.ResponseWriter, r *http.Request) {
 //	@Produce		json
 //	@Param			payload	body		UpdateTestDTO	true	"Test DTO"
 //	@Success		201		{object}	TestResponseDTO
-//	@Failure		400		{object}	error
-//	@Failure		404		{object}	error
-//	@Failure		409		{object}	error
-//	@Failure		422		{object}	error
-//	@Failure		500		{object}	error
+//	@Failure		400		{object}	ErrorResponse
+//	@Failure		404		{object}	ErrorResponse
+//	@Failure		409		{object}	ErrorResponse
+//	@Failure		422		{object}	ErrorResponse
+//	@Failure		500		{object}	ErrorResponse
 //	@Router			/tests [put]
 func (h *Handler) UpdateTest(w http.ResponseWriter, r *http.Request) {
 	var dto UpdateTestDTO
@@ -185,9 +185,9 @@ func (h *Handler) UpdateTest(w http.ResponseWriter, r *http.Request) {
 //	@Produce		json
 //	@Param			id	path	int	true	"Test ID"
 //	@Success		204
-//	@Failure		400	{object}	error
-//	@Failure		404	{object}	error
-//	@Failure		500	{object}	error
+//	@Failure		400	{object}	ErrorResponse
+//	@Failure		404	{object}	ErrorResponse
+//	@Failure		500	{object}	ErrorResponse
 //	@Router			/tests/{id} [delete]
 func (h *Handler) DeleteTest(w http.ResponseWriter, r *http.Request) {
 	testID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)

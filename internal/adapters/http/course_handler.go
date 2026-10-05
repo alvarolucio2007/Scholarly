@@ -19,10 +19,10 @@ import (
 //	@Produce		json
 //	@Param			payload	body		CreateCourseDTO	true	"User DTO"
 //	@Success		201		{object}	CourseResponseDTO
-//	@Failure		400		{object}	error
-//	@Failure		409		{object}	error
-//	@Failure		422		{object}	error
-//	@Failure		500		{object}	error
+//	@Failure		400		{object}	ErrorResponse
+//	@Failure		409		{object}	ErrorResponse
+//	@Failure		422		{object}	ErrorResponse
+//	@Failure		500		{object}	ErrorResponse
 //	@Router			/courses [post]
 func (h *Handler) CreateCourse(w http.ResponseWriter, r *http.Request) {
 	var dto CreateCourseDTO
@@ -57,9 +57,9 @@ func (h *Handler) CreateCourse(w http.ResponseWriter, r *http.Request) {
 //	@Produce		json
 //	@Param			id	path		int	true	"Course ID"
 //	@Success		200	{object}	CourseResponseDTO
-//	@Failure		400	{object}	errorResponse
-//	@Failure		404	{object}	errorResponse
-//	@Failure		500	{object}	errorResponse
+//	@Failure		400	{object}	ErrorResponse
+//	@Failure		404	{object}	ErrorResponse
+//	@Failure		500	{object}	ErrorResponse
 //	@Router			/courses/{id} [get]
 func (h *Handler) GetCourseByID(w http.ResponseWriter, r *http.Request) {
 	courseID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
@@ -91,8 +91,8 @@ func (h *Handler) GetCourseByID(w http.ResponseWriter, r *http.Request) {
 //	@Param			code		query		string	false	"filter by code"
 //	@Param			semester	query		string	false	"filter by semester"
 //	@Success		200			{array}		CourseResponseDTO
-//	@Failure		400			{object}	errorResponse
-//	@Failure		500			{object}	errorResponse
+//	@Failure		400			{object}	ErrorResponse
+//	@Failure		500			{object}	ErrorResponse
 //	@Router			/courses [get]
 func (h *Handler) ListCourses(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
@@ -147,11 +147,11 @@ func (h *Handler) ListCourses(w http.ResponseWriter, r *http.Request) {
 //	@Produce		json
 //	@Param			payload	body		UpdateCourseDTO	true	"Course DTO"
 //	@Success		201		{object}	CourseResponseDTO
-//	@Failure		400		{object}	error
-//	@Failure		404		{object}	error
-//	@Failure		409		{object}	error
-//	@Failure		422		{object}	error
-//	@Failure		500		{object}	error
+//	@Failure		400		{object}	ErrorResponse
+//	@Failure		404		{object}	ErrorResponse
+//	@Failure		409		{object}	ErrorResponse
+//	@Failure		422		{object}	ErrorResponse
+//	@Failure		500		{object}	ErrorResponse
 //	@Router			/courses [put]
 func (h *Handler) UpdateCourse(w http.ResponseWriter, r *http.Request) {
 	var dto UpdateCourseDTO
@@ -187,9 +187,9 @@ func (h *Handler) UpdateCourse(w http.ResponseWriter, r *http.Request) {
 //	@Produce		json
 //	@Param			id	path	int	true	"Course ID"
 //	@Success		204
-//	@Failure		400	{object}	error
-//	@Failure		404	{object}	error
-//	@Failure		500	{object}	error
+//	@Failure		400	{object}	ErrorResponse
+//	@Failure		404	{object}	ErrorResponse
+//	@Failure		500	{object}	ErrorResponse
 //	@Router			/courses/{id} [delete]
 func (h *Handler) DeleteCourse(w http.ResponseWriter, r *http.Request) {
 	courseID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
@@ -217,10 +217,10 @@ func (h *Handler) DeleteCourse(w http.ResponseWriter, r *http.Request) {
 //	@Produce		json
 //	@Param			payload	body		EnrollStudentDTO	true	"Enroll Student DTO"
 //	@Success		201		{object}	int
-//	@Failure		400		{object}	error
-//	@Failure		409		{object}	error
-//	@Failure		422		{object}	error
-//	@Failure		500		{object}	error
+//	@Failure		400		{object}	ErrorResponse
+//	@Failure		409		{object}	ErrorResponse
+//	@Failure		422		{object}	ErrorResponse
+//	@Failure		500		{object}	ErrorResponse
 //	@Router			/courses/enroll/ [post]
 func (h *Handler) EnrollStudent(w http.ResponseWriter, r *http.Request) {
 	var dto EnrollStudentDTO
