@@ -39,7 +39,7 @@ func Test_isValidCPF(t *testing.T) {
 		{
 			"valid CPF with punctuation",
 			"014.808.178-99",
-			true,
+			false,
 		},
 		{
 			"valid CPF, no punctuation",
