@@ -215,33 +215,24 @@ func (h *Handler) DeleteCourse(w http.ResponseWriter, r *http.Request) {
 //	@Tags			courses
 //	@Accept			json
 //	@Produce		json
-//	@Param			student_id	path		int	true	"Student ID"
-//	@Success		201			{object}	int
-//	@Failure		400			{object}	error
-//	@Failure		409			{object}	error
-//	@Failure		422			{object}	error
-//	@Failure		500			{object}	error
-//	@Router			/courses/enroll/{student_id} [post]
+//	@Param			payload	body		EnrollStudentDTO	true	"Enroll Student DTO"
+//	@Success		201		{object}	int
+//	@Failure		400		{object}	error
+//	@Failure		409		{object}	error
+//	@Failure		422		{object}	error
+//	@Failure		500		{object}	error
+//	@Router			/courses/enroll/ [post]
 func (h *Handler) EnrollStudent(w http.ResponseWriter, r *http.Request) {
-	studentID, err := strconv.ParseInt(chi.URLParam(r, "student_id"), 10, 64)
-	if err != nil {
-		_ = writeJSONError(w, http.StatusBadRequest, err.Error())
+	var dto EnrollStudentDTO
+	if err := json.NewDecoder(r.Body).Decode(&dto); err != nil {
+		_ = writeJSONError(w, http.StatusBadRequest, "invalid JSON")
 		return
 	}
-	if studentID <= 0 {
-		_ = writeJSONError(w, http.StatusBadRequest, "studentID must be at least 1")
+	if err := validate.Struct(dto); err != nil {
+		_ = writeJSONError(w, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
-	courseID, err := strconv.ParseInt(chi.URLParam(r, "course_id"), 10, 64)
-	if err != nil {
-		_ = writeJSONError(w, http.StatusBadRequest, err.Error())
-		return
-	}
-	if courseID <= 0 {
-		_ = writeJSONError(w, http.StatusBadRequest, "courseID must be at least 1")
-		return
-	}
-	enrollmentID, err := h.courses.EnrollStudent(r.Context(), studentID, courseID)
+	enrollmentID, err := h.courses.EnrollStudent(r.Context(), dto.StudentID, dto.CourseID)
 	if err != nil {
 		respondDomainError(w, err)
 		return
