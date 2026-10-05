@@ -40,3 +40,17 @@ func nilIfEmpty(s string) *string {
 	}
 	return &s
 }
+
+func nilIfZeroInt(i int64) *int64 {
+	if i == 0 {
+		return nil
+	}
+	return &i
+}
+
+func nilIfZeroFloat(f float64) *float64 {
+	if f == 0 {
+		return nil
+	}
+	return &f
+}
