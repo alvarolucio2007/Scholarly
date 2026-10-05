@@ -305,10 +305,11 @@ docker compose up --build
 
 O docker compose já monta toda a aplicação, incluindo migrações de banco de dados.
 
-Em modo de desenvolvimento com hot reload:
+Em modo de desenvolvimento com hot reload (é necessário ter a ferramenta [Make](https://kb.shells.com/tutorials/Windows_11/GNU_Make/)):
 
 ```bash
 docker compose up db -d
+make migrateup
 air
 ```
 
