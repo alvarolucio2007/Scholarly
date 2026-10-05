@@ -90,9 +90,9 @@ func (h *Handler) GetStudentByID(w http.ResponseWriter, r *http.Request) {
 //	@Failure		400	{object}	errorResponse
 //	@Failure		404	{object}	errorResponse
 //	@Failure		500	{object}	errorResponse
-//	@Router			/students/enrollments/{id} [get]
+//	@Router			/students/enrollment/{id} [get]
 func (h *Handler) GetStudentByEnrollment(w http.ResponseWriter, r *http.Request) {
-	studentEnrollment := chi.URLParam(r, "enrollment")
+	studentEnrollment := chi.URLParam(r, "id")
 	if studentEnrollment == "" {
 		_ = writeJSONError(w, http.StatusBadRequest, "studentEnrollment is missing")
 		return
