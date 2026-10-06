@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"log/slog"
 
 	"github.com/alvarolucio2007/Scholarly/internal/domain"
 	"github.com/alvarolucio2007/Scholarly/internal/ports"
@@ -14,11 +15,12 @@ import (
 var _ ports.GradeRepository = (*GradeRepo)(nil)
 
 type GradeRepo struct {
-	db *sql.DB
+	db     *sql.DB
+	logger *slog.Logger
 }
 
-func NewGradeRepo(db *sql.DB) *GradeRepo {
-	return &GradeRepo{db: db}
+func NewGradeRepo(db *sql.DB, logger *slog.Logger) *GradeRepo {
+	return &GradeRepo{db: db, logger: logger}
 }
 
 func (r *GradeRepo) Create(ctx context.Context, grade *domain.Grade) error {
@@ -80,7 +82,7 @@ func (r *GradeRepo) List(ctx context.Context, filter ports.GradeFilter) ([]*doma
 	}
 	defer func() {
 		if err := rows.Close(); err != nil {
-			log.Printf("postgres: rows.close list grade: %v", err)
+			r.logger.ErrorContext(ctx, "postgres: rows.close list grade", "error", err)
 		}
 	}()
 	var grades []*domain.Grade

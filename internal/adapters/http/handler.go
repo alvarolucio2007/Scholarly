@@ -1,6 +1,8 @@
 package http
 
 import (
+	"log/slog"
+
 	"github.com/alvarolucio2007/Scholarly/internal/services"
 )
 
@@ -12,6 +14,7 @@ type Handler struct {
 	enrollments *services.EnrollmentService
 	tests       *services.TestService
 	grades      *services.GradeService
+	logger      *slog.Logger
 }
 
 func NewHandler(
@@ -22,6 +25,7 @@ func NewHandler(
 	enrollments *services.EnrollmentService,
 	tests *services.TestService,
 	grades *services.GradeService,
+	logger *slog.Logger,
 ) *Handler {
 	return &Handler{
 		users:       users,
@@ -31,6 +35,7 @@ func NewHandler(
 		enrollments: enrollments,
 		tests:       tests,
 		grades:      grades,
+		logger:      logger,
 	}
 }
 
