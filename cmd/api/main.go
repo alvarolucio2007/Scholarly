@@ -31,7 +31,7 @@ func main() {
 			logger.Error("main: error while closing db conn", "error", err)
 		}
 	}()
-	userRepo := postgres.NewUserRepo(db)
+	userRepo := postgres.NewUserRepo(db, logger)
 	studentRepo := postgres.NewStudentRepo(db)
 	teacherRepo := postgres.NewTeacherRepo(db, logger)
 	courseRepo := postgres.NewCourseRepo(db, logger)
