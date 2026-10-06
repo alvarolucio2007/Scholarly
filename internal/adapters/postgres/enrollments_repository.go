@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"log"
+	"log/slog"
 
 	"github.com/alvarolucio2007/Scholarly/internal/domain"
 	"github.com/alvarolucio2007/Scholarly/internal/ports"
@@ -14,11 +14,12 @@ import (
 var _ ports.EnrollmentRepository = (*EnrollmentRepo)(nil)
 
 type EnrollmentRepo struct {
-	db *sql.DB
+	db     *sql.DB
+	logger *slog.Logger
 }
 
-func NewEnrollmentRepo(db *sql.DB) *EnrollmentRepo {
-	return &EnrollmentRepo{db: db}
+func NewEnrollmentRepo(db *sql.DB, logger *slog.Logger) *EnrollmentRepo {
+	return &EnrollmentRepo{db: db, logger: logger}
 }
 
 func (r *EnrollmentRepo) Create(ctx context.Context, enrollment *domain.Enrollment) error {
@@ -83,7 +84,7 @@ func (r *EnrollmentRepo) List(ctx context.Context, filter ports.EnrollmentFilter
 	}
 	defer func() {
 		if err := rows.Close(); err != nil {
-			log.Printf("postgres: rows.close list enrollment: %v", err)
+			r.logger.ErrorContext(ctx, "postgres: rows.close list enrollment:", "error", err)
 		}
 	}()
 	var enrollments []*domain.Enrollment

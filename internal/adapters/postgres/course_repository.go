@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"log"
+	"log/slog"
 
 	"github.com/alvarolucio2007/Scholarly/internal/domain"
 	"github.com/alvarolucio2007/Scholarly/internal/ports"
@@ -15,11 +15,12 @@ import (
 var _ ports.CourseRepository = (*CourseRepo)(nil)
 
 type CourseRepo struct {
-	db *sql.DB
+	db     *sql.DB
+	logger *slog.Logger
 }
 
-func NewCourseRepo(db *sql.DB) *CourseRepo {
-	return &CourseRepo{db: db}
+func NewCourseRepo(db *sql.DB, logger *slog.Logger) *CourseRepo {
+	return &CourseRepo{db: db, logger: logger}
 }
 
 func (r *CourseRepo) Create(ctx context.Context, course *domain.Course) error {
@@ -81,7 +82,7 @@ func (r *CourseRepo) List(ctx context.Context, filter ports.CourseFilter) ([]*do
 	}
 	defer func() {
 		if err := rows.Close(); err != nil {
-			log.Printf("postgres: rows.close list courses: %v", err)
+			r.logger.ErrorContext(ctx, "postgres: rows.close list courses", "error", err.Error())
 		}
 	}()
 	var courses []*domain.Course

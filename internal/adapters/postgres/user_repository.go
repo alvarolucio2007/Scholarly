@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"log"
+	"log/slog"
 
 	"github.com/alvarolucio2007/Scholarly/internal/domain"
 	"github.com/alvarolucio2007/Scholarly/internal/ports"
@@ -15,7 +15,8 @@ import (
 var _ ports.UserRepository = (*UserRepo)(nil)
 
 type UserRepo struct {
-	db *sql.DB
+	db     *sql.DB
+	logger *slog.Logger
 }
 
 func NewUserRepo(db *sql.DB) *UserRepo {
@@ -82,7 +83,7 @@ func (r *UserRepo) List(ctx context.Context, filter ports.UserFilter) ([]*domain
 	}
 	defer func() {
 		if err := rows.Close(); err != nil {
-			log.Printf("postgres: rows.close list users: %v", err)
+			r.logger.Error("postgres: rows.close list users", "error", err)
 		}
 	}()
 	var users []*domain.User

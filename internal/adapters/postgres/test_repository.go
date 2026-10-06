@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"log"
+	"log/slog"
 
 	"github.com/alvarolucio2007/Scholarly/internal/domain"
 	"github.com/alvarolucio2007/Scholarly/internal/ports"
@@ -14,11 +14,12 @@ import (
 var _ ports.TestRepository = (*TestRepo)(nil)
 
 type TestRepo struct {
-	db *sql.DB
+	db     *sql.DB
+	logger *slog.Logger
 }
 
-func NewTestRepo(db *sql.DB) *TestRepo {
-	return &TestRepo{db: db}
+func NewTestRepo(db *sql.DB, logger *slog.Logger) *TestRepo {
+	return &TestRepo{db: db, logger: logger}
 }
 
 func (r *TestRepo) Create(ctx context.Context, test *domain.Test) error {
@@ -75,7 +76,7 @@ func (r *TestRepo) List(ctx context.Context, filter ports.TestFilter) ([]*domain
 	}
 	defer func() {
 		if err := rows.Close(); err != nil {
-			log.Printf("postgres: rows.close list test: %v", err)
+			r.logger.ErrorContext(ctx, "postgres: rows.close list test", "error", err)
 		}
 	}()
 	var tests []*domain.Test

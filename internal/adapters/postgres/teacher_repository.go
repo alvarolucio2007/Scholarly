@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"log/slog"
 
 	"github.com/alvarolucio2007/Scholarly/internal/domain"
 	"github.com/alvarolucio2007/Scholarly/internal/ports"
@@ -15,11 +16,12 @@ import (
 var _ ports.TeacherRepository = (*TeacherRepo)(nil)
 
 type TeacherRepo struct {
-	db *sql.DB
+	db     *sql.DB
+	logger *slog.Logger
 }
 
-func NewTeacherRepo(db *sql.DB) *TeacherRepo {
-	return &TeacherRepo{db: db}
+func NewTeacherRepo(db *sql.DB, logger *slog.Logger) *TeacherRepo {
+	return &TeacherRepo{db: db, logger: logger}
 }
 
 func (r *TeacherRepo) Create(ctx context.Context, teacher *domain.Teacher) error {
@@ -72,6 +74,7 @@ func (r *TeacherRepo) List(ctx context.Context, filter ports.TeacherFilter) ([]*
 	}
 	defer func() {
 		if err := rows.Close(); err != nil {
+			r.logger.ErrorContext(ctx, "postgres: rows.close list teachers ", "error", err)
 			log.Printf("postgres: rows.close list teachers: %v", err)
 		}
 	}()
