@@ -19,8 +19,8 @@ type UserRepo struct {
 	logger *slog.Logger
 }
 
-func NewUserRepo(db *sql.DB) *UserRepo {
-	return &UserRepo{db: db}
+func NewUserRepo(db *sql.DB, logger *slog.Logger) *UserRepo {
+	return &UserRepo{db: db, logger: logger}
 }
 
 func (r *UserRepo) Create(ctx context.Context, user *domain.User) error {
