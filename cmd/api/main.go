@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"log/slog"
 	"os"
 	"time"
@@ -23,12 +22,13 @@ func main() {
 	logger.Info("trying to connect to db")
 	db, err := postgres.NewConn(DBUrl, 30, 30, time.Minute)
 	if err != nil {
-		log.Fatalf("main: error while connecting to db: %v", err)
+		logger.Error("main: error while connecting to db", "error", err)
+		panic(err)
 	}
 	logger.Info("db connection successful")
 	defer func() {
 		if err := db.Close(); err != nil {
-			log.Printf("error while closing DB: %v", err)
+			logger.Error("main: error while closing db conn", "error", err)
 		}
 	}()
 	userRepo := postgres.NewUserRepo(db)
@@ -58,7 +58,7 @@ func main() {
 	}
 	logger.Info("trying to start server")
 	if err := handler.Run(handler.Mount(), addr); err != nil {
-		slog.Error("main: error while booting HTTP server: ", "", err)
+		slog.Error("main: error while booting HTTP server: ", "error", err)
 	}
 	logger.Info("server has been shut down")
 }
