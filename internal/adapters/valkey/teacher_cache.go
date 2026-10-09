@@ -21,7 +21,7 @@ func (c *TeacherCache) Create(ctx context.Context, item *domain.Teacher) error {
 	cacheKey := fmt.Sprintf("teacher:%d", item.UserID)
 	json, err := json.Marshal(item)
 	if err != nil {
-		return fmt.Errorf("cache: create user error: %w", err)
+		return fmt.Errorf("cache: create teacher error: %w", err)
 	}
 	ctx, cancel := context.WithTimeout(ctx, CacheQueryTimeout)
 	defer cancel()
