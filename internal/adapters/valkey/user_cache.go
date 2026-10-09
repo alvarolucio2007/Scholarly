@@ -23,11 +23,15 @@ func (c *UserCache) Create(ctx context.Context, item *domain.User) error {
 	if err != nil {
 		return fmt.Errorf("cache: create user error: %w", err)
 	}
+	ctx, cancel := context.WithTimeout(ctx, CacheQueryTimeout)
+	defer cancel()
 	return c.rdb.Set(ctx, cacheKey, json, UserExpTime).Err()
 }
 
 func (c *UserCache) Read(ctx context.Context, id int64) (*domain.User, error) {
 	cacheKey := fmt.Sprintf("user:%d", id)
+	ctx, cancel := context.WithTimeout(ctx, CacheQueryTimeout)
+	defer cancel()
 	data, err := c.rdb.Get(ctx, cacheKey).Result()
 	if errors.Is(err, redis.Nil) {
 		return nil, nil
@@ -43,8 +47,9 @@ func (c *UserCache) Read(ctx context.Context, id int64) (*domain.User, error) {
 
 func (c *UserCache) Delete(ctx context.Context, id int64) error {
 	cacheKey := fmt.Sprintf("user:%d", id)
-	err := c.rdb.Del(ctx, cacheKey).Err()
-	if err != nil {
+	ctx, cancel := context.WithTimeout(ctx, CacheQueryTimeout)
+	defer cancel()
+	if err := c.rdb.Del(ctx, cacheKey).Err(); err != nil {
 		return fmt.Errorf("cache: delete user error: %w", err)
 	}
 	return nil
