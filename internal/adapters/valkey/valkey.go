@@ -10,4 +10,5 @@ const (
 	UserExpTime    = time.Hour
 	TeacherExpTime = time.Hour
 	StudentExpTime = time.Hour
+	CourseExpTime  = time.Hour
 )
