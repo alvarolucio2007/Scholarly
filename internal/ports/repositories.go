@@ -7,39 +7,33 @@ import (
 	"github.com/alvarolucio2007/Scholarly/internal/domain"
 )
 
-// TODO: Possible refactor here with generics...
-// like type Repository[T any] interface{...}
-
+type Repository[T any] interface {
+	Create(ctx context.Context, item *T) error
+	GetByID(ctx context.Context, id int64) (*T, error)
+	Update(ctx context.Context, item *T) error
+	Delete(ctx context.Context, id int64) error
+}
 type UserFilter struct {
 	Name  *string
 	CPF   *string
 	Email *string
 }
 type UserRepository interface {
-	Create(ctx context.Context, user *domain.User) error
-	GetByID(ctx context.Context, userID int64) (*domain.User, error)
+	Repository[domain.User]
 	List(ctx context.Context, filter UserFilter) ([]*domain.User, error)
-	Update(ctx context.Context, user *domain.User) error
-	Delete(ctx context.Context, userID int64) error
 }
 
 type StudentRepository interface {
-	Create(ctx context.Context, student *domain.Student) error
-	GetByID(ctx context.Context, studentID int64) (*domain.Student, error)
+	Repository[domain.Student]
 	GetByEnrollment(ctx context.Context, enrollment string) (*domain.Student, error)
-	Update(ctx context.Context, student *domain.Student) error
-	Delete(ctx context.Context, studentID int64) error
 }
 
 type TeacherFilter struct {
 	Department *string
 }
 type TeacherRepository interface {
-	Create(ctx context.Context, teacher *domain.Teacher) error
-	GetByID(ctx context.Context, teacherID int64) (*domain.Teacher, error)
+	Repository[domain.Teacher]
 	List(ctx context.Context, filter TeacherFilter) ([]*domain.Teacher, error)
-	Update(ctx context.Context, teacher *domain.Teacher) error
-	Delete(ctx context.Context, teacherID int64) error
 }
 
 type CourseFilter struct {
@@ -49,11 +43,8 @@ type CourseFilter struct {
 	Semester  *string
 }
 type CourseRepository interface {
-	Create(ctx context.Context, course *domain.Course) error
-	GetByID(ctx context.Context, courseID int64) (*domain.Course, error)
+	Repository[domain.Course]
 	List(ctx context.Context, filter CourseFilter) ([]*domain.Course, error)
-	Update(ctx context.Context, course *domain.Course) error
-	Delete(ctx context.Context, courseID int64) error
 	EnrollStudent(ctx context.Context, studentID, courseID int64) (int64, error)
 }
 
@@ -63,11 +54,8 @@ type EnrollmentFilter struct {
 	Status    *string
 }
 type EnrollmentRepository interface {
-	Create(ctx context.Context, enrollment *domain.Enrollment) error
-	GetByID(ctx context.Context, enrollmentID int64) (*domain.Enrollment, error)
+	Repository[domain.Enrollment] // TODO: Add status editing later for Update
 	List(ctx context.Context, filter EnrollmentFilter) ([]*domain.Enrollment, error)
-	Update(ctx context.Context, enrollment *domain.Enrollment) error // TODO: Add status editing later...
-	Delete(ctx context.Context, enrollmentID int64) error
 	GetWeightedAverage(ctx context.Context, studentID, courseID int64) (float64, error)
 }
 
@@ -77,11 +65,8 @@ type TestFilter struct {
 	TestDate *time.Time
 }
 type TestRepository interface {
-	Create(ctx context.Context, test *domain.Test) error
-	GetByID(ctx context.Context, testID int64) (*domain.Test, error)
+	Repository[domain.Test]
 	List(ctx context.Context, filter TestFilter) ([]*domain.Test, error)
-	Update(ctx context.Context, test *domain.Test) error
-	Delete(ctx context.Context, testID int64) error
 }
 
 type GradeFilter struct {
@@ -92,11 +77,8 @@ type ReportCardFilter struct {
 	StudentID *int64
 }
 type GradeRepository interface {
-	Create(ctx context.Context, grade *domain.Grade) error
-	GetByID(ctx context.Context, gradeID int64) (*domain.Grade, error)
+	Repository[domain.Grade]
 	List(ctx context.Context, filter GradeFilter) ([]*domain.Grade, error)
-	Update(ctx context.Context, grade *domain.Grade) error
-	Delete(ctx context.Context, gradeID int64) error
 	ListAverages(ctx context.Context, filter ReportCardFilter) ([]*domain.ReportCard, error)
 	GetAverage(ctx context.Context, studentID, courseID int64) (*float64, error)
 }
