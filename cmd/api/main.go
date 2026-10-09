@@ -23,7 +23,7 @@ func main() {
 	db, err := postgres.NewConn(DBUrl, 30, 30, time.Minute)
 	if err != nil {
 		logger.Error("main: error while connecting to db", "error", err)
-		panic(1)
+		os.Exit(1)
 	}
 	logger.Info("db connection successful")
 	defer func() {
