@@ -7,8 +7,5 @@ import (
 const (
 	CacheQueryTimeout = 500 * time.Millisecond
 
-	UserExpTime    = time.Hour
-	TeacherExpTime = time.Hour
-	StudentExpTime = time.Hour
-	CourseExpTime  = time.Hour
+	CacheExpTime = time.Hour
 )

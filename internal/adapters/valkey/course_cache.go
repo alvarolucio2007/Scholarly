@@ -25,7 +25,7 @@ func (c *CourseCache) Create(ctx context.Context, item *domain.Course) error {
 	}
 	ctx, cancel := context.WithTimeout(ctx, CacheQueryTimeout)
 	defer cancel()
-	return c.rdb.Set(ctx, cacheKey, json, CourseExpTime).Err()
+	return c.rdb.Set(ctx, cacheKey, json, CacheExpTime).Err()
 }
 
 func (c *CourseCache) Read(ctx context.Context, id int64) (*domain.Course, error) {
@@ -46,7 +46,7 @@ func (c *CourseCache) Read(ctx context.Context, id int64) (*domain.Course, error
 }
 
 func (c *CourseCache) Delete(ctx context.Context, id int64) error {
-	cacheKey := fmt.Sprintf("course:%d")
+	cacheKey := fmt.Sprintf("course:%d", id)
 	ctx, cancel := context.WithTimeout(ctx, CacheQueryTimeout)
 	defer cancel()
 	if err := c.rdb.Del(ctx, cacheKey).Err(); err != nil {

@@ -25,7 +25,7 @@ func (c *UserCache) Create(ctx context.Context, item *domain.User) error {
 	}
 	ctx, cancel := context.WithTimeout(ctx, CacheQueryTimeout)
 	defer cancel()
-	return c.rdb.Set(ctx, cacheKey, json, UserExpTime).Err()
+	return c.rdb.Set(ctx, cacheKey, json, CacheExpTime).Err()
 }
 
 func (c *UserCache) Read(ctx context.Context, id int64) (*domain.User, error) {
