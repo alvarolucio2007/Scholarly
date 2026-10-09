@@ -7,6 +7,9 @@ import (
 	"github.com/alvarolucio2007/Scholarly/internal/domain"
 )
 
+// TODO: Possible refactor here with generics...
+// like type Repository[T any] interface{...}
+
 type UserFilter struct {
 	Name  *string
 	CPF   *string
