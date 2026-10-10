@@ -9,13 +9,13 @@ import (
 )
 
 type StudentService struct {
-	students ports.StudentRepository
-	cache    ports.Cache[domain.Student]
-	logger   *slog.Logger
+	repo   ports.StudentRepository
+	cache  ports.Cache[domain.Student]
+	logger *slog.Logger
 }
 
-func NewStudentService(students ports.StudentRepository, cache ports.Cache[domain.Student], logger *slog.Logger) *StudentService {
-	return &StudentService{students: students, cache: cache, logger: logger}
+func NewStudentService(repo ports.StudentRepository, cache ports.Cache[domain.Student], logger *slog.Logger) *StudentService {
+	return &StudentService{repo: repo, cache: cache, logger: logger}
 }
 
 type CreateStudentPayload struct {
@@ -23,9 +23,9 @@ type CreateStudentPayload struct {
 	EnrollmentNumber string
 }
 
-func (s *StudentService) CreateStudent(ctx context.Context, payload CreateStudentPayload) (*domain.Student, error) {
+func (s *StudentService) Create(ctx context.Context, payload CreateStudentPayload) (*domain.Student, error) {
 	student := &domain.Student{UserID: payload.UserID, EnrollmentNumber: payload.EnrollmentNumber}
-	if err := s.students.Create(ctx, student); err != nil {
+	if err := s.repo.Create(ctx, student); err != nil {
 		return nil, err
 	}
 	if err := s.cache.Create(ctx, student); err != nil {
@@ -42,7 +42,7 @@ func (s *StudentService) GetByID(ctx context.Context, studentID int64) (*domain.
 	if student != nil {
 		return student, nil
 	}
-	student, err = s.students.GetByID(ctx, studentID)
+	student, err = s.repo.GetByID(ctx, studentID)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ func (s *StudentService) GetByID(ctx context.Context, studentID int64) (*domain.
 }
 
 func (s *StudentService) GetByEnrollment(ctx context.Context, enrollment string) (*domain.Student, error) {
-	return s.students.GetByEnrollment(ctx, enrollment)
+	return s.repo.GetByEnrollment(ctx, enrollment)
 }
 
 type UpdateStudentPayload struct {
@@ -66,7 +66,7 @@ func (s *StudentService) Update(ctx context.Context, payload UpdateStudentPayloa
 	if payload.EnrollmentNumber != nil {
 		student.EnrollmentNumber = *payload.EnrollmentNumber
 	}
-	if err := s.students.Update(ctx, &student); err != nil {
+	if err := s.repo.Update(ctx, &student); err != nil {
 		return nil, err
 	}
 	if err := s.cache.Delete(ctx, student.UserID); err != nil {
@@ -79,7 +79,7 @@ func (s *StudentService) Update(ctx context.Context, payload UpdateStudentPayloa
 }
 
 func (s *StudentService) Delete(ctx context.Context, studentID int64) error {
-	if err := s.students.Delete(ctx, studentID); err != nil {
+	if err := s.repo.Delete(ctx, studentID); err != nil {
 		return err
 	}
 	if err := s.cache.Delete(ctx, studentID); err != nil {
