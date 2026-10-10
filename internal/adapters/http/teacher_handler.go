@@ -34,7 +34,7 @@ func (h *Handler) CreateTeacher(w http.ResponseWriter, r *http.Request) {
 		_ = writeJSONError(w, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
-	teacher, err := h.teachers.CreateTeacher(r.Context(), services.CreateTeacherPayload{
+	teacher, err := h.teachers.Create(r.Context(), services.CreateTeacherPayload{
 		UserID:     dto.UserID,
 		Department: dto.Department,
 	})
