@@ -9,13 +9,13 @@ import (
 )
 
 type TeacherService struct {
-	teachers ports.TeacherRepository
-	cache    ports.Cache[domain.Teacher]
-	logger   *slog.Logger
+	repo   ports.TeacherRepository
+	cache  ports.Cache[domain.Teacher]
+	logger *slog.Logger
 }
 
-func NewTeacherService(teachers ports.TeacherRepository, cache ports.Cache[domain.Teacher], logger *slog.Logger) *TeacherService {
-	return &TeacherService{teachers: teachers, cache: cache, logger: logger}
+func NewTeacherService(repo ports.TeacherRepository, cache ports.Cache[domain.Teacher], logger *slog.Logger) *TeacherService {
+	return &TeacherService{repo: repo, cache: cache, logger: logger}
 }
 
 type CreateTeacherPayload struct {
@@ -23,9 +23,9 @@ type CreateTeacherPayload struct {
 	Department string
 }
 
-func (s *TeacherService) CreateTeacher(ctx context.Context, payload CreateTeacherPayload) (*domain.Teacher, error) {
+func (s *TeacherService) Create(ctx context.Context, payload CreateTeacherPayload) (*domain.Teacher, error) {
 	teacher := &domain.Teacher{UserID: payload.UserID, Department: payload.Department}
-	if err := s.teachers.Create(ctx, teacher); err != nil {
+	if err := s.repo.Create(ctx, teacher); err != nil {
 		return nil, err
 	}
 	if err := s.cache.Create(ctx, teacher); err != nil {
@@ -42,18 +42,18 @@ func (s *TeacherService) GetByID(ctx context.Context, teacherID int64) (*domain.
 	if teacher != nil {
 		return teacher, nil
 	}
-	teacher, err = s.teachers.GetByID(ctx, teacherID)
+	teacher, err = s.repo.GetByID(ctx, teacherID)
 	if err != nil {
 		return nil, err
 	}
 	if err := s.cache.Create(ctx, teacher); err != nil {
 		s.logger.ErrorContext(ctx, "failed to cache teacher", "error", err)
 	}
-	return s.teachers.GetByID(ctx, teacherID)
+	return s.repo.GetByID(ctx, teacherID)
 }
 
 func (s *TeacherService) List(ctx context.Context, filter ports.TeacherFilter) ([]*domain.Teacher, error) {
-	return s.teachers.List(ctx, filter)
+	return s.repo.List(ctx, filter)
 }
 
 type UpdateTeacherPayload struct {
@@ -66,7 +66,7 @@ func (s *TeacherService) Update(ctx context.Context, payload UpdateTeacherPayloa
 	if payload.Department != nil {
 		teacher.Department = *payload.Department
 	}
-	if err := s.teachers.Update(ctx, &teacher); err != nil {
+	if err := s.repo.Update(ctx, &teacher); err != nil {
 		return nil, err
 	}
 	if err := s.cache.Delete(ctx, teacher.UserID); err != nil {
@@ -79,7 +79,7 @@ func (s *TeacherService) Update(ctx context.Context, payload UpdateTeacherPayloa
 }
 
 func (s *TeacherService) Delete(ctx context.Context, teacherID int64) error {
-	if err := s.teachers.Delete(ctx, teacherID); err != nil {
+	if err := s.repo.Delete(ctx, teacherID); err != nil {
 		return err
 	}
 	if err := s.cache.Delete(ctx, teacherID); err != nil {
