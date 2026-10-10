@@ -12,7 +12,10 @@ import (
 	"github.com/alvarolucio2007/Scholarly/internal/ports"
 )
 
-var _ ports.GradeRepository = (*GradeRepo)(nil)
+var (
+	_ ports.GradeRepository          = (*GradeRepo)(nil)
+	_ ports.Repository[domain.Grade] = (*GradeRepo)(nil)
+)
 
 type GradeRepo struct {
 	db     *sql.DB

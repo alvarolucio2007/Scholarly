@@ -13,7 +13,10 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-var _ ports.TeacherRepository = (*TeacherRepo)(nil)
+var (
+	_ ports.TeacherRepository          = (*TeacherRepo)(nil)
+	_ ports.Repository[domain.Teacher] = (*TeacherRepo)(nil)
+)
 
 type TeacherRepo struct {
 	db     *sql.DB

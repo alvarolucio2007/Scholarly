@@ -12,7 +12,10 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-var _ ports.UserRepository = (*UserRepo)(nil)
+var (
+	_ ports.UserRepository          = (*UserRepo)(nil)
+	_ ports.Repository[domain.User] = (*UserRepo)(nil)
+)
 
 type UserRepo struct {
 	db     *sql.DB

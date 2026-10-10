@@ -11,7 +11,10 @@ import (
 	"github.com/alvarolucio2007/Scholarly/internal/ports"
 )
 
-var _ ports.TestRepository = (*TestRepo)(nil)
+var (
+	_ ports.TestRepository          = (*TestRepo)(nil)
+	_ ports.Repository[domain.Test] = (*TestRepo)(nil)
+)
 
 type TestRepo struct {
 	db     *sql.DB
