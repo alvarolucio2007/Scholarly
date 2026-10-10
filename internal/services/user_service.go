@@ -11,14 +11,14 @@ import (
 )
 
 type UserService struct {
-	users  ports.UserRepository
+	repo   ports.UserRepository
 	hasher ports.PasswordHasher
 	cache  ports.Cache[domain.User]
 	logger *slog.Logger
 }
 
-func NewUserService(users ports.UserRepository, hasher ports.PasswordHasher, cache ports.Cache[domain.User], logger *slog.Logger) *UserService {
-	return &UserService{users: users, hasher: hasher, cache: cache, logger: logger}
+func NewUserService(repo ports.UserRepository, hasher ports.PasswordHasher, cache ports.Cache[domain.User], logger *slog.Logger) *UserService {
+	return &UserService{repo: repo, hasher: hasher, cache: cache, logger: logger}
 }
 
 type CreateUserPayload struct {
@@ -36,7 +36,7 @@ type UserResponse struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 }
 
-func (s *UserService) CreateUser(ctx context.Context, payload CreateUserPayload) (*domain.User, error) {
+func (s *UserService) Create(ctx context.Context, payload CreateUserPayload) (*domain.User, error) {
 	user := &domain.User{
 		Name:  payload.Name,
 		CPF:   payload.CPF,
@@ -52,7 +52,7 @@ func (s *UserService) CreateUser(ctx context.Context, payload CreateUserPayload)
 	}
 	user.PasswordHash = []byte(hash)
 
-	if err := s.users.Create(ctx, user); err != nil {
+	if err := s.repo.Create(ctx, user); err != nil {
 		return nil, err
 	}
 	if err := s.cache.Create(ctx, user); err != nil {
@@ -69,7 +69,7 @@ func (s *UserService) GetByID(ctx context.Context, userID int64) (*domain.User, 
 	if user != nil {
 		return user, nil
 	}
-	user, err = s.users.GetByID(ctx, userID)
+	user, err = s.repo.GetByID(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -79,8 +79,8 @@ func (s *UserService) GetByID(ctx context.Context, userID int64) (*domain.User, 
 	return user, nil
 }
 
-func (s *UserService) ListUsers(ctx context.Context, filter ports.UserFilter) ([]*domain.User, error) {
-	return s.users.List(ctx, filter)
+func (s *UserService) List(ctx context.Context, filter ports.UserFilter) ([]*domain.User, error) {
+	return s.repo.List(ctx, filter)
 }
 
 type UpdateUserPayload struct {
@@ -91,7 +91,7 @@ type UpdateUserPayload struct {
 	Password *string
 }
 
-func (s *UserService) UpdateUser(ctx context.Context, payload UpdateUserPayload) (*domain.User, error) {
+func (s *UserService) Update(ctx context.Context, payload UpdateUserPayload) (*domain.User, error) {
 	user := domain.User{ID: payload.ID}
 	if payload.Name != nil {
 		user.Name = *payload.Name
@@ -116,7 +116,7 @@ func (s *UserService) UpdateUser(ctx context.Context, payload UpdateUserPayload)
 		user.PasswordHash = []byte(hash)
 	}
 
-	if err := s.users.Update(ctx, &user); err != nil {
+	if err := s.repo.Update(ctx, &user); err != nil {
 		return nil, err
 	}
 	if err := s.cache.Delete(ctx, user.ID); err != nil {
@@ -129,7 +129,7 @@ func (s *UserService) UpdateUser(ctx context.Context, payload UpdateUserPayload)
 }
 
 func (s *UserService) Delete(ctx context.Context, userID int64) error {
-	if err := s.users.Delete(ctx, userID); err != nil {
+	if err := s.repo.Delete(ctx, userID); err != nil {
 		return err
 	}
 	if err := s.cache.Delete(ctx, userID); err != nil {
