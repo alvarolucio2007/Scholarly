@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"log/slog"
 
 	"github.com/alvarolucio2007/Scholarly/internal/domain"
 	"github.com/alvarolucio2007/Scholarly/internal/ports"
@@ -9,6 +10,8 @@ import (
 
 type CourseService struct {
 	courses ports.CourseRepository
+	cache   ports.Cache[domain.Course]
+	logger  *slog.Logger
 }
 
 func NewCourseService(courses ports.CourseRepository) *CourseService {
@@ -28,11 +31,28 @@ func (s *CourseService) CreateCourse(ctx context.Context, payload CreateCoursePa
 	if err := s.courses.Create(ctx, course); err != nil {
 		return nil, err
 	}
+	if err := s.cache.Create(ctx, course); err != nil {
+		s.logger.ErrorContext(ctx, "failed to cache course", "error", err)
+	}
 	return course, nil
 }
 
 func (s *CourseService) GetByID(ctx context.Context, courseID int64) (*domain.Course, error) {
-	return s.courses.GetByID(ctx, courseID)
+	course, err := s.cache.Read(ctx, courseID)
+	if err != nil {
+		s.logger.ErrorContext(ctx, "failed to fetch cached course", "error", err)
+	}
+	if course != nil {
+		return course, nil
+	}
+	course, err = s.courses.GetByID(ctx, courseID)
+	if err != nil {
+		return nil, err
+	}
+	if err := s.cache.Create(ctx, course); err != nil {
+		s.logger.ErrorContext(ctx, "failed to cache user", "error", err)
+	}
+	return course, nil
 }
 
 func (s *CourseService) ListCourses(ctx context.Context, filter ports.CourseFilter) ([]*domain.Course, error) {
@@ -68,11 +88,23 @@ func (s *CourseService) UpdateCourse(ctx context.Context, payload UpdateCoursePa
 	if err := s.courses.Update(ctx, &course); err != nil {
 		return nil, err
 	}
+	if err := s.cache.Delete(ctx, course.ID); err != nil {
+		s.logger.ErrorContext(ctx, "failed to delete cached course", "error", err)
+	}
+	if err := s.cache.Create(ctx, &course); err != nil {
+		s.logger.ErrorContext(ctx, "failed to cache course", "error", err)
+	}
 	return &course, nil
 }
 
 func (s *CourseService) DeleteCourse(ctx context.Context, courseID int64) error {
-	return s.courses.Delete(ctx, courseID)
+	if err := s.courses.Delete(ctx, courseID); err != nil {
+		return err
+	}
+	if err := s.cache.Delete(ctx, courseID); err != nil {
+		s.logger.ErrorContext(ctx, "failed to delete cached user", "error", err)
+	}
+	return nil
 }
 
 func (s *CourseService) EnrollStudent(ctx context.Context, studentID, courseID int64) (int64, error) {
