@@ -34,7 +34,7 @@ func (h *Handler) CreateGrade(w http.ResponseWriter, r *http.Request) {
 		_ = writeJSONError(w, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
-	grade, err := h.grades.CreateGrade(r.Context(), services.CreateGradePayload{
+	grade, err := h.grades.Create(r.Context(), services.CreateGradePayload{
 		TestID:       dto.TestID,
 		EnrollmentID: dto.EnrollmentID,
 		Value:        dto.Value,
