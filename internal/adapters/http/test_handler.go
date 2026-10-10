@@ -41,7 +41,7 @@ func (h *Handler) CreateTest(w http.ResponseWriter, r *http.Request) {
 		_ = writeJSONError(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	test, err := h.tests.CreateTest(r.Context(), services.CreateTestPayload{
+	test, err := h.tests.Create(r.Context(), services.CreateTestPayload{
 		CourseID: dto.CourseID,
 		Name:     dto.Name,
 		Weight:   dto.Weight,
@@ -120,7 +120,7 @@ func (h *Handler) ListTests(w http.ResponseWriter, r *http.Request) {
 		}
 		filter.Name = &v
 	}
-	tests, err := h.tests.ListTests(r.Context(), filter)
+	tests, err := h.tests.List(r.Context(), filter)
 	if err != nil {
 		respondDomainError(w, err)
 		return
@@ -162,7 +162,7 @@ func (h *Handler) UpdateTest(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	test, err := h.tests.UpdateTest(r.Context(), services.UpdateTestPayload{
+	test, err := h.tests.Update(r.Context(), services.UpdateTestPayload{
 		ID:       dto.ID,
 		CourseID: nilIfZeroInt(dto.CourseID),
 		Name:     nilIfEmpty(dto.Name),
@@ -199,7 +199,7 @@ func (h *Handler) DeleteTest(w http.ResponseWriter, r *http.Request) {
 		_ = writeJSONError(w, http.StatusBadRequest, "testID must be at least 1")
 		return
 	}
-	if err := h.tests.DeleteTest(r.Context(), testID); err != nil {
+	if err := h.tests.Delete(r.Context(), testID); err != nil {
 		respondDomainError(w, err)
 		return
 	}
