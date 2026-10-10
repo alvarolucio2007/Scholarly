@@ -3,17 +3,18 @@ package services
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/alvarolucio2007/Scholarly/internal/domain"
 	"github.com/alvarolucio2007/Scholarly/internal/ports"
 )
 
-// FIXME: Work out the rough edges in this (adding slogs, fixing orders, etc.)
 type UserService struct {
 	users  ports.UserRepository
 	hasher ports.PasswordHasher
 	cache  ports.Cache[domain.User]
+	logger *slog.Logger
 }
 
 func NewUserService(users ports.UserRepository, hasher ports.PasswordHasher, cache ports.Cache[domain.User]) *UserService {
@@ -55,7 +56,7 @@ func (s *UserService) CreateUser(ctx context.Context, payload CreateUserPayload)
 		return nil, err
 	}
 	if err := s.cache.Create(ctx, user); err != nil {
-		return nil, err
+		s.logger.ErrorContext(ctx, "failed to cache user", "error", err)
 	}
 	return user, nil
 }
@@ -63,7 +64,7 @@ func (s *UserService) CreateUser(ctx context.Context, payload CreateUserPayload)
 func (s *UserService) GetUserByID(ctx context.Context, userID int64) (*domain.User, error) {
 	user, err := s.cache.Read(ctx, userID)
 	if err != nil {
-		return nil, err
+		s.logger.ErrorContext(ctx, "failed to fetch cached user", "error", err)
 	}
 	if user != nil {
 		return user, nil
@@ -73,7 +74,7 @@ func (s *UserService) GetUserByID(ctx context.Context, userID int64) (*domain.Us
 		return nil, err
 	}
 	if err := s.cache.Create(ctx, user); err != nil {
-		return nil, err
+		s.logger.ErrorContext(ctx, "failed to cache user", "error", err)
 	}
 	return user, nil
 }
@@ -119,17 +120,20 @@ func (s *UserService) UpdateUser(ctx context.Context, payload UpdateUserPayload)
 		return nil, err
 	}
 	if err := s.cache.Delete(ctx, user.ID); err != nil {
-		return nil, err
+		s.logger.ErrorContext(ctx, "failed to delete cached user", "error", err)
 	}
 	if err := s.cache.Create(ctx, &user); err != nil {
-		return nil, err
+		s.logger.ErrorContext(ctx, "failed to cache user", "error", err)
 	}
 	return &user, nil
 }
 
 func (s *UserService) Delete(ctx context.Context, userID int64) error {
-	if err := s.cache.Delete(ctx, userID); err != nil {
+	if err := s.users.Delete(ctx, userID); err != nil {
 		return err
 	}
-	return s.users.Delete(ctx, userID)
+	if err := s.cache.Delete(ctx, userID); err != nil {
+		s.logger.ErrorContext(ctx, "failed to delete cached user", "error", err)
+	}
+	return nil
 }
