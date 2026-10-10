@@ -1,5 +1,40 @@
 # Changelog
 
+## [1.1.0](https://github.com/alvarolucio2007/Scholarly/compare/v1.0.0...v1.1.0) (2026-10-10)
+
+
+### Features
+
+* Add full course cache. ([35cfa82](https://github.com/alvarolucio2007/Scholarly/commit/35cfa82ff6e29b536feb813b62791445926941f8))
+* Add full enrollment cache. ([678e3c7](https://github.com/alvarolucio2007/Scholarly/commit/678e3c7e371a1d460d1402d4d023f153bccf1d4e))
+* Add full grade cache. ([6e541d9](https://github.com/alvarolucio2007/Scholarly/commit/6e541d9ecd903db7513480cfb232a3dc8517663e))
+* Add full student cache ([bac9f82](https://github.com/alvarolucio2007/Scholarly/commit/bac9f82b48d3c1b38ba9619bb95415a82a5fd5c4))
+* Add full test cache ([71505c0](https://github.com/alvarolucio2007/Scholarly/commit/71505c0f8de6e7c0c2aa78cd714f36abf3f9559e))
+* Adding cache ([7737d29](https://github.com/alvarolucio2007/Scholarly/commit/7737d291583e9c3579eaa7da4721feb0ae0176c0))
+* Adding cache ([36aaeb9](https://github.com/alvarolucio2007/Scholarly/commit/36aaeb9191f8bcd835bb34217beaf439d1702ea8))
+* Adding cache interfaces. ([59ba137](https://github.com/alvarolucio2007/Scholarly/commit/59ba1376f0644a998e3452909ad22efc3792a55a))
+* Adding cache support ([23deeb6](https://github.com/alvarolucio2007/Scholarly/commit/23deeb6516155e625e882687447e783ab3ace88e))
+* Adding cache support ([9deb6cc](https://github.com/alvarolucio2007/Scholarly/commit/9deb6cc6256a594624384a6970a1cff75cec8f78))
+* Adding cache support ([504b132](https://github.com/alvarolucio2007/Scholarly/commit/504b132a0efa271d9cf07b3cf700b80b3f530d88))
+* Adding cache support ([d48a70c](https://github.com/alvarolucio2007/Scholarly/commit/d48a70c5fc0deffdfff5223e21cb6ae633a597ca))
+* Adding cache support to student_service ([3099a8d](https://github.com/alvarolucio2007/Scholarly/commit/3099a8d97eabdc432f319f1313e62e5b9e5e484a))
+* Adding cache support to teacher_service ([0068de0](https://github.com/alvarolucio2007/Scholarly/commit/0068de03867b46e8e7c4af392ad5813c5109116c))
+* Adding CacheQueryTimeout constant ([8c30db7](https://github.com/alvarolucio2007/Scholarly/commit/8c30db7d7d9c2693c1e29ed6d8bef4f7a092bb6c))
+* Adding expiry time to user,teacher and student ([12a052e](https://github.com/alvarolucio2007/Scholarly/commit/12a052e36d74247dfcfd1a14c6c93adce1ce6458))
+* Adding NewConnn func ([6fc3f5a](https://github.com/alvarolucio2007/Scholarly/commit/6fc3f5a64634216404f6edd457e3bbab7be66945))
+* Adding teacher cache ([9910a42](https://github.com/alvarolucio2007/Scholarly/commit/9910a422e1b2b2c28dac4cc11fe4841c1f3cfb28))
+* Adding user creation, read and delete in redis ([904a928](https://github.com/alvarolucio2007/Scholarly/commit/904a928bda5b8c93b0a1fc98e21ab476d847cc63))
+* Finishing cache in user_service ([f1022b2](https://github.com/alvarolucio2007/Scholarly/commit/f1022b2486efbbe991e946ff54442f55a7c35a54))
+
+
+### Bug Fixes
+
+* Adding golangci-lint instead of staticcheck (which includes statticcheck) ([e36d8a7](https://github.com/alvarolucio2007/Scholarly/commit/e36d8a75d411370f00968e0b3d30b2723d9fe2e9))
+* Adding logger to NewUserService ([d9b645a](https://github.com/alvarolucio2007/Scholarly/commit/d9b645a9c6bf23774e301f3a505bcca251f37fd5))
+* changing cacheURL to localhost:6379 ([ca15c0c](https://github.com/alvarolucio2007/Scholarly/commit/ca15c0c4ee1df31318dbfa78ed6fc0bfa49f4e47))
+* Changing panic(1) to os.Exit(1) ([a2b8ef5](https://github.com/alvarolucio2007/Scholarly/commit/a2b8ef538dc79d76019105ced389a61f1f7c6a80))
+* replacing create user error to create X error message (respective package) ([d3dccc9](https://github.com/alvarolucio2007/Scholarly/commit/d3dccc9a350b5df59203253707fde0d811904dd9))
+
 ## 1.0.0 (2026-10-06)
 
 
