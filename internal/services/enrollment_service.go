@@ -9,13 +9,13 @@ import (
 )
 
 type EnrollmentService struct {
-	enrollments ports.EnrollmentRepository
-	cache       ports.Cache[domain.Enrollment]
-	logger      *slog.Logger
+	repo   ports.EnrollmentRepository
+	cache  ports.Cache[domain.Enrollment]
+	logger *slog.Logger
 }
 
-func NewEnrollmentService(enrollments ports.EnrollmentRepository, cache ports.Cache[domain.Enrollment], logger *slog.Logger) *EnrollmentService {
-	return &EnrollmentService{enrollments: enrollments, cache: cache, logger: logger}
+func NewEnrollmentService(repo ports.EnrollmentRepository, cache ports.Cache[domain.Enrollment], logger *slog.Logger) *EnrollmentService {
+	return &EnrollmentService{repo: repo, cache: cache, logger: logger}
 }
 
 type CreateEnrollmentPayload struct {
@@ -24,9 +24,9 @@ type CreateEnrollmentPayload struct {
 	Status    domain.EnrollmentStatus
 }
 
-func (s *EnrollmentService) CreateEnrollment(ctx context.Context, payload CreateEnrollmentPayload) (*domain.Enrollment, error) {
+func (s *EnrollmentService) Create(ctx context.Context, payload CreateEnrollmentPayload) (*domain.Enrollment, error) {
 	enrollment := &domain.Enrollment{StudentID: payload.StudentID, CourseID: payload.CourseID, Status: payload.Status}
-	if err := s.enrollments.Create(ctx, enrollment); err != nil {
+	if err := s.repo.Create(ctx, enrollment); err != nil {
 		return nil, err
 	}
 	return enrollment, nil
@@ -40,7 +40,7 @@ func (s *EnrollmentService) GetByID(ctx context.Context, enrollmentID int64) (*d
 	if enrollment != nil {
 		return enrollment, nil
 	}
-	enrollment, err = s.enrollments.GetByID(ctx, enrollmentID)
+	enrollment, err = s.repo.GetByID(ctx, enrollmentID)
 	if err != nil {
 		return nil, err
 	}
@@ -50,8 +50,8 @@ func (s *EnrollmentService) GetByID(ctx context.Context, enrollmentID int64) (*d
 	return enrollment, nil
 }
 
-func (s *EnrollmentService) ListEnrollments(ctx context.Context, filter ports.EnrollmentFilter) ([]*domain.Enrollment, error) {
-	return s.enrollments.List(ctx, filter)
+func (s *EnrollmentService) List(ctx context.Context, filter ports.EnrollmentFilter) ([]*domain.Enrollment, error) {
+	return s.repo.List(ctx, filter)
 }
 
 type UpdateEnrollmentPayload struct {
@@ -60,7 +60,7 @@ type UpdateEnrollmentPayload struct {
 	CourseID  *int64
 }
 
-func (s *EnrollmentService) UpdateEnrollment(ctx context.Context, payload UpdateEnrollmentPayload) (*domain.Enrollment, error) {
+func (s *EnrollmentService) Update(ctx context.Context, payload UpdateEnrollmentPayload) (*domain.Enrollment, error) {
 	enrollment := domain.Enrollment{ID: payload.ID}
 	if payload.StudentID != nil {
 		enrollment.StudentID = *payload.StudentID
@@ -68,7 +68,7 @@ func (s *EnrollmentService) UpdateEnrollment(ctx context.Context, payload Update
 	if payload.CourseID != nil {
 		enrollment.CourseID = *payload.CourseID
 	}
-	if err := s.enrollments.Update(ctx, &enrollment); err != nil {
+	if err := s.repo.Update(ctx, &enrollment); err != nil {
 		return nil, err
 	}
 	if err := s.cache.Delete(ctx, enrollment.ID); err != nil {
@@ -80,8 +80,8 @@ func (s *EnrollmentService) UpdateEnrollment(ctx context.Context, payload Update
 	return &enrollment, nil
 }
 
-func (s *EnrollmentService) DeleteEnrollment(ctx context.Context, enrollmentID int64) error {
-	if err := s.enrollments.Delete(ctx, enrollmentID); err != nil {
+func (s *EnrollmentService) Delete(ctx context.Context, enrollmentID int64) error {
+	if err := s.repo.Delete(ctx, enrollmentID); err != nil {
 		return err
 	}
 	if err := s.cache.Delete(ctx, enrollmentID); err != nil {
@@ -91,5 +91,5 @@ func (s *EnrollmentService) DeleteEnrollment(ctx context.Context, enrollmentID i
 }
 
 func (s *EnrollmentService) GetWeightedAverage(ctx context.Context, studentID, courseID int64) (float64, error) {
-	return s.enrollments.GetWeightedAverage(ctx, studentID, courseID)
+	return s.repo.GetWeightedAverage(ctx, studentID, courseID)
 }
