@@ -39,7 +39,7 @@ func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		_ = writeJSONError(w, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
-	user, err := h.users.CreateUser(r.Context(), services.CreateUserPayload{
+	user, err := h.users.Create(r.Context(), services.CreateUserPayload{
 		Name:     dto.Name,
 		CPF:      dto.CPF,
 		Email:    dto.Email,
@@ -120,7 +120,7 @@ func (h *Handler) ListUsers(w http.ResponseWriter, r *http.Request) {
 	if v := q.Get("email"); v != "" {
 		filter.Email = &v
 	}
-	users, err := h.users.ListUsers(r.Context(), filter)
+	users, err := h.users.List(r.Context(), filter)
 	if err != nil {
 		respondDomainError(w, err)
 		return
@@ -165,7 +165,7 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		Email:    nilIfEmpty(dto.Email),
 		Password: nilIfEmpty(dto.Password),
 	}
-	user, err := h.users.UpdateUser(r.Context(), updateUserPayload)
+	user, err := h.users.Update(r.Context(), updateUserPayload)
 	if err != nil {
 		respondDomainError(w, err)
 		return
