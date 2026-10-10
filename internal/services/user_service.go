@@ -17,8 +17,8 @@ type UserService struct {
 	logger *slog.Logger
 }
 
-func NewUserService(users ports.UserRepository, hasher ports.PasswordHasher, cache ports.Cache[domain.User]) *UserService {
-	return &UserService{users: users, hasher: hasher, cache: cache}
+func NewUserService(users ports.UserRepository, hasher ports.PasswordHasher, cache ports.Cache[domain.User], logger *slog.Logger) *UserService {
+	return &UserService{users: users, hasher: hasher, cache: cache, logger: logger}
 }
 
 type CreateUserPayload struct {
