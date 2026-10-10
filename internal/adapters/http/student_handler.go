@@ -33,7 +33,7 @@ func (h *Handler) CreateStudent(w http.ResponseWriter, r *http.Request) {
 		_ = writeJSONError(w, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
-	student, err := h.students.CreateStudent(r.Context(), services.CreateStudentPayload{
+	student, err := h.students.Create(r.Context(), services.CreateStudentPayload{
 		UserID:           dto.UserID,
 		EnrollmentNumber: dto.EnrollmentNumber,
 	})

@@ -11,7 +11,10 @@ import (
 	"github.com/alvarolucio2007/Scholarly/internal/ports"
 )
 
-var _ ports.EnrollmentRepository = (*EnrollmentRepo)(nil)
+var (
+	_ ports.EnrollmentRepository          = (*EnrollmentRepo)(nil)
+	_ ports.Repository[domain.Enrollment] = (*EnrollmentRepo)(nil)
+)
 
 type EnrollmentRepo struct {
 	db     *sql.DB

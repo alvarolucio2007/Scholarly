@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log/slog"
 	"os"
 	"time"
 
@@ -9,21 +8,22 @@ import (
 	"github.com/alvarolucio2007/Scholarly/internal/adapters/http"
 	"github.com/alvarolucio2007/Scholarly/internal/adapters/logger"
 	"github.com/alvarolucio2007/Scholarly/internal/adapters/postgres"
+	"github.com/alvarolucio2007/Scholarly/internal/adapters/valkey"
 	"github.com/alvarolucio2007/Scholarly/internal/services"
 )
 
 func main() {
 	logger := logger.New()
-	DBUrl := os.Getenv("DATABASE_URL")
-	if DBUrl == "" {
-		DBUrl = "postgres://admin:root@localhost:5432/scholarly?sslmode=disable"
+	dbURL := os.Getenv("DATABASE_URL")
+	if dbURL == "" {
+		dbURL = "postgres://admin:root@localhost:5432/scholarly?sslmode=disable"
 	}
 	logger.Info("starting app")
 	logger.Info("trying to connect to db")
-	db, err := postgres.NewConn(DBUrl, 30, 30, time.Minute)
+	db, err := postgres.NewConn(dbURL, 30, 30, time.Minute)
 	if err != nil {
 		logger.Error("main: error while connecting to db", "error", err)
-		panic(1)
+		os.Exit(1)
 	}
 	logger.Info("db connection successful")
 	defer func() {
@@ -41,13 +41,33 @@ func main() {
 
 	hasher := argon2.NewArgon2Hasher(64*1024, 3, 2)
 
-	userSvc := services.NewUserService(userRepo, hasher)
-	studentSvc := services.NewStudentService(studentRepo)
-	teacherSvc := services.NewTeacherService(teacherRepo)
-	courseSvc := services.NewCourseService(courseRepo)
-	enrollmentSvc := services.NewEnrollmentService(enrollmentRepo)
-	testSvc := services.NewTestService(testRepo)
-	gradeSvc := services.NewGradeService(gradeRepo)
+	cacheURL := os.Getenv("CACHE_URL")
+	if cacheURL == "" {
+		cacheURL = "localhost:6379"
+	}
+	logger.Info("trying to connect to cache")
+	rdb := valkey.NewConn(cacheURL, "", 0)
+	if rdb == nil {
+		logger.Error("main: error while connecting to cache")
+		os.Exit(1)
+	}
+	logger.Info("cache connection successful")
+
+	userCache := valkey.NewUserCache(rdb)
+	studentCache := valkey.NewStudentCache(rdb)
+	teacherCache := valkey.NewTeacherCache(rdb)
+	courseCache := valkey.NewCourseCache(rdb)
+	enrollmentCache := valkey.NewEnrollmentCache(rdb)
+	testCache := valkey.NewTestCache(rdb)
+	gradeCache := valkey.NewGradeCache(rdb)
+
+	userSvc := services.NewUserService(userRepo, hasher, userCache, logger)
+	studentSvc := services.NewStudentService(studentRepo, studentCache, logger)
+	teacherSvc := services.NewTeacherService(teacherRepo, teacherCache, logger)
+	courseSvc := services.NewCourseService(courseRepo, courseCache, logger)
+	enrollmentSvc := services.NewEnrollmentService(enrollmentRepo, enrollmentCache, logger)
+	testSvc := services.NewTestService(testRepo, testCache, logger)
+	gradeSvc := services.NewGradeService(gradeRepo, gradeCache, logger)
 
 	handler := http.NewHandler(userSvc, studentSvc, teacherSvc,
 		courseSvc, enrollmentSvc, testSvc, gradeSvc, logger)
@@ -58,7 +78,8 @@ func main() {
 	}
 	logger.Info("trying to start server")
 	if err := handler.Run(handler.Mount(), addr); err != nil {
-		slog.Error("main: error while booting HTTP server: ", "error", err)
+		logger.Error("main: error while booting HTTP server", "error", err)
+		os.Exit(1)
 	}
 	logger.Info("server has been shut down")
 }

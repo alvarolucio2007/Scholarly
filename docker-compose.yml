@@ -28,18 +28,32 @@ services:
     depends_on:
       db:
         condition: service_healthy
+  cache:
+    image: valkey/valkey:9-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   api:
     build: .
     container_name: api
     environment:
       DATABASE_URL: postgres://admin:root@db:5432/scholarly?sslmode=disable
+      CACHE_URL: redis://cache:6379/0
       SERVER_ADDR: "0.0.0.0:8080"
     ports:
       - "8080:8080"
     depends_on:
       db:
         condition: service_healthy
+      cache:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
 
 volumes:
   db-data:

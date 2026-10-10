@@ -2,17 +2,20 @@ package services
 
 import (
 	"context"
+	"log/slog"
 
 	"github.com/alvarolucio2007/Scholarly/internal/domain"
 	"github.com/alvarolucio2007/Scholarly/internal/ports"
 )
 
 type CourseService struct {
-	courses ports.CourseRepository
+	repo   ports.CourseRepository
+	cache  ports.Cache[domain.Course]
+	logger *slog.Logger
 }
 
-func NewCourseService(courses ports.CourseRepository) *CourseService {
-	return &CourseService{courses: courses}
+func NewCourseService(repo ports.CourseRepository, cache ports.Cache[domain.Course], logger *slog.Logger) *CourseService {
+	return &CourseService{repo: repo, cache: cache, logger: logger}
 }
 
 type CreateCoursePayload struct {
@@ -23,20 +26,37 @@ type CreateCoursePayload struct {
 	MaxStudents int16
 }
 
-func (s *CourseService) CreateCourse(ctx context.Context, payload CreateCoursePayload) (*domain.Course, error) {
+func (s *CourseService) Create(ctx context.Context, payload CreateCoursePayload) (*domain.Course, error) {
 	course := &domain.Course{TeacherID: payload.TeacherID, Name: payload.Name, Code: payload.Code, Semester: payload.Semester, MaxStudents: payload.MaxStudents}
-	if err := s.courses.Create(ctx, course); err != nil {
+	if err := s.repo.Create(ctx, course); err != nil {
 		return nil, err
+	}
+	if err := s.cache.Create(ctx, course); err != nil {
+		s.logger.ErrorContext(ctx, "failed to cache course", "error", err)
 	}
 	return course, nil
 }
 
 func (s *CourseService) GetByID(ctx context.Context, courseID int64) (*domain.Course, error) {
-	return s.courses.GetByID(ctx, courseID)
+	course, err := s.cache.Read(ctx, courseID)
+	if err != nil {
+		s.logger.ErrorContext(ctx, "failed to fetch cached course", "error", err)
+	}
+	if course != nil {
+		return course, nil
+	}
+	course, err = s.repo.GetByID(ctx, courseID)
+	if err != nil {
+		return nil, err
+	}
+	if err := s.cache.Create(ctx, course); err != nil {
+		s.logger.ErrorContext(ctx, "failed to cache user", "error", err)
+	}
+	return course, nil
 }
 
-func (s *CourseService) ListCourses(ctx context.Context, filter ports.CourseFilter) ([]*domain.Course, error) {
-	return s.courses.List(ctx, filter)
+func (s *CourseService) List(ctx context.Context, filter ports.CourseFilter) ([]*domain.Course, error) {
+	return s.repo.List(ctx, filter)
 }
 
 type UpdateCoursePayload struct {
@@ -48,7 +68,7 @@ type UpdateCoursePayload struct {
 	MaxStudents *int16
 }
 
-func (s *CourseService) UpdateCourse(ctx context.Context, payload UpdateCoursePayload) (*domain.Course, error) {
+func (s *CourseService) Update(ctx context.Context, payload UpdateCoursePayload) (*domain.Course, error) {
 	course := domain.Course{ID: payload.ID}
 	if payload.TeacherID != nil {
 		course.TeacherID = *payload.TeacherID
@@ -65,16 +85,28 @@ func (s *CourseService) UpdateCourse(ctx context.Context, payload UpdateCoursePa
 	if payload.MaxStudents != nil {
 		course.MaxStudents = *payload.MaxStudents
 	}
-	if err := s.courses.Update(ctx, &course); err != nil {
+	if err := s.repo.Update(ctx, &course); err != nil {
 		return nil, err
+	}
+	if err := s.cache.Delete(ctx, course.ID); err != nil {
+		s.logger.ErrorContext(ctx, "failed to delete cached course", "error", err)
+	}
+	if err := s.cache.Create(ctx, &course); err != nil {
+		s.logger.ErrorContext(ctx, "failed to cache course", "error", err)
 	}
 	return &course, nil
 }
 
-func (s *CourseService) DeleteCourse(ctx context.Context, courseID int64) error {
-	return s.courses.Delete(ctx, courseID)
+func (s *CourseService) Delete(ctx context.Context, courseID int64) error {
+	if err := s.repo.Delete(ctx, courseID); err != nil {
+		return err
+	}
+	if err := s.cache.Delete(ctx, courseID); err != nil {
+		s.logger.ErrorContext(ctx, "failed to delete cached user", "error", err)
+	}
+	return nil
 }
 
 func (s *CourseService) EnrollStudent(ctx context.Context, studentID, courseID int64) (int64, error) {
-	return s.courses.EnrollStudent(ctx, studentID, courseID)
+	return s.repo.EnrollStudent(ctx, studentID, courseID)
 }

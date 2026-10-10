@@ -90,7 +90,7 @@ func (h *Handler) ListEnrollments(w http.ResponseWriter, r *http.Request) {
 		}
 		filter.Status = &v
 	}
-	enrollments, err := h.enrollments.ListEnrollments(r.Context(), filter)
+	enrollments, err := h.enrollments.List(r.Context(), filter)
 	if err != nil {
 		respondDomainError(w, err)
 		return
@@ -123,7 +123,7 @@ func (h *Handler) UpdateEnrollment(w http.ResponseWriter, r *http.Request) {
 		_ = writeJSONError(w, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
-	enrollment, err := h.enrollments.UpdateEnrollment(r.Context(), services.UpdateEnrollmentPayload{
+	enrollment, err := h.enrollments.Update(r.Context(), services.UpdateEnrollmentPayload{
 		ID:        dto.ID,
 		StudentID: dto.StudentID,
 		CourseID:  dto.CourseID,
@@ -158,7 +158,7 @@ func (h *Handler) DeleteEnrollment(w http.ResponseWriter, r *http.Request) {
 		_ = writeJSONError(w, http.StatusBadRequest, "enrollmentID must be at least 1")
 		return
 	}
-	if err := h.enrollments.DeleteEnrollment(r.Context(), enrollmentID); err != nil {
+	if err := h.enrollments.Delete(r.Context(), enrollmentID); err != nil {
 		respondDomainError(w, err)
 		return
 	}
