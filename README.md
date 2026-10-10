@@ -34,6 +34,8 @@
     - [Erros de domínio](#erros-de-domínio)
     - [Uso dos recursos do PostgreSQL](#uso-dos-recursos-do-postgresql)
   - [Evolução em relação ao semestre anterior](#evolução-em-relação-ao-semestre-anterior)
+  - [Performance](#performance)
+  - [Vídeos](#vídeos)
   - [Licença](#licença)
 <!--toc:end-->
 
@@ -361,6 +363,16 @@ Este projeto é uma reescrita de um sistema acadêmico desenvolvido no semestre 
 | Containerização | Docker e Docker Compose | Docker e Docker Compose |
 
 ---
+
+## Performance
+
+| Cenário | Req/s | p50 | p99 |
+| --- | --- | --- | --- |
+| Sem cache | 4,900 | 202ms | 290ms |
+| Com cache | 47,000 | 21ms | 40ms |
+
+---
+
 ## Vídeos
 
 - [Parte 1: Demonstração do sistema](https://youtu.be/W15-8AW7WaY)
