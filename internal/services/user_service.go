@@ -9,6 +9,7 @@ import (
 	"github.com/alvarolucio2007/Scholarly/internal/ports"
 )
 
+// FIXME: Work out the rough edges in this (adding slogs, fixing orders, etc.)
 type UserService struct {
 	users  ports.UserRepository
 	hasher ports.PasswordHasher
