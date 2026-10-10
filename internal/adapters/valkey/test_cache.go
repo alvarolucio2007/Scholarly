@@ -17,6 +17,10 @@ type TestCache struct {
 	rdb *redis.Client
 }
 
+func NewTestCache(rdb *redis.Client) *TestCache {
+	return &TestCache{rdb: rdb}
+}
+
 func (c *TestCache) Create(ctx context.Context, item *domain.Test) error {
 	cacheKey := fmt.Sprintf("test:%d", item.ID)
 	json, err := json.Marshal(item)

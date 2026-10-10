@@ -17,6 +17,10 @@ type UserCache struct {
 	rdb *redis.Client
 }
 
+func NewUserCache(rdb *redis.Client) *UserCache {
+	return &UserCache{rdb: rdb}
+}
+
 func (c *UserCache) Create(ctx context.Context, item *domain.User) error {
 	cacheKey := fmt.Sprintf("user:%d", item.ID)
 	json, err := json.Marshal(item)

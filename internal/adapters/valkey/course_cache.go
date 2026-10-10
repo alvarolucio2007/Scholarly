@@ -17,6 +17,10 @@ type CourseCache struct {
 	rdb *redis.Client
 }
 
+func NewCourseCache(rdb *redis.Client) *CourseCache {
+	return &CourseCache{rdb: rdb}
+}
+
 func (c *CourseCache) Create(ctx context.Context, item *domain.Course) error {
 	cacheKey := fmt.Sprintf("course:%d", item.ID)
 	json, err := json.Marshal(item)

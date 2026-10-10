@@ -17,6 +17,10 @@ type GradeCache struct {
 	rdb *redis.Client
 }
 
+func NewGradeCache(rdb *redis.Client) *GradeCache {
+	return &GradeCache{rdb: rdb}
+}
+
 func (c *GradeCache) Create(ctx context.Context, item *domain.Grade) error {
 	cacheKey := fmt.Sprintf("grade:%d", item.ID)
 	json, err := json.Marshal(item)

@@ -17,6 +17,10 @@ type EnrollmentCache struct {
 	rdb *redis.Client
 }
 
+func NewEnrollmentCache(rdb *redis.Client) *EnrollmentCache {
+	return &EnrollmentCache{rdb: rdb}
+}
+
 func (c *EnrollmentCache) Create(ctx context.Context, item *domain.Enrollment) error {
 	cacheKey := fmt.Sprintf("enrollment:%d", item.ID)
 	json, err := json.Marshal(item)
