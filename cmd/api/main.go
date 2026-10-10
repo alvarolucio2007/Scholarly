@@ -43,7 +43,7 @@ func main() {
 
 	cacheURL := os.Getenv("CACHE_URL")
 	if cacheURL == "" {
-		cacheURL = "redis://localhost:6379/0"
+		cacheURL = "localhost:6379"
 	}
 	logger.Info("trying to connect to cache")
 	rdb := valkey.NewConn(cacheURL, "", 0)
