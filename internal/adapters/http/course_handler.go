@@ -34,7 +34,7 @@ func (h *Handler) CreateCourse(w http.ResponseWriter, r *http.Request) {
 		_ = writeJSONError(w, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
-	course, err := h.courses.CreateCourse(r.Context(), services.CreateCoursePayload{
+	course, err := h.courses.Create(r.Context(), services.CreateCoursePayload{
 		TeacherID:   dto.TeacherID,
 		Name:        dto.Name,
 		Code:        dto.Code,
@@ -130,7 +130,7 @@ func (h *Handler) ListCourses(w http.ResponseWriter, r *http.Request) {
 		}
 		filter.Semester = &v
 	}
-	courses, err := h.courses.ListCourses(r.Context(), filter)
+	courses, err := h.courses.List(r.Context(), filter)
 	if err != nil {
 		respondDomainError(w, err)
 		return
@@ -163,7 +163,7 @@ func (h *Handler) UpdateCourse(w http.ResponseWriter, r *http.Request) {
 		_ = writeJSONError(w, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
-	course, err := h.courses.UpdateCourse(r.Context(), services.UpdateCoursePayload{
+	course, err := h.courses.Update(r.Context(), services.UpdateCoursePayload{
 		ID:          dto.ID,
 		TeacherID:   dto.TeacherID,
 		Name:        dto.Name,
@@ -201,7 +201,7 @@ func (h *Handler) DeleteCourse(w http.ResponseWriter, r *http.Request) {
 		_ = writeJSONError(w, http.StatusBadRequest, "courseID must be at least 1")
 		return
 	}
-	if err := h.courses.DeleteCourse(r.Context(), courseID); err != nil {
+	if err := h.courses.Delete(r.Context(), courseID); err != nil {
 		respondDomainError(w, err)
 		return
 	}
