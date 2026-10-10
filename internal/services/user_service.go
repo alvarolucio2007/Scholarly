@@ -61,7 +61,7 @@ func (s *UserService) CreateUser(ctx context.Context, payload CreateUserPayload)
 	return user, nil
 }
 
-func (s *UserService) GetUserByID(ctx context.Context, userID int64) (*domain.User, error) {
+func (s *UserService) GetByID(ctx context.Context, userID int64) (*domain.User, error) {
 	user, err := s.cache.Read(ctx, userID)
 	if err != nil {
 		s.logger.ErrorContext(ctx, "failed to fetch cached user", "error", err)

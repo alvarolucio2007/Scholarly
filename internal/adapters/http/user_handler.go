@@ -76,7 +76,7 @@ func (h *Handler) GetUserByID(w http.ResponseWriter, r *http.Request) {
 		_ = writeJSONError(w, http.StatusBadRequest, "userID must be at least 1")
 		return
 	}
-	user, err := h.users.GetUserByID(r.Context(), userID)
+	user, err := h.users.GetByID(r.Context(), userID)
 	if err != nil {
 		respondDomainError(w, err)
 		return
