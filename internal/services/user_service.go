@@ -12,10 +12,11 @@ import (
 type UserService struct {
 	users  ports.UserRepository
 	hasher ports.PasswordHasher
+	cache  ports.Cache[domain.User]
 }
 
-func NewUserService(users ports.UserRepository, hasher ports.PasswordHasher) *UserService {
-	return &UserService{users: users, hasher: hasher}
+func NewUserService(users ports.UserRepository, hasher ports.PasswordHasher, cache ports.Cache[domain.User]) *UserService {
+	return &UserService{users: users, hasher: hasher, cache: cache}
 }
 
 type CreateUserPayload struct {
@@ -52,11 +53,28 @@ func (s *UserService) CreateUser(ctx context.Context, payload CreateUserPayload)
 	if err := s.users.Create(ctx, user); err != nil {
 		return nil, err
 	}
+	if err := s.cache.Create(ctx, user); err != nil {
+		return nil, err
+	}
 	return user, nil
 }
 
 func (s *UserService) GetUserByID(ctx context.Context, userID int64) (*domain.User, error) {
-	return s.users.GetByID(ctx, userID)
+	user, err := s.cache.Read(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+	if user != nil {
+		return user, nil
+	}
+	user, err = s.users.GetByID(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+	if err := s.cache.Create(ctx, user); err != nil {
+		return nil, err
+	}
+	return user, nil
 }
 
 func (s *UserService) ListUsers(ctx context.Context, filter ports.UserFilter) ([]*domain.User, error) {
@@ -99,9 +117,18 @@ func (s *UserService) UpdateUser(ctx context.Context, payload UpdateUserPayload)
 	if err := s.users.Update(ctx, &user); err != nil {
 		return nil, err
 	}
+	if err := s.cache.Delete(ctx, user.ID); err != nil {
+		return nil, err
+	}
+	if err := s.cache.Create(ctx, &user); err != nil {
+		return nil, err
+	}
 	return &user, nil
 }
 
 func (s *UserService) Delete(ctx context.Context, userID int64) error {
+	if err := s.cache.Delete(ctx, userID); err != nil {
+		return err
+	}
 	return s.users.Delete(ctx, userID)
 }
