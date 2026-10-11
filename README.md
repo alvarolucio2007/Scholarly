@@ -365,6 +365,10 @@ Este projeto é uma reescrita de um sistema acadêmico desenvolvido no semestre 
 ---
 
 ## Performance
+Comando
+```bash
+npx autocannon -c 1000 -d 20 -V http://127.0.0.1:8080/users/1 --renderStatusCodes
+```
 
 | Cenário | Req/s | p50 | p99 |
 | --- | --- | --- | --- |
