@@ -75,6 +75,7 @@ Além dos requisitos mínimos, o projeto foi construído seguindo práticas adot
 | --- | --- |
 | Linguagem | Go 1.27 |
 | Banco de dados | PostgreSQL 17 |
+| Cache | Valkey 9 |
 | Roteador HTTP | chi |
 | Driver PostgreSQL | pgx/v5 |
 | Hash de senha | Argon2id |
@@ -102,7 +103,7 @@ O projeto segue os princípios da **arquitetura hexagonal**, com dependências f
 │  Domain (entidades e regras)            │
 └─────────────────────────────────────────┘
          ▲
-         │  Adapters de saída (Postgres, Argon2)
+         │  Adapters de saída (Postgres, Argon2, Valkey)
 ```
 
 A camada de domínio não possui conhecimento de HTTP, bancos de dados ou qualquer biblioteca de infraestrutura. Os serviços dependem apenas de interfaces (`ports`), e os adaptadores implementam essas interfaces — permitindo substituir PostgreSQL por outro banco de dados, ou chi por outro roteador, sem alterações no núcleo da aplicação.
@@ -120,9 +121,11 @@ Scholarly/
 │   ├── env/                 # Suporte a variáveis de ambiente (.env)
 │   ├── config/              # Configurações básicas
 │   └── adapters/
+│       ├── argon2/          # Implementação de hash de senha        
 │       ├── http/            # Handlers HTTP, DTOs, middlewares
-│       ├── postgres/        # Repositórios
-│       └── argon2/          # Implementação de hash de senha
+|       ├── logger/          # Logger
+│       ├── postgres/        # PostgreSQL (Banco de dados Relacional)
+|       ├── valkey/          # Valkey (Cache não relacional)
 ├── database/
 │   ├── tables/              # Scripts de criação de tabelas
 │   ├── views/               # Scripts de criação de Views
@@ -310,7 +313,7 @@ O docker compose já monta toda a aplicação, incluindo migrações de banco de
 Em modo de desenvolvimento com hot reload (é necessário ter a ferramenta [Make](https://kb.shells.com/tutorials/Windows_11/GNU_Make/)):
 
 ```bash
-docker compose up db -d
+docker compose up db cache -d
 make migrateup
 air
 ```
