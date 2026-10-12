@@ -10,7 +10,10 @@ import (
 	"time"
 
 	"github.com/alvarolucio2007/Scholarly/internal/adapters/logger"
-	"github.com/golang-migrate/migrate"
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
+	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
 	"github.com/testcontainers/testcontainers-go/wait"
@@ -78,7 +81,7 @@ func setupTestDB() (*sql.DB, *postgres.PostgresContainer, error) {
 }
 
 func runMigrations(connStr string) error {
-	m, err := migrate.New("file:../../cmd/migrate/migrations/", connStr)
+	m, err := migrate.New("file:../../../database/migrations/", connStr)
 	if err != nil {
 		return err
 	}
