@@ -1,3 +1,4 @@
+// Package valkey handles cache connection and respective cache methods
 package valkey
 
 import (

@@ -1,3 +1,4 @@
+// Package app is simply a helper to make main.go more concise.
 package app
 
 import (

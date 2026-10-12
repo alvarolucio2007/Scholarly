@@ -1,3 +1,4 @@
+// Package http handles HTTP routing and handling, by consuming services interfaces.
 package http
 
 import (

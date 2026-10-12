@@ -1,3 +1,4 @@
+// Package domain is the core in hexagonal architecture, having pure go structs and business rules.
 package domain
 
 import (

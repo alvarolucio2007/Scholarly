@@ -1,3 +1,4 @@
+// Package logger implements a new *slog.Logger struct.
 package logger
 
 import (

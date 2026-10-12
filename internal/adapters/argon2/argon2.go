@@ -1,3 +1,4 @@
+// Package argon2 handles argon2 initialization, hashing and checking.
 package argon2
 
 import "github.com/alvarolucio2007/Scholarly/internal/ports"

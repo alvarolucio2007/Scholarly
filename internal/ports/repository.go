@@ -1,3 +1,4 @@
+// Package ports contains the interfaces that dictate what the adapters must have.
 package ports
 
 import (

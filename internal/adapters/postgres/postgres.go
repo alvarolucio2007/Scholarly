@@ -1,3 +1,4 @@
+// Package postgres handles postgres connection and respective repository functions
 package postgres
 
 import (
