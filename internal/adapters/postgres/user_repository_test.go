@@ -245,4 +245,44 @@ func TestUserRepo_Update(t *testing.T) {
 			}
 		})
 	}
+	t.Cleanup(func() {
+		_, err := testDB.Exec("DELETE FROM users WHERE id=$1", 1)
+		require.NoError(t, err)
+	})
+}
+
+func TestUserRepo_Delete(t *testing.T) {
+	user1 := &domain.User{Name: "Test", CPF: "00000000000", Email: "test@gmail.com", PasswordHash: []byte("123456")}
+	createUserTest(t, user1)
+	tests := []struct {
+		name string // description of this test case
+		// Named input parameters for target function.
+		userID  int64
+		wantErr bool
+	}{
+		{
+			name:    "should delete with valid ID",
+			userID:  user1.ID,
+			wantErr: false,
+		}, {
+			name:    "shouldn't delete with invalid ID",
+			userID:  user1.ID + 1,
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := NewUserRepo(testDB, testLogger)
+			gotErr := r.Delete(t.Context(), tt.userID)
+			if gotErr != nil {
+				if !tt.wantErr {
+					t.Errorf("Delete() failed: %v", gotErr)
+				}
+				return
+			}
+			if tt.wantErr {
+				t.Fatal("Delete() succeeded unexpectedly")
+			}
+		})
+	}
 }
