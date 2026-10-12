@@ -112,7 +112,8 @@ func (r *EnrollmentRepo) Update(ctx context.Context, enrollment *domain.Enrollme
 	query := `UPDATE enrollments
 	SET
 		student_id=COALESCE(NULLIF($1,0),student_id),
-		course_id=COALESCE(NULLIF($2,0),course_id)
+		course_id=COALESCE(NULLIF($2,0),course_id),
+		updated_at=NOW()
 	WHERE id=$3;
 	`
 	ctx, cancel := context.WithTimeout(ctx, PostgresQueryTimeout)
