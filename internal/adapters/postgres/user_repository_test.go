@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/alvarolucio2007/Scholarly/internal/domain"
+	"github.com/alvarolucio2007/Scholarly/internal/ports"
 	"github.com/go-openapi/testify/require"
 )
 
@@ -78,7 +79,8 @@ func TestUserRepo_GetByID(t *testing.T) {
 			userID:  user1.ID,
 			want:    user1,
 			wantErr: false,
-		}, {
+		},
+		{
 			name:    "should return error when user doesn't exist",
 			userID:  0,
 			want:    nil,
@@ -103,6 +105,78 @@ func TestUserRepo_GetByID(t *testing.T) {
 			require.EqualValues(t, got.CPF, tt.want.CPF)
 			require.EqualValues(t, got.CreatedAt, tt.want.CreatedAt)
 			require.EqualValues(t, got.UpdatedAt, tt.want.UpdatedAt)
+		})
+	}
+	t.Cleanup(func() {
+		_, err := testDB.Exec("DELETE FROM users WHERE id=$1", user1.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user2.ID)
+		require.NoError(t, err)
+	})
+}
+
+func TestUserRepo_List(t *testing.T) {
+	incorrectStr := "INCORRECT"
+	user1 := &domain.User{Name: "TestOne", CPF: "00000000000", Email: "testOne@gmail.com", PasswordHash: []byte("123456")}
+	createUserTest(t, user1)
+	user2 := &domain.User{Name: "TestTwo", CPF: "00000000001", Email: "testTwo@gmail.com", PasswordHash: []byte("123456")}
+	createUserTest(t, user2)
+	tests := []struct {
+		name string // description of this test case
+		// Named input parameters for target function.
+		filter  ports.UserFilter
+		want    []*domain.User
+		wantErr bool
+	}{
+		{
+			name:    "with no filter, should return all users",
+			filter:  ports.UserFilter{},
+			want:    []*domain.User{user2, user1}, // reversed because of the ORDER BY created_at DESC in line 78 of user_repository
+			wantErr: false,
+		}, {
+			name:    "should filter by name",
+			filter:  ports.UserFilter{Name: &user1.Name},
+			want:    []*domain.User{user1},
+			wantErr: false,
+		}, {
+			name:    "should filter by CPF",
+			filter:  ports.UserFilter{CPF: &user1.CPF},
+			want:    []*domain.User{user1},
+			wantErr: false,
+		}, {
+			name:    "should filter by email",
+			filter:  ports.UserFilter{Email: &user1.Email},
+			want:    []*domain.User{user1},
+			wantErr: false,
+		}, {
+			name:    "should not return anyone if filters are invalid",
+			filter:  ports.UserFilter{Name: &incorrectStr},
+			want:    []*domain.User{},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := NewUserRepo(testDB, testLogger)
+			got, gotErr := r.List(t.Context(), tt.filter)
+			if gotErr != nil {
+				if !tt.wantErr {
+					t.Errorf("List() failed: %v", gotErr)
+				}
+				return
+			}
+			if tt.wantErr {
+				t.Fatal("List() succeeded unexpectedly")
+			}
+			// TODO: update the condition below to compare got with tt.want.
+			require.Equal(t, len(got), len(tt.want))
+			for i := range got {
+				require.EqualValues(t, got[i].ID, tt.want[i].ID)
+				require.EqualValues(t, got[i].Email, tt.want[i].Email)
+				require.EqualValues(t, got[i].CPF, tt.want[i].CPF)
+				require.EqualValues(t, got[i].CreatedAt, tt.want[i].CreatedAt)
+				require.EqualValues(t, got[i].UpdatedAt, tt.want[i].UpdatedAt)
+			}
 		})
 	}
 }
