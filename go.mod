@@ -8,7 +8,7 @@ require (
 	github.com/go-faker/faker/v4 v4.12.0
 	github.com/go-openapi/testify v0.0.0-20251001202347-e909893202bd
 	github.com/go-playground/validator/v10 v10.30.5
-	github.com/golang-migrate/migrate v3.5.4+incompatible
+	github.com/golang-migrate/migrate/v4 v4.20.1
 	github.com/jackc/pgx/v5 v5.11.0
 	github.com/redis/go-redis/v9 v9.23.0
 	github.com/swaggo/http-swagger/v2 v2.0.2
@@ -52,6 +52,7 @@ require (
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/klauspost/compress v1.18.6 // indirect
 	github.com/leodido/go-urn v1.5.0 // indirect
+	github.com/lib/pq v1.10.9 // indirect
 	github.com/lufia/plan9stats v0.0.0-20260330125221-c963978e514e // indirect
 	github.com/magiconair/properties v1.8.10 // indirect
 	github.com/mailru/easyjson v0.7.6 // indirect
