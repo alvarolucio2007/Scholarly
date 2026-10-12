@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.1](https://github.com/alvarolucio2007/Scholarly/compare/v1.1.0...v1.1.1) (2026-10-12)
+
+
+### Bug Fixes
+
+* Adding created_at and updated_at to enrollments migration ([ff6cf73](https://github.com/alvarolucio2007/Scholarly/commit/ff6cf7386fcaaaaf13cf8eca2224a69581399e96))
+* Adding updated_at NOW to Update ([2c39203](https://github.com/alvarolucio2007/Scholarly/commit/2c39203a5102ed58903cbe7161a615572b339757))
+
 ## [1.1.0](https://github.com/alvarolucio2007/Scholarly/compare/v1.0.0...v1.1.0) (2026-10-10)
 
 
