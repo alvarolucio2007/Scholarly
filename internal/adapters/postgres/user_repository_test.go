@@ -185,3 +185,64 @@ func TestUserRepo_List(t *testing.T) {
 		require.NoError(t, err)
 	})
 }
+
+func TestUserRepo_Update(t *testing.T) {
+	user1 := &domain.User{Name: "Test", CPF: "00000000000", Email: "test@gmail.com", PasswordHash: []byte("123456")}
+	createUserTest(t, user1)
+	tests := []struct {
+		name    string // description of this test case
+		user    *domain.User
+		wantErr bool
+	}{
+		{
+			name:    "shouldn't edit user if all params are empty",
+			user:    &domain.User{ID: user1.ID, Name: "", CPF: "", Email: "", PasswordHash: []byte("")},
+			wantErr: false,
+		}, {
+			name:    "should edit only name",
+			user:    &domain.User{ID: user1.ID, Name: "changed", CPF: "", Email: "", PasswordHash: []byte("")},
+			wantErr: false,
+		}, {
+			name:    "should edit only CPF",
+			user:    &domain.User{ID: user1.ID, Name: "", CPF: "00000000001", Email: "", PasswordHash: []byte("")},
+			wantErr: false,
+		}, {
+			name:    "should edit only email",
+			user:    &domain.User{ID: user1.ID, Name: "", CPF: "", Email: "changed@gmail.com", PasswordHash: []byte("")},
+			wantErr: false,
+		}, {
+			name:    "should edit only password",
+			user:    &domain.User{ID: user1.ID, Name: "", CPF: "", Email: "", PasswordHash: []byte("changed")},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := NewUserRepo(testDB, testLogger)
+			gotErr := r.Update(t.Context(), tt.user)
+			if gotErr != nil {
+				if !tt.wantErr {
+					t.Errorf("Update() failed: %v", gotErr)
+				}
+				return
+			}
+			if tt.wantErr {
+				t.Fatal("Update() succeeded unexpectedly")
+			}
+			updatedUser, err := r.GetByID(t.Context(), user1.ID)
+			require.NoError(t, err)
+			if tt.user.Name != "" {
+				require.NotEqual(t, user1.Name, updatedUser.Name)
+			}
+			if tt.user.CPF != "" {
+				require.NotEqual(t, user1.CPF, updatedUser.CPF)
+			}
+			if tt.user.Email != "" {
+				require.NotEqual(t, user1.Email, updatedUser.Email)
+			}
+			if string(tt.user.PasswordHash) != "" {
+				require.NotEqual(t, user1.PasswordHash, updatedUser.PasswordHash)
+			}
+		})
+	}
+}
