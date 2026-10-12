@@ -9,7 +9,7 @@ import (
 
 var (
 	ErrUniqueViolation     error = errors.New("unique constraint violation")
-	ErrForeignKeyViolation error = errors.New("foregin key violation")
+	ErrForeignKeyViolation error = errors.New("foreign key violation")
 )
 
 var codeToError = map[string]error{
