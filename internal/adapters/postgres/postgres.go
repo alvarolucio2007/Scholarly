@@ -11,6 +11,14 @@ import (
 
 const PostgresQueryTimeout time.Duration = 5 * time.Second
 
+type HealthChecker struct {
+	db *sql.DB
+}
+
+func NewHealthChecker(db *sql.DB) *HealthChecker {
+	return &HealthChecker{db: db}
+}
+
 func NewConn(addr string, maxOpenConns, maxIdleConns int, maxIdleTime time.Duration) (*sql.DB, error) {
 	db, err := sql.Open("pgx", addr)
 	if err != nil {
@@ -26,4 +34,10 @@ func NewConn(addr string, maxOpenConns, maxIdleConns int, maxIdleTime time.Durat
 		return nil, err
 	}
 	return db, nil
+}
+
+func (h *HealthChecker) Health(ctx context.Context) error {
+	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	defer cancel()
+	return h.db.PingContext(ctx)
 }
