@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/alvarolucio2007/Scholarly/compare/v1.1.1...v1.2.0) (2026-10-12)
+
+
+### Features
+
+* Adding package comments to all packages ([a7477e4](https://github.com/alvarolucio2007/Scholarly/commit/a7477e48a1ff76d8814577dc24c29e576aaa7f8d))
+
 ## [1.1.1](https://github.com/alvarolucio2007/Scholarly/compare/v1.1.0...v1.1.1) (2026-10-12)
 
 
