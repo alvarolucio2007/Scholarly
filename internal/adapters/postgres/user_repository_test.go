@@ -168,7 +168,6 @@ func TestUserRepo_List(t *testing.T) {
 			if tt.wantErr {
 				t.Fatal("List() succeeded unexpectedly")
 			}
-			// TODO: update the condition below to compare got with tt.want.
 			require.Equal(t, len(got), len(tt.want))
 			for i := range got {
 				require.EqualValues(t, got[i].ID, tt.want[i].ID)
@@ -179,4 +178,10 @@ func TestUserRepo_List(t *testing.T) {
 			}
 		})
 	}
+	t.Cleanup(func() {
+		_, err := testDB.Exec("DELETE FROM users WHERE id=$1", user1.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user2.ID)
+		require.NoError(t, err)
+	})
 }
