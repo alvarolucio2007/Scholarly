@@ -16,6 +16,7 @@ type Handler struct {
 	tests       *services.TestService
 	grades      *services.GradeService
 	logger      *slog.Logger
+	healthcheck *services.HealthService
 }
 
 func NewHandler(
@@ -27,6 +28,7 @@ func NewHandler(
 	tests *services.TestService,
 	grades *services.GradeService,
 	logger *slog.Logger,
+	healthcheck *services.HealthService,
 ) *Handler {
 	return &Handler{
 		users:       users,
@@ -37,6 +39,7 @@ func NewHandler(
 		tests:       tests,
 		grades:      grades,
 		logger:      logger,
+		healthcheck: healthcheck,
 	}
 }
 

@@ -47,6 +47,10 @@ func New(db *sql.DB, rdb *redis.Client, logger *slog.Logger) *App {
 	gradeCache := valkey.NewGradeCache(rdb)
 	gradeSvc := services.NewGradeService(gradeRepo, gradeCache, logger)
 
-	handler := http.NewHandler(userSvc, studentSvc, teacherSvc, courseSvc, enrollmentSvc, testSvc, gradeSvc, logger)
+	healthRepo := postgres.NewHealthChecker(db)
+	healthCache := valkey.NewHealthChecker(rdb)
+	healthSvc := services.NewHealthService(healthRepo, healthCache)
+
+	handler := http.NewHandler(userSvc, studentSvc, teacherSvc, courseSvc, enrollmentSvc, testSvc, gradeSvc, logger, healthSvc)
 	return &App{Handler: handler}
 }
