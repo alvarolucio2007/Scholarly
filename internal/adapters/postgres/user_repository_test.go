@@ -193,7 +193,7 @@ func TestUserRepo_Update(t *testing.T) {
 	user1 := &domain.User{Name: "Test", CPF: "00000000000", Email: "test@gmail.com", PasswordHash: []byte("123456")}
 	createUserTest(t, user1)
 	t.Cleanup(func() {
-		_, err := testDB.Exec("DELETE FROM users WHERE id=$1", 1)
+		_, err := testDB.Exec("DELETE FROM users WHERE id=$1", user1.ID)
 		require.NoError(t, err)
 	})
 	tests := []struct {
