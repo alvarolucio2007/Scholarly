@@ -15,6 +15,11 @@ func createUserTest(t *testing.T, user *domain.User) {
 }
 
 func TestUserRepo_Create(t *testing.T) {
+	var id int64
+	t.Cleanup(func() {
+		_, err := testDB.Exec("DELETE FROM users WHERE id=$1", id)
+		require.NoError(t, err)
+	})
 	tests := []struct {
 		name string // description of this test case
 		// Named input parameters for target function.
@@ -55,12 +60,9 @@ func TestUserRepo_Create(t *testing.T) {
 			if tt.wantErr {
 				t.Fatal("Create() succeeded unexpectedly")
 			}
+			id = tt.user.ID
 		})
 	}
-	t.Cleanup(func() {
-		_, err := testDB.Exec("DELETE FROM users WHERE id=$1", 1)
-		require.NoError(t, err)
-	})
 }
 
 func TestUserRepo_GetByID(t *testing.T) {
@@ -68,6 +70,12 @@ func TestUserRepo_GetByID(t *testing.T) {
 	createUserTest(t, user1)
 	user2 := &domain.User{Name: "Test", CPF: "00000000001", Email: "test2@gmail.com", PasswordHash: []byte("123456")}
 	createUserTest(t, user2)
+	t.Cleanup(func() {
+		_, err := testDB.Exec("DELETE FROM users WHERE id=$1", user1.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user2.ID)
+		require.NoError(t, err)
+	})
 	tests := []struct {
 		name    string // description of this test case
 		userID  int64
@@ -107,12 +115,6 @@ func TestUserRepo_GetByID(t *testing.T) {
 			require.EqualValues(t, got.UpdatedAt, tt.want.UpdatedAt)
 		})
 	}
-	t.Cleanup(func() {
-		_, err := testDB.Exec("DELETE FROM users WHERE id=$1", user1.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user2.ID)
-		require.NoError(t, err)
-	})
 }
 
 func TestUserRepo_List(t *testing.T) {
@@ -121,6 +123,13 @@ func TestUserRepo_List(t *testing.T) {
 	createUserTest(t, user1)
 	user2 := &domain.User{Name: "TestTwo", CPF: "00000000001", Email: "testTwo@gmail.com", PasswordHash: []byte("123456")}
 	createUserTest(t, user2)
+
+	t.Cleanup(func() {
+		_, err := testDB.Exec("DELETE FROM users WHERE id=$1", user1.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user2.ID)
+		require.NoError(t, err)
+	})
 	tests := []struct {
 		name string // description of this test case
 		// Named input parameters for target function.
@@ -178,17 +187,15 @@ func TestUserRepo_List(t *testing.T) {
 			}
 		})
 	}
-	t.Cleanup(func() {
-		_, err := testDB.Exec("DELETE FROM users WHERE id=$1", user1.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user2.ID)
-		require.NoError(t, err)
-	})
 }
 
 func TestUserRepo_Update(t *testing.T) {
 	user1 := &domain.User{Name: "Test", CPF: "00000000000", Email: "test@gmail.com", PasswordHash: []byte("123456")}
 	createUserTest(t, user1)
+	t.Cleanup(func() {
+		_, err := testDB.Exec("DELETE FROM users WHERE id=$1", 1)
+		require.NoError(t, err)
+	})
 	tests := []struct {
 		name    string // description of this test case
 		user    *domain.User
@@ -245,10 +252,6 @@ func TestUserRepo_Update(t *testing.T) {
 			}
 		})
 	}
-	t.Cleanup(func() {
-		_, err := testDB.Exec("DELETE FROM users WHERE id=$1", 1)
-		require.NoError(t, err)
-	})
 }
 
 func TestUserRepo_Delete(t *testing.T) {

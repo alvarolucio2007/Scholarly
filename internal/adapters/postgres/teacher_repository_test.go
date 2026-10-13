@@ -1,9 +1,12 @@
 package postgres
 
 import (
+	"database/sql"
+	"log/slog"
 	"testing"
 
 	"github.com/alvarolucio2007/Scholarly/internal/domain"
+	"github.com/alvarolucio2007/Scholarly/internal/ports"
 	"github.com/go-openapi/testify/require"
 )
 
@@ -16,6 +19,12 @@ func createTeacherTest(t *testing.T, teacher *domain.Teacher) {
 func TestTeacherRepo_Create(t *testing.T) {
 	user1 := &domain.User{Name: "Test", CPF: "00000000000", Email: "test@gmail.com", PasswordHash: []byte("123456")}
 	createUserTest(t, user1)
+	t.Cleanup(func() {
+		_, err := testDB.Exec("DELETE FROM teachers WHERE user_id=$1", user1.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user1.ID)
+		require.NoError(t, err)
+	})
 	tests := []struct {
 		name string // description of this test case
 		// Named input parameters for target function.
@@ -53,14 +62,6 @@ func TestTeacherRepo_Create(t *testing.T) {
 			}
 		})
 	}
-	t.Cleanup(func() {
-		_, err := testDB.Exec("DELETE FROM teachers WHERE user_id=$1", user1.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user1.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("ALTER SEQUENCE users_id_seq RESTART WITH 1")
-		require.NoError(t, err)
-	})
 }
 
 func TestTeacherRepo_GetByID(t *testing.T) {
@@ -68,7 +69,11 @@ func TestTeacherRepo_GetByID(t *testing.T) {
 	createUserTest(t, user1)
 	teacher1 := &domain.Teacher{UserID: user1.ID, Department: "Testing"}
 	createTeacherTest(t, teacher1)
-
+	t.Cleanup(func() {
+		_, _ = testDB.Exec("DELETE FROM teachers WHERE user_id=$1", user1.ID)
+		_, _ = testDB.Exec("DELETE FROM users WHERE id=$1", user1.ID)
+	})
+	r := NewTeacherRepo(testDB, testLogger)
 	tests := []struct {
 		name      string // description of this test case
 		teacherID int64
@@ -94,7 +99,6 @@ func TestTeacherRepo_GetByID(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewTeacherRepo(testDB, testLogger)
 			got, gotErr := r.GetByID(t.Context(), tt.teacherID)
 			if gotErr != nil {
 				if !tt.wantErr {
@@ -109,12 +113,38 @@ func TestTeacherRepo_GetByID(t *testing.T) {
 			require.EqualValues(t, got.Department, tt.want.Department)
 		})
 	}
-	t.Cleanup(func() {
-		_, err := testDB.Exec("DELETE FROM teachers WHERE user_id=$1", user1.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user1.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("ALTER SEQUENCE users_id_seq RESTART WITH 1")
-		require.NoError(t, err)
-	})
+}
+
+func TestTeacherRepo_List(t *testing.T) {
+	tests := []struct {
+		name string // description of this test case
+		// Named input parameters for receiver constructor.
+		db     *sql.DB
+		logger *slog.Logger
+		// Named input parameters for target function.
+		filter  ports.TeacherFilter
+		want    []*domain.Teacher
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := NewTeacherRepo(tt.db, tt.logger)
+			got, gotErr := r.List(t.Context(), tt.filter)
+			if gotErr != nil {
+				if !tt.wantErr {
+					t.Errorf("List() failed: %v", gotErr)
+				}
+				return
+			}
+			if tt.wantErr {
+				t.Fatal("List() succeeded unexpectedly")
+			}
+			// TODO: update the condition below to compare got with tt.want.
+			if true {
+				t.Errorf("List() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }
