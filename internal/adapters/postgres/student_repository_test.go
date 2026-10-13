@@ -57,3 +57,33 @@ func TestStudentRepo_Create(t *testing.T) {
 		})
 	}
 }
+
+func TestStudentRepo_GetByID(t *testing.T) {
+	tests := []struct {
+		name      string // description of this test case
+		studentID int64
+		want      *domain.Student
+		wantErr   bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := NewStudentRepo(testDB)
+			got, gotErr := r.GetByID(t.Context(), tt.studentID)
+			if gotErr != nil {
+				if !tt.wantErr {
+					t.Errorf("GetByID() failed: %v", gotErr)
+				}
+				return
+			}
+			if tt.wantErr {
+				t.Fatal("GetByID() succeeded unexpectedly")
+			}
+			// TODO: update the condition below to compare got with tt.want.
+			if true {
+				t.Errorf("GetByID() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
