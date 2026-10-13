@@ -165,3 +165,52 @@ func TestTeacherRepo_List(t *testing.T) {
 		})
 	}
 }
+
+func TestTeacherRepo_Update(t *testing.T) {
+	user1 := &domain.User{Name: "Test", CPF: "00000000000", Email: "test@gmail.com", PasswordHash: []byte("123456")}
+	createUserTest(t, user1)
+	teacher1 := &domain.Teacher{UserID: user1.ID, Department: "Testing"}
+	createTeacherTest(t, teacher1)
+	t.Cleanup(func() {
+		_, err := testDB.Exec("DELETE FROM teachers WHERE user_id=$1", user1.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user1.ID)
+		require.NoError(t, err)
+	})
+	tests := []struct {
+		name string // description of this test case
+		// Named input parameters for target function.
+		teacher *domain.Teacher
+		wantErr bool
+	}{
+		{
+			name:    "shouldn't edit teacher if all params are empty",
+			teacher: &domain.Teacher{UserID: user1.ID, Department: ""},
+			wantErr: false,
+		}, {
+			name:    "should edit only department",
+			teacher: &domain.Teacher{UserID: user1.ID, Department: "Updated"},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := NewTeacherRepo(testDB, testLogger)
+			gotErr := r.Update(t.Context(), tt.teacher)
+			if gotErr != nil {
+				if !tt.wantErr {
+					t.Errorf("Update() failed: %v", gotErr)
+				}
+				return
+			}
+			if tt.wantErr {
+				t.Fatal("Update() succeeded unexpectedly")
+			}
+			updatedTeacher, err := r.GetByID(t.Context(), user1.ID)
+			require.NoError(t, err)
+			if tt.teacher.Department != "" {
+				require.NotEqual(t, teacher1.Department, updatedTeacher.Department)
+			}
+		})
+	}
+}
