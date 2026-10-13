@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"log"
 	"log/slog"
 
 	"github.com/alvarolucio2007/Scholarly/internal/domain"
@@ -78,7 +77,6 @@ func (r *TeacherRepo) List(ctx context.Context, filter ports.TeacherFilter) ([]*
 	defer func() {
 		if err := rows.Close(); err != nil {
 			r.logger.ErrorContext(ctx, "postgres: rows.close list teachers ", "error", err)
-			log.Printf("postgres: rows.close list teachers: %v", err)
 		}
 	}()
 	var teachers []*domain.Teacher
