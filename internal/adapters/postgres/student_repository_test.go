@@ -135,6 +135,11 @@ func TestStudentRepo_GetByEnrollment(t *testing.T) {
 			enrollment: "Testing",
 			want:       student1,
 			wantErr:    false,
+		}, {
+			name:       "should not return anything if userID doesn't exist",
+			enrollment: "DOESN'T EXIST",
+			want:       nil,
+			wantErr:    true,
 		},
 	}
 	for _, tt := range tests {
