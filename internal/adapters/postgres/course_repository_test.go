@@ -270,3 +270,54 @@ func TestCourseRepo_Update(t *testing.T) {
 		})
 	}
 }
+
+func TestCourseRepo_Delete(t *testing.T) {
+	user := &domain.User{Name: "Create test", Email: "createtest@email.com", CPF: "00000000000", PasswordHash: []byte("123456789")}
+	createUserTest(t, user)
+	teacher := &domain.Teacher{UserID: user.ID, Department: "CourseCreation"}
+	createTeacherTest(t, teacher)
+	course := &domain.Course{TeacherID: teacher.UserID, Name: "GetByID", Code: "GETBYID", Semester: "GETBYIDSEMESTER", MaxStudents: 100}
+	createCourseTest(t, course)
+	t.Cleanup(func() {
+		_, err := testDB.Exec("DELETE FROM courses WHERE id = $1", course.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM teachers WHERE user_id=$1", user.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user.ID)
+		require.NoError(t, err)
+	})
+	tests := []struct {
+		name     string // description of this test case
+		courseID int64
+		wantErr  bool
+	}{
+		{
+			name:     "should delete with valid courseID",
+			courseID: course.ID,
+			wantErr:  false,
+		}, {
+			name:     "should return error if id doesn't exist",
+			courseID: -1,
+			wantErr:  true,
+		}, {
+			name:     "should return error if course was already deleted",
+			courseID: course.ID,
+			wantErr:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := NewCourseRepo(testDB, testLogger)
+			gotErr := r.Delete(t.Context(), tt.courseID)
+			if gotErr != nil {
+				if !tt.wantErr {
+					t.Errorf("Delete() failed: %v", gotErr)
+				}
+				return
+			}
+			if tt.wantErr {
+				t.Fatal("Delete() succeeded unexpectedly")
+			}
+		})
+	}
+}
