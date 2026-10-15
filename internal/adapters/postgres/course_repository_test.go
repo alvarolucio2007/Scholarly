@@ -321,3 +321,77 @@ func TestCourseRepo_Delete(t *testing.T) {
 		})
 	}
 }
+
+func TestCourseRepo_EnrollStudent(t *testing.T) {
+	var id int64
+	user := &domain.User{Name: "Create test", Email: "createtest@email.com", CPF: "00000000000", PasswordHash: []byte("123456789")}
+	createUserTest(t, user)
+	user2 := &domain.User{Name: "Create student test", Email: "createstudent@email.com", CPF: "00000000002", PasswordHash: []byte("123456789")}
+	createUserTest(t, user2)
+	teacher := &domain.Teacher{UserID: user.ID, Department: "CourseCreation"}
+	createTeacherTest(t, teacher)
+	student := &domain.Student{UserID: user2.ID, EnrollmentNumber: "Test"}
+	createStudentTest(t, student)
+	course := &domain.Course{TeacherID: teacher.UserID, Name: "GetByID", Code: "GETBYID", Semester: "GETBYIDSEMESTER", MaxStudents: 100}
+	createCourseTest(t, course)
+	t.Cleanup(func() {
+		_, err := testDB.Exec("DELETE FROM enrollments WHERE id=$1", id)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM courses WHERE id = $1", course.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM teachers WHERE user_id=$1", user.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM students WHERE user_id=$1", user2.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user2.ID)
+		require.NoError(t, err)
+	})
+	tests := []struct {
+		name      string // description of this test case
+		studentID int64
+		courseID  int64
+		want      int64
+		wantErr   bool
+	}{
+		{
+			name:      "should enroll student with valid course and student IDs",
+			studentID: student.UserID,
+			courseID:  course.ID,
+			want:      1,
+			wantErr:   false,
+		}, {
+			name:      "shouldn't enroll student with invalid course ID",
+			studentID: student.UserID,
+			courseID:  -1,
+			want:      0,
+			wantErr:   true,
+		}, {
+			name:      "shouldn't enroll student with invalid student ID",
+			studentID: -1,
+			courseID:  course.ID,
+			want:      0,
+			wantErr:   true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := NewCourseRepo(testDB, testLogger)
+			got, gotErr := r.EnrollStudent(t.Context(), tt.studentID, tt.courseID)
+			if gotErr != nil {
+				if !tt.wantErr {
+					t.Errorf("EnrollStudent() failed: %v", gotErr)
+				}
+				return
+			}
+			if tt.wantErr {
+				t.Fatal("EnrollStudent() succeeded unexpectedly")
+			}
+			id = got
+			if got != tt.want {
+				t.Errorf("EnrollStudent() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
