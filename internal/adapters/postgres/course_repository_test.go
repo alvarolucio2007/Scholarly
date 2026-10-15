@@ -182,3 +182,91 @@ func TestCourseRepo_List(t *testing.T) {
 		})
 	}
 }
+
+func TestCourseRepo_Update(t *testing.T) {
+	user := &domain.User{Name: "Create course", Email: "createtest@email.com", CPF: "00000000000", PasswordHash: []byte("123456789")}
+	createUserTest(t, user)
+	user2 := &domain.User{Name: "Create course", Email: "createtest2@email.com", CPF: "00000000001", PasswordHash: []byte("123456789")}
+	createUserTest(t, user2)
+	teacher := &domain.Teacher{UserID: user.ID, Department: "CourseCreation"}
+	createTeacherTest(t, teacher)
+	teacher2 := &domain.Teacher{UserID: user2.ID, Department: "CourseCreation2"}
+	createTeacherTest(t, teacher2)
+	course := &domain.Course{TeacherID: teacher.UserID, Name: "GetByID", Code: "GETBYID", Semester: "GETBYIDSEMESTER", MaxStudents: 100}
+	createCourseTest(t, course)
+	t.Cleanup(func() {
+		_, err := testDB.Exec("DELETE FROM courses WHERE id = $1", course.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM teachers WHERE user_id=$1", user2.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM teachers WHERE user_id=$1", user.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user2.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user.ID)
+		require.NoError(t, err)
+	})
+	tests := []struct {
+		name    string // description of this test case
+		course  *domain.Course
+		wantErr bool
+	}{
+		{
+			name:    "shouldn't edit course if all params are empty",
+			course:  &domain.Course{ID: course.ID},
+			wantErr: false,
+		}, {
+			name:    "should only edit teacherID",
+			course:  &domain.Course{ID: course.ID, TeacherID: teacher2.UserID, Name: "", Code: "", Semester: "", MaxStudents: 0},
+			wantErr: false,
+		}, {
+			name:    "should only edit name",
+			course:  &domain.Course{ID: course.ID, TeacherID: 0, Name: "EDITED NAME", Code: "", Semester: "", MaxStudents: 0},
+			wantErr: false,
+		}, {
+			name:    "should only edit code",
+			course:  &domain.Course{ID: course.ID, TeacherID: 0, Name: "", Code: "EDITED CODE", Semester: "", MaxStudents: 0},
+			wantErr: false,
+		}, {
+			name:    "should only edit semester",
+			course:  &domain.Course{ID: course.ID, TeacherID: 0, Name: "", Code: "", Semester: "EDITED Semester", MaxStudents: 0},
+			wantErr: false,
+		}, {
+			name:    "should only edit max students",
+			course:  &domain.Course{ID: course.ID, TeacherID: 0, Name: "", Code: "", Semester: "", MaxStudents: 1},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := NewCourseRepo(testDB, testLogger)
+			gotErr := r.Update(t.Context(), tt.course)
+			if gotErr != nil {
+				if !tt.wantErr {
+					t.Errorf("Update() failed: %v", gotErr)
+				}
+				return
+			}
+			if tt.wantErr {
+				t.Fatal("Update() succeeded unexpectedly")
+			}
+			updatedCourse, err := r.GetByID(t.Context(), course.ID)
+			require.NoError(t, err)
+			if tt.course.Name != "" {
+				require.NotEqual(t, course.Name, updatedCourse.Name)
+			}
+			if tt.course.TeacherID != 0 {
+				require.NotEqual(t, course.TeacherID, updatedCourse.TeacherID)
+			}
+			if tt.course.Code != "" {
+				require.NotEqual(t, course.Code, updatedCourse.Code)
+			}
+			if tt.course.Semester != "" {
+				require.NotEqual(t, course.Semester, updatedCourse.Semester)
+			}
+			if tt.course.MaxStudents != 0 {
+				require.NotEqual(t, course.MaxStudents, updatedCourse.MaxStudents)
+			}
+		})
+	}
+}
