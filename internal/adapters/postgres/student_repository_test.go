@@ -107,8 +107,7 @@ func TestStudentRepo_GetByID(t *testing.T) {
 			if tt.wantErr {
 				t.Fatal("GetByID() succeeded unexpectedly")
 			}
-			require.EqualValues(t, got.UserID, tt.want.UserID)
-			require.EqualValues(t, got.EnrollmentNumber, tt.want.EnrollmentNumber)
+			require.EqualValues(t, &tt.want, &got)
 		})
 	}
 }
@@ -155,8 +154,7 @@ func TestStudentRepo_GetByEnrollment(t *testing.T) {
 			if tt.wantErr {
 				t.Fatal("GetByEnrollment() succeeded unexpectedly")
 			}
-			require.EqualValues(t, got.UserID, tt.want.UserID)
-			require.EqualValues(t, got.EnrollmentNumber, tt.want.EnrollmentNumber)
+			require.EqualValues(t, &tt.want, &got)
 		})
 	}
 }

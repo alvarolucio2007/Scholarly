@@ -108,6 +108,7 @@ func TestTeacherRepo_GetByID(t *testing.T) {
 			if tt.wantErr {
 				t.Fatal("GetByID() succeeded unexpectedly")
 			}
+			require.EqualValues(t, &got, &tt.want)
 			require.EqualValues(t, got.UserID, tt.want.UserID)
 			require.EqualValues(t, got.Department, tt.want.Department)
 		})
@@ -159,8 +160,7 @@ func TestTeacherRepo_List(t *testing.T) {
 			}
 			require.Equal(t, len(got), len(tt.want))
 			for i := range got {
-				require.EqualValues(t, got[i].UserID, tt.want[i].UserID)
-				require.EqualValues(t, got[i].Department, tt.want[i].Department)
+				require.EqualValues(t, &got[i], &tt.want[i])
 			}
 		})
 	}
