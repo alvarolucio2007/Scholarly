@@ -25,6 +25,7 @@ func NewEnrollmentRepo(db *sql.DB, logger *slog.Logger) *EnrollmentRepo {
 	return &EnrollmentRepo{db: db, logger: logger}
 }
 
+// Create is unused...
 func (r *EnrollmentRepo) Create(ctx context.Context, enrollment *domain.Enrollment) error {
 	query := `INSERT INTO enrollments (student_id,course_id,status) VALUES ($1,$2,$3) RETURNING id,enrolled_at`
 	ctx, cancel := context.WithTimeout(ctx, PostgresQueryTimeout)
