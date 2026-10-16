@@ -206,3 +206,59 @@ func TestGradeRepo_List(t *testing.T) {
 		})
 	}
 }
+
+func TestGradeRepo_Update(t *testing.T) {
+	s := setupGradeScenario(t)
+	grade := &domain.Grade{TestID: s.Test.ID, EnrollmentID: s.Enrollment.ID, Value: 0}
+	createGradeTest(t, grade)
+	cleanupGrade(t, grade.ID, s.Test.ID, s.Course.ID, s.Enrollment.ID, s.Teacher.UserID, s.Student.UserID, s.User.ID, s.User2.ID)
+	tests := []struct {
+		name    string // description of this test case
+		grade   *domain.Grade
+		wantErr bool
+	}{
+		{
+			name:    "shouldn't edit anything if all params are empty",
+			grade:   &domain.Grade{ID: grade.ID},
+			wantErr: false,
+		}, {
+			name:    "should try to edit only testID (and throw error because FK constraint)",
+			grade:   &domain.Grade{ID: grade.ID, TestID: 999},
+			wantErr: true,
+		}, {
+			name:    "should try to edit only enrollmentID (and throw error because FK constraint)",
+			grade:   &domain.Grade{ID: grade.ID, EnrollmentID: 999},
+			wantErr: true,
+		}, {
+			name:    "should edit only value",
+			grade:   &domain.Grade{ID: grade.ID, Value: 5},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := NewGradeRepo(testDB, testLogger)
+			gotErr := r.Update(t.Context(), tt.grade)
+			if gotErr != nil {
+				if !tt.wantErr {
+					t.Errorf("Update() failed: %v", gotErr)
+				}
+				return
+			}
+			if tt.wantErr {
+				t.Fatal("Update() succeeded unexpectedly")
+			}
+			updatedGrade, err := r.GetByID(t.Context(), grade.ID)
+			require.NoError(t, err)
+			if tt.grade.Value != 0 {
+				require.NotEqual(t, grade.Value, updatedGrade.Value)
+			}
+			if tt.grade.TestID != 0 {
+				require.NotEqual(t, grade.TestID, updatedGrade.TestID)
+			}
+			if tt.grade.EnrollmentID != 0 {
+				require.NotEqual(t, grade.EnrollmentID, updatedGrade.EnrollmentID)
+			}
+		})
+	}
+}
