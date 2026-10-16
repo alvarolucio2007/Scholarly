@@ -287,3 +287,62 @@ func TestTestRepo_Update(t *testing.T) {
 		})
 	}
 }
+
+func TestTestRepo_Delete(t *testing.T) {
+	user := &domain.User{Name: "Create test", Email: "createtest@email.com", CPF: "00000000000", PasswordHash: []byte("123456789")}
+	createUserTest(t, user)
+	teacher := &domain.Teacher{UserID: user.ID, Department: "CourseCreation"}
+	createTeacherTest(t, teacher)
+	course := &domain.Course{TeacherID: teacher.UserID, Name: "GetByID", Code: "GETBYID", Semester: "GETBYIDSEMESTER", MaxStudents: 100}
+	createCourseTest(t, course)
+	test := &domain.Test{CourseID: course.ID, Name: "Successful test creation", Weight: 6}
+	createTestTest(t, test)
+	t.Cleanup(func() {
+		_, err := testDB.Exec("DELETE FROM tests WHERE id = $1", test.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM courses WHERE id = $1", course.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM teachers WHERE user_id=$1", user.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user.ID)
+		require.NoError(t, err)
+	})
+	tests := []struct {
+		name    string // description of this test case
+		testID  int64
+		wantErr bool
+	}{
+		{
+			name:    "should delete test if ID is valid",
+			testID:  test.ID,
+			wantErr: false,
+		}, {
+			name:    "shouldn't delete test if testID is invalid",
+			testID:  -1,
+			wantErr: true,
+		}, {
+			name:    "shoudln't delete test if testID doesn't exist",
+			testID:  999,
+			wantErr: true,
+		}, {
+			name:    "should return error if test was already deleted",
+			testID:  test.ID,
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := NewTestRepo(testDB, testLogger)
+			gotErr := r.Delete(t.Context(), tt.testID)
+			if gotErr != nil {
+				if !tt.wantErr {
+					t.Errorf("Delete() failed: %v", gotErr)
+				}
+				return
+			}
+			if tt.wantErr {
+				t.Fatal("Delete() succeeded unexpectedly")
+			}
+		})
+	}
+}
