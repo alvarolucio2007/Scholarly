@@ -209,3 +209,81 @@ func TestTestRepo_List(t *testing.T) {
 		})
 	}
 }
+
+func TestTestRepo_Update(t *testing.T) {
+	user := &domain.User{Name: "Create test", Email: "createtest@email.com", CPF: "00000000000", PasswordHash: []byte("123456789")}
+	createUserTest(t, user)
+	teacher := &domain.Teacher{UserID: user.ID, Department: "CourseCreation"}
+	createTeacherTest(t, teacher)
+	course := &domain.Course{TeacherID: teacher.UserID, Name: "GetByID", Code: "GETBYID", Semester: "GETBYIDSEMESTER", MaxStudents: 100}
+	createCourseTest(t, course)
+	course2 := &domain.Course{TeacherID: teacher.UserID, Name: "Course 2", Code: "COURSE 2", Semester: "COURSE 2", MaxStudents: 10}
+	createCourseTest(t, course2)
+	test := &domain.Test{CourseID: course.ID, Name: "Successful test creation", Weight: 6}
+	createTestTest(t, test)
+	t.Cleanup(func() {
+		_, err := testDB.Exec("DELETE FROM tests WHERE id = $1", test.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM courses WHERE id = $1", course.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM courses WHERE id = $1", course2.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM teachers WHERE user_id=$1", user.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user.ID)
+		require.NoError(t, err)
+	})
+	tests := []struct {
+		name    string // description of this test case
+		test    *domain.Test
+		wantErr bool
+	}{
+		{
+			name:    "shouldn't edit the test if all params are empty",
+			test:    &domain.Test{ID: test.ID},
+			wantErr: false,
+		}, {
+			name:    "should only edit courseID",
+			test:    &domain.Test{ID: test.ID, CourseID: course2.ID, Name: ""},
+			wantErr: false,
+		}, {
+			name:    "should only edit name",
+			test:    &domain.Test{ID: test.ID, CourseID: 0, Name: "New name", Weight: 0},
+			wantErr: false,
+		}, {
+			name:    "should only edit weight",
+			test:    &domain.Test{ID: test.ID, CourseID: 0, Name: "", Weight: 9},
+			wantErr: false,
+		}, {
+			name:    "should return error if not found",
+			test:    &domain.Test{},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := NewTestRepo(testDB, testLogger)
+			gotErr := r.Update(t.Context(), tt.test)
+			if gotErr != nil {
+				if !tt.wantErr {
+					t.Errorf("Update() failed: %v", gotErr)
+				}
+				return
+			}
+			if tt.wantErr {
+				t.Fatal("Update() succeeded unexpectedly")
+			}
+			updatedTest, err := r.GetByID(t.Context(), test.ID)
+			require.NoError(t, err)
+			if tt.test.CourseID != 0 {
+				require.NotEqual(t, test.CourseID, updatedTest.CourseID)
+			}
+			if tt.test.Weight != 0 {
+				require.NotEqual(t, test.Weight, updatedTest.Weight)
+			}
+			if tt.test.Name != "" {
+				require.NotEqual(t, test.Name, updatedTest.Name)
+			}
+		})
+	}
+}
