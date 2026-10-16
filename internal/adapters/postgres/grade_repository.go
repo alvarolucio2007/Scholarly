@@ -207,7 +207,7 @@ func (r *GradeRepo) ListAverages(ctx context.Context, filter ports.ReportCardFil
 	return reportCards, nil
 }
 
-func (r *GradeRepo) GetAverage(ctx context.Context, studentID, courseID int64) (*float64, error) {
+func (r *GradeRepo) GetAverage(ctx context.Context, studentID, courseID int64) (float64, error) {
 	query := `SELECT * FROM fn_weighted_average($1,$2)`
 	ctx, cancel := context.WithTimeout(ctx, PostgresQueryTimeout)
 	defer cancel()
@@ -216,9 +216,9 @@ func (r *GradeRepo) GetAverage(ctx context.Context, studentID, courseID int64) (
 	if err != nil {
 		translated := translateError(err)
 		if !errors.Is(err, translated) {
-			return nil, translated
+			return 0, translated
 		}
-		return nil, fmt.Errorf("postgres: GetAverageReportCard: %w", err)
+		return 0, fmt.Errorf("postgres: GetAverageReportCard: %w", err)
 	}
-	return &res, nil
+	return res, nil
 }

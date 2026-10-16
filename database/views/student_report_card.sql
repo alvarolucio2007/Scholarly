@@ -8,9 +8,9 @@ SELECT
     tu.name               AS teacher_name,
     fn_weighted_average(s.user_id,c.id)               AS average,
   CASE  
-        WHEN fn_weighted_average(s.user_id, c.id) >= 7 THEN 'Approved'
-        WHEN fn_weighted_average(s.user_id, c.id) >= 5 THEN 'Recovery'
-        ELSE 'Failed'
+        WHEN fn_weighted_average(s.user_id, c.id) >= 7 THEN 'approved'
+        WHEN fn_weighted_average(s.user_id, c.id) >= 5 THEN 'recovery'
+        ELSE 'failed'
   END AS situation
 FROM students s
 JOIN users u         ON s.user_id=u.id

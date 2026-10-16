@@ -101,6 +101,6 @@ func (s *GradeService) ListAverages(ctx context.Context, filter ports.ReportCard
 	return s.repo.ListAverages(ctx, filter)
 }
 
-func (s *GradeService) GetAverage(ctx context.Context, studentID, courseID int64) (*float64, error) {
+func (s *GradeService) GetAverage(ctx context.Context, studentID, courseID int64) (float64, error) {
 	return s.repo.GetAverage(ctx, studentID, courseID)
 }

@@ -89,7 +89,3 @@ func (s *EnrollmentService) Delete(ctx context.Context, enrollmentID int64) erro
 	}
 	return nil
 }
-
-func (s *EnrollmentService) GetWeightedAverage(ctx context.Context, studentID, courseID int64) (float64, error) {
-	return s.repo.GetWeightedAverage(ctx, studentID, courseID)
-}

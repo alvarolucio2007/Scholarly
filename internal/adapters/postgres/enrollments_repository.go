@@ -25,6 +25,7 @@ func NewEnrollmentRepo(db *sql.DB, logger *slog.Logger) *EnrollmentRepo {
 	return &EnrollmentRepo{db: db, logger: logger}
 }
 
+// Create is unused...
 func (r *EnrollmentRepo) Create(ctx context.Context, enrollment *domain.Enrollment) error {
 	query := `INSERT INTO enrollments (student_id,course_id,status) VALUES ($1,$2,$3) RETURNING id,enrolled_at`
 	ctx, cancel := context.WithTimeout(ctx, PostgresQueryTimeout)
@@ -164,19 +165,4 @@ func (r *EnrollmentRepo) Delete(ctx context.Context, enrollmentID int64) error {
 		return domain.ErrNotFound
 	}
 	return nil
-}
-
-func (r *EnrollmentRepo) GetWeightedAverage(ctx context.Context, studentID, courseID int64) (float64, error) {
-	query := `SELECT fn_weighted_average($1,$2)`
-	ctx, cancel := context.WithTimeout(ctx, PostgresQueryTimeout)
-	defer cancel()
-	var res float64
-	if err := r.db.QueryRowContext(ctx, query, studentID, courseID).Scan(&res); err != nil {
-		translated := translateError(err)
-		if !errors.Is(err, translated) {
-			return 0, translated
-		}
-		return 0, fmt.Errorf("postgres: get weighed average : %w", err)
-	}
-	return res, nil
 }
