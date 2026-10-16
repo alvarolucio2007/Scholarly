@@ -262,3 +262,48 @@ func TestGradeRepo_Update(t *testing.T) {
 		})
 	}
 }
+
+func TestGradeRepo_Delete(t *testing.T) {
+	s := setupGradeScenario(t)
+	grade := &domain.Grade{TestID: s.Test.ID, EnrollmentID: s.Enrollment.ID, Value: 0}
+	createGradeTest(t, grade)
+	cleanupGrade(t, grade.ID, s.Test.ID, s.Course.ID, s.Enrollment.ID, s.Teacher.UserID, s.Student.UserID, s.User.ID, s.User2.ID)
+	tests := []struct {
+		name    string // description of this test case
+		gradeID int64
+		wantErr bool
+	}{
+		{
+			name:    "should delete valid grade",
+			gradeID: grade.ID,
+			wantErr: false,
+		}, {
+			name:    "shouldn't delete invalid gradeID",
+			gradeID: -1,
+			wantErr: true,
+		}, {
+			name:    "shouldn't delete gradeID that doesn't exist",
+			gradeID: 999,
+			wantErr: true,
+		}, {
+			name:    "should return error if grade was already deleted",
+			gradeID: grade.ID,
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := NewGradeRepo(testDB, testLogger)
+			gotErr := r.Delete(t.Context(), tt.gradeID)
+			if gotErr != nil {
+				if !tt.wantErr {
+					t.Errorf("Delete() failed: %v", gotErr)
+				}
+				return
+			}
+			if tt.wantErr {
+				t.Fatal("Delete() succeeded unexpectedly")
+			}
+		})
+	}
+}
