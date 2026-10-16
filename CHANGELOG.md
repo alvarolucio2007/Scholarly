@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.0.0](https://github.com/alvarolucio2007/Scholarly/compare/v1.2.0...v2.0.0) (2026-10-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* replacing EnrollmentStatus with SituationStatus in ReportCard
+* Changing vw_student average return to 'approved', 'recovery' and 'failed'
+
+### Bug Fixes
+
+* Changing vw_student average return to 'approved', 'recovery' and 'failed' ([04fda07](https://github.com/alvarolucio2007/Scholarly/commit/04fda07efb96d66381cca9b155444ac8bb7f509d))
+* removing pointer from float64 return in GetAverage ([16b919c](https://github.com/alvarolucio2007/Scholarly/commit/16b919ce99b766ec31921f93b11fed56e3152881))
+* replacing EnrollmentStatus with SituationStatus in ReportCard ([0b2d643](https://github.com/alvarolucio2007/Scholarly/commit/0b2d6438fefc24ac3d5d6bfafcb169141806cad0))
+
 ## [1.2.0](https://github.com/alvarolucio2007/Scholarly/compare/v1.1.1...v1.2.0) (2026-10-12)
 
 
