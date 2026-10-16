@@ -1,5 +1,13 @@
 package domain
 
+type SituationStatus string
+
+const (
+	StatusApproved SituationStatus = "approved"
+	StatusFailed   SituationStatus = "cancelled"
+	StatusRecovery SituationStatus = "recovery"
+)
+
 type ReportCard struct {
 	StudentID   int64
 	StudentName string
@@ -8,5 +16,5 @@ type ReportCard struct {
 	CourseCode  string
 	TeacherName string
 	Average     float64
-	Situation   EnrollmentStatus
+	Situation   SituationStatus
 }
