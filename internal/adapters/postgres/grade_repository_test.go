@@ -343,3 +343,43 @@ func TestGradeRepo_ListAverages(t *testing.T) {
 		})
 	}
 }
+
+func TestGradeRepo_GetAverage(t *testing.T) {
+	s := setupGradeScenario(t)
+	grade := &domain.Grade{TestID: s.Test.ID, EnrollmentID: s.Enrollment.ID, Value: 10}
+	createGradeTest(t, grade)
+	cleanupGrade(t, grade.ID, s.Test.ID, s.Course.ID, s.Enrollment.ID, s.Teacher.UserID, s.Student.UserID, s.User.ID, s.User2.ID)
+	tests := []struct {
+		name      string // description of this test case
+		studentID int64
+		courseID  int64
+		want      float64
+		wantErr   bool
+	}{
+		{
+			name:      "should return average",
+			studentID: s.Student.UserID,
+			courseID:  s.Course.ID,
+			want:      10,
+			wantErr:   false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := NewGradeRepo(testDB, testLogger)
+			got, gotErr := r.GetAverage(t.Context(), tt.studentID, tt.courseID)
+			if gotErr != nil {
+				if !tt.wantErr {
+					t.Errorf("GetAverage() failed: %v", gotErr)
+				}
+				return
+			}
+			if tt.wantErr {
+				t.Fatal("GetAverage() succeeded unexpectedly")
+			}
+			if tt.want != got {
+				t.Errorf("GetAverage() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
