@@ -307,3 +307,39 @@ func TestGradeRepo_Delete(t *testing.T) {
 		})
 	}
 }
+
+func TestGradeRepo_ListAverages(t *testing.T) {
+	s := setupGradeScenario(t)
+	grade := &domain.Grade{TestID: s.Test.ID, EnrollmentID: s.Enrollment.ID, Value: 0}
+	createGradeTest(t, grade)
+	cleanupGrade(t, grade.ID, s.Test.ID, s.Course.ID, s.Enrollment.ID, s.Teacher.UserID, s.Student.UserID, s.User.ID, s.User2.ID)
+	tests := []struct {
+		name    string // description of this test case
+		filter  ports.ReportCardFilter
+		want    []*domain.ReportCard
+		wantErr bool
+	}{
+		{
+			name:    "should list all averages",
+			filter:  ports.ReportCardFilter{StudentID: &s.Student.UserID},
+			want:    []*domain.ReportCard{{StudentID: s.Student.UserID, StudentName: s.User2.Name, CourseID: s.Course.ID, CourseName: s.Course.Name, CourseCode: s.Course.Code, TeacherName: s.User.Name, Average: 0, Situation: domain.SituationStatus("failed")}},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := NewGradeRepo(testDB, testLogger)
+			got, gotErr := r.ListAverages(t.Context(), tt.filter)
+			if gotErr != nil {
+				if !tt.wantErr {
+					t.Errorf("ListAverages() failed: %v", gotErr)
+				}
+				return
+			}
+			if tt.wantErr {
+				t.Fatal("ListAverages() succeeded unexpectedly")
+			}
+			require.EqualValues(t, tt.want, got)
+		})
+	}
+}
