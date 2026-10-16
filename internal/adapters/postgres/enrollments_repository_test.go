@@ -295,3 +295,72 @@ func TestEnrollmentRepo_Update(t *testing.T) {
 		})
 	}
 }
+
+func TestEnrollmentRepo_Delete(t *testing.T) {
+	user := &domain.User{Name: "Create test", Email: "createtest@email.com", CPF: "00000000000", PasswordHash: []byte("123456789")}
+	createUserTest(t, user)
+	user2 := &domain.User{Name: "Create student test", Email: "createstudent@email.com", CPF: "00000000002", PasswordHash: []byte("123456789")}
+	createUserTest(t, user2)
+	teacher := &domain.Teacher{UserID: user.ID, Department: "CourseCreation"}
+	createTeacherTest(t, teacher)
+	student := &domain.Student{UserID: user2.ID, EnrollmentNumber: "Test"}
+	createStudentTest(t, student)
+	course := &domain.Course{TeacherID: teacher.UserID, Name: "GetByID", Code: "GETBYID", Semester: "GETBYIDSEMESTER", MaxStudents: 100}
+	createCourseTest(t, course)
+	enrollment := &domain.Enrollment{StudentID: student.UserID, CourseID: course.ID, Status: "active"}
+	createEnrollmentTest(t, enrollment)
+	t.Cleanup(func() {
+		_, err := testDB.Exec("DELETE FROM enrollments WHERE id=$1", enrollment.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM courses WHERE id = $1", course.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM teachers WHERE user_id=$1", user.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM students WHERE user_id=$1", user2.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM students WHERE user_id=$1", user.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user2.ID)
+		require.NoError(t, err)
+	})
+	tests := []struct {
+		name         string // description of this test case
+		enrollmentID int64
+		wantErr      bool
+	}{
+		{
+			name:         "should delete valid enrollment",
+			enrollmentID: enrollment.ID,
+			wantErr:      false,
+		}, {
+			name:         "shouldn't delete invalid enrollmentID",
+			enrollmentID: -1,
+			wantErr:      true,
+		}, {
+			name:         "shouldn't delete enrollmentID which doesn't exist",
+			enrollmentID: 999,
+			wantErr:      true,
+		}, {
+			name:         "should return error if enrollment was already deleted",
+			enrollmentID: enrollment.ID,
+			wantErr:      true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := NewEnrollmentRepo(testDB, testLogger)
+			gotErr := r.Delete(t.Context(), tt.enrollmentID)
+			if gotErr != nil {
+				if !tt.wantErr {
+					t.Errorf("Delete() failed: %v", gotErr)
+				}
+				return
+			}
+			if tt.wantErr {
+				t.Fatal("Delete() succeeded unexpectedly")
+			}
+		})
+	}
+}
