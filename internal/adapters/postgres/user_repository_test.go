@@ -1,25 +1,30 @@
-package postgres
+package postgres_test
 
 import (
 	"testing"
 
+	"github.com/alvarolucio2007/Scholarly/internal/adapters/postgres"
 	"github.com/alvarolucio2007/Scholarly/internal/domain"
 	"github.com/alvarolucio2007/Scholarly/internal/ports"
 	"github.com/go-openapi/testify/require"
 )
 
 func createUserTest(t *testing.T, user *domain.User) {
-	r := NewUserRepo(testDB, testLogger)
+	r := postgres.NewUserRepo(testDB, testLogger)
 	err := r.Create(t.Context(), user)
 	require.NoError(t, err)
+}
+func cleanupUser(t *testing.T, userID int64) {
+	t.Cleanup(func() {
+		_, err := testDB.Exec("DELETE FROM users where id=$1")
+		require.NoError(t, err)
+	})
 }
 
 func TestUserRepo_Create(t *testing.T) {
 	var id int64
-	t.Cleanup(func() {
-		_, err := testDB.Exec("DELETE FROM users WHERE id=$1", id)
-		require.NoError(t, err)
-	})
+	r := postgres.NewUserRepo(testDB, testLogger)
+	cleanupUser(t, id)
 	tests := []struct {
 		name string // description of this test case
 		// Named input parameters for target function.
@@ -49,7 +54,6 @@ func TestUserRepo_Create(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewUserRepo(testDB, testLogger)
 			gotErr := r.Create(t.Context(), tt.user)
 			if gotErr != nil {
 				if !tt.wantErr {
@@ -68,10 +72,8 @@ func TestUserRepo_Create(t *testing.T) {
 func TestUserRepo_GetByID(t *testing.T) {
 	user1 := &domain.User{Name: "Test", CPF: "00000000000", Email: "test@gmail.com", PasswordHash: []byte("123456")}
 	createUserTest(t, user1)
-	t.Cleanup(func() {
-		_, err := testDB.Exec("DELETE FROM users WHERE id=$1", user1.ID)
-		require.NoError(t, err)
-	})
+	cleanupUser(t, user1.ID)
+	r := postgres.NewUserRepo(testDB, testLogger)
 	tests := []struct {
 		name    string // description of this test case
 		userID  int64
@@ -93,7 +95,6 @@ func TestUserRepo_GetByID(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewUserRepo(testDB, testLogger)
 			got, gotErr := r.GetByID(t.Context(), tt.userID)
 			if gotErr != nil {
 				if !tt.wantErr {
@@ -115,17 +116,13 @@ func TestUserRepo_GetByID(t *testing.T) {
 
 func TestUserRepo_List(t *testing.T) {
 	incorrectStr := "INCORRECT"
+	r := postgres.NewUserRepo(testDB, testLogger)
 	user1 := &domain.User{Name: "TestOne", CPF: "00000000000", Email: "testOne@gmail.com", PasswordHash: []byte("123456")}
 	createUserTest(t, user1)
 	user2 := &domain.User{Name: "TestTwo", CPF: "00000000001", Email: "testTwo@gmail.com", PasswordHash: []byte("123456")}
 	createUserTest(t, user2)
-
-	t.Cleanup(func() {
-		_, err := testDB.Exec("DELETE FROM users WHERE id=$1", user1.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user2.ID)
-		require.NoError(t, err)
-	})
+	cleanupUser(t, user1.ID)
+	cleanupUser(t, user2.ID)
 	tests := []struct {
 		name string // description of this test case
 		// Named input parameters for target function.
@@ -162,7 +159,6 @@ func TestUserRepo_List(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewUserRepo(testDB, testLogger)
 			got, gotErr := r.List(t.Context(), tt.filter)
 			if gotErr != nil {
 				if !tt.wantErr {
@@ -186,12 +182,10 @@ func TestUserRepo_List(t *testing.T) {
 }
 
 func TestUserRepo_Update(t *testing.T) {
+	r := postgres.NewUserRepo(testDB, testLogger)
 	user1 := &domain.User{Name: "Test", CPF: "00000000000", Email: "test@gmail.com", PasswordHash: []byte("123456")}
 	createUserTest(t, user1)
-	t.Cleanup(func() {
-		_, err := testDB.Exec("DELETE FROM users WHERE id=$1", user1.ID)
-		require.NoError(t, err)
-	})
+	cleanupUser(t, user1.ID)
 	tests := []struct {
 		name    string // description of this test case
 		user    *domain.User
@@ -221,7 +215,6 @@ func TestUserRepo_Update(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewUserRepo(testDB, testLogger)
 			gotErr := r.Update(t.Context(), tt.user)
 			if gotErr != nil {
 				if !tt.wantErr {
@@ -251,6 +244,7 @@ func TestUserRepo_Update(t *testing.T) {
 }
 
 func TestUserRepo_Delete(t *testing.T) {
+	r := postgres.NewUserRepo(testDB, testLogger)
 	user1 := &domain.User{Name: "Test", CPF: "00000000000", Email: "test@gmail.com", PasswordHash: []byte("123456")}
 	createUserTest(t, user1)
 	tests := []struct {
@@ -271,7 +265,6 @@ func TestUserRepo_Delete(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewUserRepo(testDB, testLogger)
 			gotErr := r.Delete(t.Context(), tt.userID)
 			if gotErr != nil {
 				if !tt.wantErr {
