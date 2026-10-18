@@ -15,7 +15,7 @@ CREATE PROCEDURE sp_enroll_student(
     IF EXISTS (SELECT 1 FROM enrollments WHERE student_id=p_student_id AND course_id=p_course_id)  THEN
       RAISE EXCEPTION 'student already enrolled in course' USING ERRCODE = 'P0E01';
     END IF;
-    IF (SELECT COUNT(*) FROM enrollments WHERE course_id = p_course_id AND status='active' ) >= 
+    IF (SELECT COUNT(*) FROM enrollments WHERE course_id = p_course_id AND status='active' ) >=
         (SELECT max_students FROM courses WHERE id = p_course_id ) THEN
       RAISE EXCEPTION 'course is full' USING ERRCODE='P0C02';
     END IF;
