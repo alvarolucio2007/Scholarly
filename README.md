@@ -317,7 +317,22 @@ Em modo de desenvolvimento com hot reload (é necessário ter a ferramenta [Make
 docker compose up db cache -d
 make migrateup
 air
+
 ```
+**(OPCIONAL) Supabase como banco de dados**
+Crie um arquivo chamado `.env` com o seguinte conteúdo:
+
+```env
+DATABASE_URL = [SUA URL DO SUPABASE AQUI]
+```
+Após isso, faça as migrações de bancos de dados por meio do Makefile, trocando a variável DB_URL pela sua URL do supabase, e executando `make migrateup` (Após as migrações, é recomendado mudar para o valor anterior).
+
+Por último, rode o seguinte comando
+```bash
+docker compose up cache
+```
+
+
 
 **3. Acesse o Swagger UI**
 

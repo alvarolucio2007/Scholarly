@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.1.0](https://github.com/alvarolucio2007/Scholarly/compare/v2.0.0...v2.1.0) (2026-10-18)
+
+
+### Features
+
+* Adding env support ([5e5fcaa](https://github.com/alvarolucio2007/Scholarly/commit/5e5fcaa3ea38d423129ba2a9c986519ea9030311))
+
+
+### Bug Fixes
+
+* Adding error handling to LoadEnv ([fb7d2e3](https://github.com/alvarolucio2007/Scholarly/commit/fb7d2e3ad25d62fb65cbfdef03f983a8e4a83241))
+* Changing the alive conn and idle conn slightly in Postgres.NewConn ([0bef373](https://github.com/alvarolucio2007/Scholarly/commit/0bef373044bd4c038b759e551b72d0980c6ba00f))
+
 ## [2.0.0](https://github.com/alvarolucio2007/Scholarly/compare/v1.2.0...v2.0.0) (2026-10-16)
 
 
