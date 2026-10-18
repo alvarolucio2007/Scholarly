@@ -16,15 +16,15 @@ func createUserTest(t *testing.T, user *domain.User) {
 }
 func cleanupUser(t *testing.T, userID int64) {
 	t.Cleanup(func() {
-		_, err := testDB.Exec("DELETE FROM users where id=$1")
+		_, err := testDB.Exec("DELETE FROM users where id=$1", userID)
 		require.NoError(t, err)
 	})
 }
 
 func TestUserRepo_Create(t *testing.T) {
-	var id int64
 	r := postgres.NewUserRepo(testDB, testLogger)
-	cleanupUser(t, id)
+	user := &domain.User{Name: "Test", CPF: "00000000000", Email: "test@gmail.com", PasswordHash: []byte("123456")}
+	cleanupUser(t, user.ID)
 	tests := []struct {
 		name string // description of this test case
 		// Named input parameters for target function.
@@ -33,7 +33,7 @@ func TestUserRepo_Create(t *testing.T) {
 	}{
 		{
 			name:    "should accept normal users with all default data",
-			user:    &domain.User{Name: "Test", CPF: "00000000000", Email: "test@gmail.com", PasswordHash: []byte("123456")},
+			user:    user,
 			wantErr: false,
 		},
 		{
@@ -64,7 +64,6 @@ func TestUserRepo_Create(t *testing.T) {
 			if tt.wantErr {
 				t.Fatal("Create() succeeded unexpectedly")
 			}
-			id = tt.user.ID
 		})
 	}
 }
@@ -248,8 +247,7 @@ func TestUserRepo_Delete(t *testing.T) {
 	user1 := &domain.User{Name: "Test", CPF: "00000000000", Email: "test@gmail.com", PasswordHash: []byte("123456")}
 	createUserTest(t, user1)
 	tests := []struct {
-		name string // description of this test case
-		// Named input parameters for target function.
+		name    string // description of this test case
 		userID  int64
 		wantErr bool
 	}{
