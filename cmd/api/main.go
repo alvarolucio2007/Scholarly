@@ -14,12 +14,15 @@ func main() {
 	logger := logger.New()
 
 	logger.Info("starting app")
+	if err := app.LoadEnv(".env"); err != nil {
+		logger.Error("main:error while trying to read env", "error", err)
+	}
 	dbURL := os.Getenv("DATABASE_URL")
 	if dbURL == "" {
 		dbURL = "postgres://admin:root@localhost:5432/scholarly?sslmode=disable"
 	}
 	logger.Info("trying to connect to db")
-	db, err := postgres.NewConn(dbURL, 30, 30, time.Minute)
+	db, err := postgres.NewConn(dbURL, 20, 10, time.Minute)
 	if err != nil {
 		logger.Error("main: error while connecting to db", "error", err)
 		os.Exit(1)

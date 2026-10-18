@@ -145,6 +145,7 @@ Scholarly/
 ### SGBD
 
 **PostgreSQL 17**, executado via Docker.
+**Supabase**, como opção.
 
 ### Principais tabelas
 
