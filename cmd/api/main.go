@@ -14,6 +14,7 @@ func main() {
 	logger := logger.New()
 
 	logger.Info("starting app")
+	app.LoadEnv(".env")
 	dbURL := os.Getenv("DATABASE_URL")
 	if dbURL == "" {
 		dbURL = "postgres://admin:root@localhost:5432/scholarly?sslmode=disable"
