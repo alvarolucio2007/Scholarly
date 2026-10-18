@@ -302,8 +302,20 @@ A documentação completa, com payloads e códigos de resposta, está disponíve
 git clone https://github.com/alvarolucio2007/Scholarly.git
 cd Scholarly
 ```
+**2. Remova o .example do arquivo .env.example**
 
-**2. Suba a aplicação completa**
+O arquivo .env.example possui exemplos válidos de variáveis de ambiente.
+
+Ele possui as seguintes variáveis:
+
+```env
+DATABASE_URL = postgres://admin:root@db:5432/scholarly?sslmode=disable
+CACHE_URL = cache:6379
+SERVER_ADDR = 0.0.0.0:8080
+```
+
+
+**3. Suba a aplicação completa (com Postgres local, para Supabase, instruções abaixo.)**
 
 ```bash
 docker compose up --build
@@ -320,16 +332,14 @@ air
 
 ```
 **(OPCIONAL) Supabase como banco de dados**
-Crie um arquivo chamado `.env` com o seguinte conteúdo:
 
-```env
-DATABASE_URL = [SUA URL DO SUPABASE AQUI]
-```
-Após isso, faça as migrações de bancos de dados por meio do Makefile, trocando a variável DB_URL pela sua URL do supabase, e executando `make migrateup` (Após as migrações, é recomendado mudar para o valor anterior).
 
-Por último, rode o seguinte comando
+Primeiro, mude a variável `DATABASE_URL` para a URL do supabase (é altamente recomendado usar Session Pooler nas opções de conexão do Supabase)
+
+Após isso, basta executar:
+
 ```bash
-docker compose up cache
+docker compose up api cache --build --no-deps
 ```
 
 
