@@ -17,17 +17,14 @@ services:
       retries: 5
   migrate:
     image: migrate/migrate
+    env_file:
+      - .env
     volumes:
       - ./database/migrations:/migrations
+    entrypoint: ["/bin/sh", "-c"]
     command:
-      [
-        "-path=/migrations",
-        "-database=postgres://admin:root@db:5432/scholarly?sslmode=disable",
-        "up",
-      ]
-    depends_on:
-      db:
-        condition: service_healthy
+      - |
+        /migrate -path=/migrations -database "$DATABASE_URL" up
   cache:
     image: valkey/valkey:9-alpine
     ports:
@@ -41,10 +38,8 @@ services:
   api:
     build: .
     container_name: api
-    environment:
-      DATABASE_URL: postgres://admin:root@db:5432/scholarly?sslmode=disable
-      CACHE_URL: redis://cache:6379/0
-      SERVER_ADDR: "0.0.0.0:8080"
+    env_file:
+      - .env
     ports:
       - "8080:8080"
     depends_on:
