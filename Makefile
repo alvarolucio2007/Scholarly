@@ -10,6 +10,6 @@ migratedown:
 test:
 	go test -v -cover -short ./...
 gen-docs:
-	swag init -g ./cmd/api/main.go -o ./docs --parseDependency --parseInternal && swag fmt 
+	swag init -g ./cmd/api/main.go -o ./docs --parseDependency --parseInternal && swag fmt
 run:
 	go run ./...
