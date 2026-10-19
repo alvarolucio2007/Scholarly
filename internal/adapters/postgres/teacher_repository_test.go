@@ -13,7 +13,7 @@ type teacherScenario struct {
 	User *domain.User
 }
 
-func setupTeacherScenario(t *testing.T) teacherScenario {
+func newTeacherScenario(t *testing.T) teacherScenario {
 	user := &domain.User{Name: "Create teacher", Email: "createTeacher@email.com", CPF: "00000000000", PasswordHash: []byte("123456789")}
 	createUserTest(t, user)
 	return teacherScenario{User: user}
@@ -35,9 +35,8 @@ func createTeacherTest(t *testing.T, teacher *domain.Teacher) {
 
 func TestTeacherRepo_Create(t *testing.T) {
 	r := postgres.NewTeacherRepo(testDB, testLogger)
-	s := setupTeacherScenario(t)
+	s := newTeacherScenario(t)
 	teacher := &domain.Teacher{UserID: s.User.ID, Department: "Creation"}
-	cleanupTeacher(t, teacher.UserID, s.User.ID)
 	tests := []struct {
 		name    string // description of this test case
 		teacher *domain.Teacher
@@ -73,13 +72,13 @@ func TestTeacherRepo_Create(t *testing.T) {
 			}
 		})
 	}
+	cleanupTeacher(t, teacher.UserID, s.User.ID)
 }
 
 func TestTeacherRepo_GetByID(t *testing.T) {
-	s := setupTeacherScenario(t)
+	s := newTeacherScenario(t)
 	teacher := &domain.Teacher{UserID: s.User.ID, Department: "Testing"}
 	createTeacherTest(t, teacher)
-	cleanupTeacher(t, teacher.UserID, s.User.ID)
 	r := postgres.NewTeacherRepo(testDB, testLogger)
 	tests := []struct {
 		name      string // description of this test case
@@ -121,14 +120,14 @@ func TestTeacherRepo_GetByID(t *testing.T) {
 			require.EqualValues(t, got.Department, tt.want.Department)
 		})
 	}
+	cleanupTeacher(t, teacher.UserID, s.User.ID)
 }
 
 func TestTeacherRepo_List(t *testing.T) {
 	incorrectStr := "INCORRECT"
-	s := setupTeacherScenario(t)
+	s := newTeacherScenario(t)
 	teacher1 := &domain.Teacher{UserID: s.User.ID, Department: "Testing"}
 	createTeacherTest(t, teacher1)
-	cleanupTeacher(t, teacher1.UserID, s.User.ID)
 	r := postgres.NewTeacherRepo(testDB, testLogger)
 	tests := []struct {
 		name    string // description of this test case
@@ -166,13 +165,13 @@ func TestTeacherRepo_List(t *testing.T) {
 			}
 		})
 	}
+	cleanupTeacher(t, teacher1.UserID, s.User.ID)
 }
 
 func TestTeacherRepo_Update(t *testing.T) {
-	s := setupTeacherScenario(t)
+	s := newTeacherScenario(t)
 	teacher := &domain.Teacher{UserID: s.User.ID, Department: "Testing"}
 	createTeacherTest(t, teacher)
-	cleanupTeacher(t, teacher.UserID, s.User.ID)
 	tests := []struct {
 		name    string // description of this test case
 		teacher *domain.Teacher
@@ -208,17 +207,14 @@ func TestTeacherRepo_Update(t *testing.T) {
 			}
 		})
 	}
+	cleanupTeacher(t, teacher.UserID, s.User.ID)
 }
 
 func TestTeacherRepo_Delete(t *testing.T) {
-	s := setupTeacherScenario(t)
+	s := newTeacherScenario(t)
 	teacher1 := &domain.Teacher{UserID: s.User.ID, Department: "Testing"}
 	createTeacherTest(t, teacher1)
 	r := postgres.NewTeacherRepo(testDB, testLogger)
-	t.Cleanup(func() {
-		_, err := testDB.Exec("DELETE FROM users WHERE id=$1", s.User.ID)
-		require.NoError(t, err)
-	})
 	tests := []struct {
 		name      string // description of this test case
 		teacherID int64
@@ -248,4 +244,8 @@ func TestTeacherRepo_Delete(t *testing.T) {
 			}
 		})
 	}
+	t.Cleanup(func() {
+		_, err := testDB.Exec("DELETE FROM users WHERE id=$1", s.User.ID)
+		require.NoError(t, err)
+	})
 }
