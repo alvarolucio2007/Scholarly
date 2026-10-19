@@ -119,3 +119,46 @@ func TestTestCache_Read(t *testing.T) {
 		})
 	}
 }
+
+func TestTestCache_Delete(t *testing.T) {
+	test := &domain.Test{ID: 1}
+	testCache := valkey.NewTestCache(testRDB)
+	err := testCache.Create(t.Context(), test)
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		testRDB.FlushAll(t.Context())
+	})
+	tests := []struct {
+		name    string // description of this test case
+		rdb     *redis.Client
+		id      int64
+		wantErr bool
+	}{
+		{
+			name:    "should delete valid test",
+			rdb:     testRDB,
+			id:      test.ID,
+			wantErr: false,
+		}, {
+			name:    "shouldn't function with invalid redis connection",
+			rdb:     redis.NewClient(&redis.Options{Addr: "localhost:9999"}),
+			id:      test.ID,
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := valkey.NewTestCache(tt.rdb)
+			gotErr := c.Delete(t.Context(), tt.id)
+			if gotErr != nil {
+				if !tt.wantErr {
+					t.Errorf("Delete() failed: %v", gotErr)
+				}
+				return
+			}
+			if tt.wantErr {
+				t.Fatal("Delete() succeeded unexpectedly")
+			}
+		})
+	}
+}
