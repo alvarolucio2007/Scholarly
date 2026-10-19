@@ -16,7 +16,7 @@ type testScenario struct {
 	Course  *domain.Course
 }
 
-func setupTestScenario(t *testing.T) testScenario {
+func newTestScenario(t *testing.T) testScenario {
 	user := &domain.User{Name: "Create test", Email: "createtest@email.com", CPF: "00000000000", PasswordHash: []byte("123456789")}
 	createUserTest(t, user)
 	teacher := &domain.Teacher{UserID: user.ID, Department: "TestCreation"}
@@ -45,9 +45,8 @@ func createTestTest(t *testing.T, test *domain.Test) {
 }
 
 func TestTestRepo_Create(t *testing.T) {
-	s := setupTestScenario(t)
+	s := newTestScenario(t)
 	test := &domain.Test{}
-	cleanupTest(t, test.ID, s.Course.ID, s.Teacher.UserID, s.Teacher.UserID)
 	r := postgres.NewTestRepo(testDB, testLogger)
 	tests := []struct {
 		name    string // description of this test case
@@ -94,18 +93,13 @@ func TestTestRepo_Create(t *testing.T) {
 			}
 		})
 	}
+	cleanupTest(t, test.ID, s.Course.ID, s.Teacher.UserID, s.Teacher.UserID)
 }
 
 func TestTestRepo_GetByID(t *testing.T) {
-	user := &domain.User{Name: "Create test", Email: "createtest@email.com", CPF: "00000000000", PasswordHash: []byte("123456789")}
-	createUserTest(t, user)
-	teacher := &domain.Teacher{UserID: user.ID, Department: "CourseCreation"}
-	createTeacherTest(t, teacher)
-	course := &domain.Course{TeacherID: teacher.UserID, Name: "GetByID", Code: "GETBYID", Semester: "GETBYIDSEMESTER", MaxStudents: 100}
-	createCourseTest(t, course)
-	test := &domain.Test{CourseID: course.ID, Name: "Successful test creation", Weight: 6}
+	s := newTestScenario(t)
+	test := &domain.Test{CourseID: s.Course.ID, Name: "Successful test creation", Weight: 6}
 	createTestTest(t, test)
-	cleanupTest(t, test.ID, course.ID, teacher.UserID, user.ID)
 	r := postgres.NewTestRepo(testDB, testLogger)
 	tests := []struct {
 		name    string // description of this test case
@@ -145,21 +139,17 @@ func TestTestRepo_GetByID(t *testing.T) {
 			require.EqualValues(t, &got, &tt.want)
 		})
 	}
+	cleanupTest(t, test.ID, s.Course.ID, s.Teacher.UserID, s.User.ID)
 }
 
 func TestTestRepo_List(t *testing.T) {
 	incorrectName := "Not a valid test name"
-	s := setupTestScenario(t)
+	s := newTestScenario(t)
 	test := &domain.Test{CourseID: s.Course.ID, Name: "Successful test creation", Weight: 6}
 	createTestTest(t, test)
 	test2 := &domain.Test{CourseID: s.Course.ID, Name: "Test 2", Weight: 4}
 	createTestTest(t, test2)
-	cleanupTest(t, test2.ID, s.Course.ID, s.Teacher.UserID, s.User.ID)
 	r := postgres.NewTestRepo(testDB, testLogger)
-	t.Cleanup(func() {
-		_, err := testDB.Exec("DELETE FROM tests WHERE id = $1", test.ID)
-		require.NoError(t, err)
-	})
 	tests := []struct {
 		name    string // description of this test case
 		filter  ports.TestFilter
@@ -201,16 +191,20 @@ func TestTestRepo_List(t *testing.T) {
 			}
 		})
 	}
+	cleanupTest(t, test2.ID, s.Course.ID, s.Teacher.UserID, s.User.ID)
+	t.Cleanup(func() {
+		_, err := testDB.Exec("DELETE FROM tests WHERE id = $1", test.ID)
+		require.NoError(t, err)
+	})
 }
 
 func TestTestRepo_Update(t *testing.T) {
-	s := setupTestScenario(t)
+	s := newTestScenario(t)
 	course2 := &domain.Course{TeacherID: s.Teacher.UserID, Name: "Course2", Code: "Test", MaxStudents: 100}
 	test := &domain.Test{CourseID: s.Course.ID, Name: "Successful test creation", Weight: 6}
 	createTestTest(t, test)
 	test2 := &domain.Test{CourseID: s.Course.ID, Name: "Test 2", Weight: 4}
 	createTestTest(t, test2)
-	cleanupTest(t, test2.ID, s.Course.ID, s.Teacher.UserID, s.User.ID)
 	t.Cleanup(func() {
 		_, err := testDB.Exec("DELETE FROM tests WHERE id = $1", test.ID)
 		require.NoError(t, err)
@@ -268,13 +262,13 @@ func TestTestRepo_Update(t *testing.T) {
 			}
 		})
 	}
+	cleanupTest(t, test2.ID, s.Course.ID, s.Teacher.UserID, s.User.ID)
 }
 
 func TestTestRepo_Delete(t *testing.T) {
-	s := setupTestScenario(t)
+	s := newTestScenario(t)
 	test := &domain.Test{CourseID: s.Course.ID, Name: "Successful test creation", Weight: 6}
 	createTestTest(t, test)
-	cleanupTest(t, test.ID, s.Course.ID, s.Teacher.UserID, s.User.ID)
 	tests := []struct {
 		name    string // description of this test case
 		testID  int64
@@ -313,4 +307,5 @@ func TestTestRepo_Delete(t *testing.T) {
 			}
 		})
 	}
+	cleanupTest(t, test.ID, s.Course.ID, s.Teacher.UserID, s.User.ID)
 }
