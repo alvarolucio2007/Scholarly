@@ -67,7 +67,6 @@ func newGradeScenario(t *testing.T) gradeScenario {
 func TestGradeRepo_Create(t *testing.T) {
 	s := newGradeScenario(t)
 	grade := &domain.Grade{TestID: s.Test.ID, EnrollmentID: s.Enrollment.ID, Value: 10}
-	cleanupGrade(t, grade.ID, s.Test.ID, s.Course.ID, s.Enrollment.ID, s.Teacher.UserID, s.Student.UserID, s.User.ID, s.User2.ID)
 	r := postgres.NewGradeRepo(testDB, testLogger)
 	tests := []struct {
 		name    string // description of this test case
@@ -106,13 +105,13 @@ func TestGradeRepo_Create(t *testing.T) {
 			}
 		})
 	}
+	cleanupGrade(t, grade.ID, s.Test.ID, s.Course.ID, s.Enrollment.ID, s.Teacher.UserID, s.Student.UserID, s.User.ID, s.User2.ID)
 }
 
 func TestGradeRepo_GetByID(t *testing.T) {
 	s := newGradeScenario(t)
 	grade := &domain.Grade{TestID: s.Test.ID, EnrollmentID: s.Enrollment.ID, Value: 10}
 	createGradeTest(t, grade)
-	cleanupGrade(t, grade.ID, s.Test.ID, s.Course.ID, s.Enrollment.ID, s.Teacher.UserID, s.Student.UserID, s.User.ID, s.User2.ID)
 	r := postgres.NewGradeRepo(testDB, testLogger)
 	tests := []struct {
 		name    string // description of this test case
@@ -152,13 +151,13 @@ func TestGradeRepo_GetByID(t *testing.T) {
 			require.EqualValues(t, got, tt.want)
 		})
 	}
+	cleanupGrade(t, grade.ID, s.Test.ID, s.Course.ID, s.Enrollment.ID, s.Teacher.UserID, s.Student.UserID, s.User.ID, s.User2.ID)
 }
 
 func TestGradeRepo_List(t *testing.T) {
 	s := newGradeScenario(t)
 	grade := &domain.Grade{TestID: s.Test.ID, EnrollmentID: s.Enrollment.ID, Value: 0}
 	createGradeTest(t, grade)
-	cleanupGrade(t, grade.ID, s.Test.ID, s.Course.ID, s.Enrollment.ID, s.Teacher.UserID, s.Student.UserID, s.User.ID, s.User2.ID)
 	r := postgres.NewGradeRepo(testDB, testLogger)
 	tests := []struct {
 		name    string // description of this test case
@@ -206,13 +205,13 @@ func TestGradeRepo_List(t *testing.T) {
 			}
 		})
 	}
+	cleanupGrade(t, grade.ID, s.Test.ID, s.Course.ID, s.Enrollment.ID, s.Teacher.UserID, s.Student.UserID, s.User.ID, s.User2.ID)
 }
 
 func TestGradeRepo_Update(t *testing.T) {
 	s := newGradeScenario(t)
 	grade := &domain.Grade{TestID: s.Test.ID, EnrollmentID: s.Enrollment.ID, Value: 0}
 	createGradeTest(t, grade)
-	cleanupGrade(t, grade.ID, s.Test.ID, s.Course.ID, s.Enrollment.ID, s.Teacher.UserID, s.Student.UserID, s.User.ID, s.User2.ID)
 	r := postgres.NewGradeRepo(testDB, testLogger)
 	tests := []struct {
 		name    string // description of this test case
@@ -262,13 +261,13 @@ func TestGradeRepo_Update(t *testing.T) {
 			}
 		})
 	}
+	cleanupGrade(t, grade.ID, s.Test.ID, s.Course.ID, s.Enrollment.ID, s.Teacher.UserID, s.Student.UserID, s.User.ID, s.User2.ID)
 }
 
 func TestGradeRepo_Delete(t *testing.T) {
 	s := newGradeScenario(t)
 	grade := &domain.Grade{TestID: s.Test.ID, EnrollmentID: s.Enrollment.ID, Value: 0}
 	createGradeTest(t, grade)
-	cleanupGrade(t, grade.ID, s.Test.ID, s.Course.ID, s.Enrollment.ID, s.Teacher.UserID, s.Student.UserID, s.User.ID, s.User2.ID)
 	r := postgres.NewGradeRepo(testDB, testLogger)
 	tests := []struct {
 		name    string // description of this test case
@@ -307,13 +306,13 @@ func TestGradeRepo_Delete(t *testing.T) {
 			}
 		})
 	}
+	cleanupGrade(t, grade.ID, s.Test.ID, s.Course.ID, s.Enrollment.ID, s.Teacher.UserID, s.Student.UserID, s.User.ID, s.User2.ID)
 }
 
 func TestGradeRepo_ListAverages(t *testing.T) {
 	s := newGradeScenario(t)
 	grade := &domain.Grade{TestID: s.Test.ID, EnrollmentID: s.Enrollment.ID, Value: 0}
 	createGradeTest(t, grade)
-	cleanupGrade(t, grade.ID, s.Test.ID, s.Course.ID, s.Enrollment.ID, s.Teacher.UserID, s.Student.UserID, s.User.ID, s.User2.ID)
 	r := postgres.NewGradeRepo(testDB, testLogger)
 	tests := []struct {
 		name    string // description of this test case
@@ -343,13 +342,13 @@ func TestGradeRepo_ListAverages(t *testing.T) {
 			require.EqualValues(t, tt.want, got)
 		})
 	}
+	cleanupGrade(t, grade.ID, s.Test.ID, s.Course.ID, s.Enrollment.ID, s.Teacher.UserID, s.Student.UserID, s.User.ID, s.User2.ID)
 }
 
 func TestGradeRepo_GetAverage(t *testing.T) {
 	s := newGradeScenario(t)
 	grade := &domain.Grade{TestID: s.Test.ID, EnrollmentID: s.Enrollment.ID, Value: 10}
 	createGradeTest(t, grade)
-	cleanupGrade(t, grade.ID, s.Test.ID, s.Course.ID, s.Enrollment.ID, s.Teacher.UserID, s.Student.UserID, s.User.ID, s.User2.ID)
 	r := postgres.NewGradeRepo(testDB, testLogger)
 	tests := []struct {
 		name      string // description of this test case
@@ -383,4 +382,5 @@ func TestGradeRepo_GetAverage(t *testing.T) {
 			}
 		})
 	}
+	cleanupGrade(t, grade.ID, s.Test.ID, s.Course.ID, s.Enrollment.ID, s.Teacher.UserID, s.Student.UserID, s.User.ID, s.User2.ID)
 }
