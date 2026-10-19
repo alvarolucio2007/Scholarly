@@ -139,10 +139,10 @@ func TestUserCache_Delete(t *testing.T) {
 			id:      user.ID,
 			wantErr: false,
 		}, {
-			name:    "shouldn't delete user that doesn't exist",
-			rdb:     testRDB,
-			id:      0,
-			wantErr: false,
+			name:    "shouldn't function with invalid redis connection",
+			rdb:     redis.NewClient(&redis.Options{Addr: "localhost:9999"}),
+			id:      user.ID,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
