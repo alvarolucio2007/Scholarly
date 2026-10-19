@@ -35,7 +35,6 @@ func TestStudentRepo_Create(t *testing.T) {
 	s := newStudentScenario(t)
 	student := &domain.Student{UserID: s.User.ID, EnrollmentNumber: "TestingCreation"}
 	r := postgres.NewStudentRepo(testDB)
-	cleanupStudent(t, student.UserID, s.User.ID)
 	tests := []struct {
 		name    string // description of this test case
 		student *domain.Student
@@ -69,6 +68,7 @@ func TestStudentRepo_Create(t *testing.T) {
 			}
 		})
 	}
+	cleanupStudent(t, student.UserID, s.User.ID)
 }
 
 func TestStudentRepo_GetByID(t *testing.T) {
@@ -76,7 +76,6 @@ func TestStudentRepo_GetByID(t *testing.T) {
 	s := newStudentScenario(t)
 	student := &domain.Student{UserID: s.User.ID, EnrollmentNumber: "Testing"}
 	createStudentTest(t, student)
-	cleanupStudent(t, student.UserID, s.User.ID)
 	tests := []struct {
 		name      string // description of this test case
 		studentID int64
@@ -117,13 +116,13 @@ func TestStudentRepo_GetByID(t *testing.T) {
 			require.EqualValues(t, &tt.want, &got)
 		})
 	}
+	cleanupStudent(t, student.UserID, s.User.ID)
 }
 
 func TestStudentRepo_GetByEnrollment(t *testing.T) {
 	s := newStudentScenario(t)
 	student := &domain.Student{UserID: s.User.ID, EnrollmentNumber: "Testing"}
 	createStudentTest(t, student)
-	cleanupStudent(t, student.UserID, s.User.ID)
 	tests := []struct {
 		name       string // description of this test case
 		enrollment string
@@ -158,12 +157,12 @@ func TestStudentRepo_GetByEnrollment(t *testing.T) {
 			require.EqualValues(t, &tt.want, &got)
 		})
 	}
+	cleanupStudent(t, student.UserID, s.User.ID)
 }
 
 func TestStudentRepo_Update(t *testing.T) {
 	s := newStudentScenario(t)
 	student := &domain.Student{UserID: s.User.ID, EnrollmentNumber: "Testing"}
-	createStudentTest(t, student)
 	t.Cleanup(func() {
 		_, err := testDB.Exec("DELETE FROM students WHERE user_id=$1", s.User.ID)
 		require.NoError(t, err)
@@ -206,16 +205,13 @@ func TestStudentRepo_Update(t *testing.T) {
 			}
 		})
 	}
+	createStudentTest(t, student)
 }
 
 func TestStudentRepo_Delete(t *testing.T) {
 	s := newStudentScenario(t)
 	student1 := &domain.Student{UserID: s.User.ID, EnrollmentNumber: "Testing"}
 	createStudentTest(t, student1)
-	t.Cleanup(func() {
-		_, err := testDB.Exec("DELETE FROM users WHERE id=$1", s.User.ID)
-		require.NoError(t, err)
-	})
 	tests := []struct {
 		name      string // description of this test case
 		studentID int64
@@ -246,4 +242,8 @@ func TestStudentRepo_Delete(t *testing.T) {
 			}
 		})
 	}
+	t.Cleanup(func() {
+		_, err := testDB.Exec("DELETE FROM users WHERE id=$1", s.User.ID)
+		require.NoError(t, err)
+	})
 }
