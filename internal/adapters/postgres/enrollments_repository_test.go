@@ -1,45 +1,64 @@
-package postgres
+package postgres_test
 
 import (
 	"testing"
 
+	"github.com/alvarolucio2007/Scholarly/internal/adapters/postgres"
 	"github.com/alvarolucio2007/Scholarly/internal/domain"
 	"github.com/alvarolucio2007/Scholarly/internal/ports"
 	"github.com/go-openapi/testify/require"
 )
 
+type enrollmentScenario struct {
+	User    *domain.User
+	User2   *domain.User
+	Teacher *domain.Teacher
+	Student *domain.Student
+	Course  *domain.Course
+}
+
+func newEnrollmentScenario(t *testing.T) enrollmentScenario {
+	user := &domain.User{Name: "Create enrollment", Email: "createenrollment@email.com", CPF: "00000000000", PasswordHash: []byte("123456789")}
+	createUserTest(t, user)
+	user2 := &domain.User{Name: "Create student test", Email: "createstudent@email.com", CPF: "00000000002", PasswordHash: []byte("123456789")}
+	createUserTest(t, user2)
+	teacher := &domain.Teacher{UserID: user.ID, Department: "EnrollmentCreation"}
+	createTeacherTest(t, teacher)
+	student := &domain.Student{UserID: user2.ID, EnrollmentNumber: "Enrollment"}
+	createStudentTest(t, student)
+	course := &domain.Course{TeacherID: teacher.UserID, Name: "GetByID", Code: "GETBYID", Semester: "GETBYIDSEMESTER", MaxStudents: 100}
+	createCourseTest(t, course)
+
+	return enrollmentScenario{User: user, User2: user2, Teacher: teacher, Student: student, Course: course}
+}
+
+func cleanupEnrollment(t *testing.T, enrollmentID, courseID, studentID, teacherID, user2ID, userID int64) {
+	t.Cleanup(func() {
+
+		_, err := testDB.Exec("DELETE FROM enrollments WHERE id = $1", enrollmentID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM courses WHERE id = $1", courseID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM teachers WHERE user_id=$1", teacherID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM students WHERE user_id=$1", studentID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", userID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user2ID)
+		require.NoError(t, err)
+	})
+}
 func createEnrollmentTest(t *testing.T, enrollment *domain.Enrollment) {
-	r := NewEnrollmentRepo(testDB, testLogger)
+	r := postgres.NewEnrollmentRepo(testDB, testLogger)
 	err := r.Create(t.Context(), enrollment)
 	require.NoError(t, err)
 }
 
 func TestEnrollmentRepo_Create(t *testing.T) {
-	var id int64
-	user := &domain.User{Name: "Create test", Email: "createtest@email.com", CPF: "00000000000", PasswordHash: []byte("123456789")}
-	createUserTest(t, user)
-	user2 := &domain.User{Name: "Create student test", Email: "createstudent@email.com", CPF: "00000000002", PasswordHash: []byte("123456789")}
-	createUserTest(t, user2)
-	teacher := &domain.Teacher{UserID: user.ID, Department: "CourseCreation"}
-	createTeacherTest(t, teacher)
-	student := &domain.Student{UserID: user2.ID, EnrollmentNumber: "Test"}
-	createStudentTest(t, student)
-	course := &domain.Course{TeacherID: teacher.UserID, Name: "GetByID", Code: "GETBYID", Semester: "GETBYIDSEMESTER", MaxStudents: 100}
-	createCourseTest(t, course)
-	t.Cleanup(func() {
-		_, err := testDB.Exec("DELETE FROM enrollments WHERE id=$1", id)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM courses WHERE id = $1", course.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM teachers WHERE user_id=$1", user.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM students WHERE user_id=$1", user2.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user2.ID)
-		require.NoError(t, err)
-	})
+	s := newEnrollmentScenario(t)
+	enrollment := &domain.Enrollment{CourseID: s.Course.ID, StudentID: s.Student.UserID, Status: "active"}
+	r := postgres.NewEnrollmentRepo(testDB, testLogger)
 	tests := []struct {
 		name       string // description of this test case
 		enrollment *domain.Enrollment
@@ -47,25 +66,24 @@ func TestEnrollmentRepo_Create(t *testing.T) {
 	}{
 		{
 			name:       "should create enrollment with valid credentials",
-			enrollment: &domain.Enrollment{StudentID: student.UserID, CourseID: course.ID, Status: "active"},
+			enrollment: &domain.Enrollment{StudentID: s.Student.UserID, CourseID: s.Course.ID, Status: "active"},
 			wantErr:    false,
 		}, {
 			name:       "should not create enrollment with invalid student",
-			enrollment: &domain.Enrollment{StudentID: -1, CourseID: course.ID, Status: "active"},
+			enrollment: &domain.Enrollment{StudentID: -1, CourseID: s.Course.ID, Status: "active"},
 			wantErr:    true,
 		}, {
 			name:       "should not create enrollment with invalid course",
-			enrollment: &domain.Enrollment{StudentID: student.UserID, CourseID: -1, Status: "active"},
+			enrollment: &domain.Enrollment{StudentID: s.Student.UserID, CourseID: -1, Status: "active"},
 			wantErr:    true,
 		}, {
 			name:       "should not create enrollment with invalid status",
-			enrollment: &domain.Enrollment{StudentID: student.UserID, CourseID: -1, Status: "inactive"},
+			enrollment: &domain.Enrollment{StudentID: s.Student.UserID, CourseID: -1, Status: "inactive"},
 			wantErr:    true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewEnrollmentRepo(testDB, testLogger)
 			gotErr := r.Create(t.Context(), tt.enrollment)
 			if gotErr != nil {
 				if !tt.wantErr {
@@ -76,38 +94,16 @@ func TestEnrollmentRepo_Create(t *testing.T) {
 			if tt.wantErr {
 				t.Fatal("Create() succeeded unexpectedly")
 			}
-			id = tt.enrollment.ID
 		})
 	}
+	cleanupEnrollment(t, enrollment.ID, s.Course.ID, s.Student.UserID, s.Teacher.UserID, s.User2.ID, s.User.ID)
 }
 
 func TestEnrollmentRepo_GetByID(t *testing.T) {
-	user := &domain.User{Name: "Create test", Email: "createtest@email.com", CPF: "00000000000", PasswordHash: []byte("123456789")}
-	createUserTest(t, user)
-	user2 := &domain.User{Name: "Create student test", Email: "createstudent@email.com", CPF: "00000000002", PasswordHash: []byte("123456789")}
-	createUserTest(t, user2)
-	teacher := &domain.Teacher{UserID: user.ID, Department: "CourseCreation"}
-	createTeacherTest(t, teacher)
-	student := &domain.Student{UserID: user2.ID, EnrollmentNumber: "Test"}
-	createStudentTest(t, student)
-	course := &domain.Course{TeacherID: teacher.UserID, Name: "GetByID", Code: "GETBYID", Semester: "GETBYIDSEMESTER", MaxStudents: 100}
-	createCourseTest(t, course)
-	enrollment := &domain.Enrollment{StudentID: student.UserID, CourseID: course.ID, Status: "active"}
+	s := newEnrollmentScenario(t)
+	enrollment := &domain.Enrollment{StudentID: s.Student.UserID, CourseID: s.Course.ID, Status: "active"}
 	createEnrollmentTest(t, enrollment)
-	t.Cleanup(func() {
-		_, err := testDB.Exec("DELETE FROM enrollments WHERE id=$1", enrollment.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM courses WHERE id = $1", course.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM teachers WHERE user_id=$1", user.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM students WHERE user_id=$1", user2.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user2.ID)
-		require.NoError(t, err)
-	})
+	r := postgres.NewEnrollmentRepo(testDB, testLogger)
 	tests := []struct {
 		name         string // description of this test case
 		enrollmentID int64
@@ -133,7 +129,6 @@ func TestEnrollmentRepo_GetByID(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewEnrollmentRepo(testDB, testLogger)
 			got, gotErr := r.GetByID(t.Context(), tt.enrollmentID)
 			if gotErr != nil {
 				if !tt.wantErr {
@@ -147,35 +142,14 @@ func TestEnrollmentRepo_GetByID(t *testing.T) {
 			require.EqualValues(t, &got, &tt.want)
 		})
 	}
+	cleanupEnrollment(t, enrollment.ID, s.Course.ID, s.Student.UserID, s.Teacher.UserID, s.User2.ID, s.User.ID)
 }
 
 func TestEnrollmentRepo_List(t *testing.T) {
-	user := &domain.User{Name: "Create test", Email: "createtest@email.com", CPF: "00000000000", PasswordHash: []byte("123456789")}
-	createUserTest(t, user)
-	user2 := &domain.User{Name: "Create student test", Email: "createstudent@email.com", CPF: "00000000002", PasswordHash: []byte("123456789")}
-	createUserTest(t, user2)
-	teacher := &domain.Teacher{UserID: user.ID, Department: "CourseCreation"}
-	createTeacherTest(t, teacher)
-	student := &domain.Student{UserID: user2.ID, EnrollmentNumber: "Test"}
-	createStudentTest(t, student)
-	course := &domain.Course{TeacherID: teacher.UserID, Name: "GetByID", Code: "GETBYID", Semester: "GETBYIDSEMESTER", MaxStudents: 100}
-	createCourseTest(t, course)
-	enrollment := &domain.Enrollment{StudentID: student.UserID, CourseID: course.ID, Status: "active"}
+	s := newEnrollmentScenario(t)
+	enrollment := &domain.Enrollment{StudentID: s.Student.UserID, CourseID: s.Course.ID, Status: "active"}
 	createEnrollmentTest(t, enrollment)
-	t.Cleanup(func() {
-		_, err := testDB.Exec("DELETE FROM enrollments WHERE id=$1", enrollment.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM courses WHERE id = $1", course.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM teachers WHERE user_id=$1", user.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM students WHERE user_id=$1", user2.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user2.ID)
-		require.NoError(t, err)
-	})
+	r := postgres.NewEnrollmentRepo(testDB, testLogger)
 	tests := []struct {
 		name    string // description of this test case
 		filter  ports.EnrollmentFilter
@@ -189,19 +163,18 @@ func TestEnrollmentRepo_List(t *testing.T) {
 			wantErr: false,
 		}, {
 			name:    "shouldn't list any enrollment if no enrollments match",
-			filter:  ports.EnrollmentFilter{StudentID: &teacher.UserID},
+			filter:  ports.EnrollmentFilter{StudentID: &s.Teacher.UserID},
 			want:    []*domain.Enrollment{},
 			wantErr: false,
 		}, {
 			name:    "should list only select courses if right paramenters are given",
-			filter:  ports.EnrollmentFilter{StudentID: &student.UserID},
+			filter:  ports.EnrollmentFilter{StudentID: &s.Student.UserID},
 			want:    []*domain.Enrollment{enrollment},
 			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewEnrollmentRepo(testDB, testLogger)
 			got, gotErr := r.List(t.Context(), tt.filter)
 			if gotErr != nil {
 				if !tt.wantErr {
@@ -218,43 +191,14 @@ func TestEnrollmentRepo_List(t *testing.T) {
 			}
 		})
 	}
+	cleanupEnrollment(t, enrollment.ID, s.Course.ID, s.Student.UserID, s.Teacher.UserID, s.User2.ID, s.User.ID)
 }
 
 func TestEnrollmentRepo_Update(t *testing.T) {
-	user := &domain.User{Name: "Create test", Email: "createtest@email.com", CPF: "00000000000", PasswordHash: []byte("123456789")}
-	createUserTest(t, user)
-	user2 := &domain.User{Name: "Create student test", Email: "createstudent@email.com", CPF: "00000000002", PasswordHash: []byte("123456789")}
-	createUserTest(t, user2)
-	teacher := &domain.Teacher{UserID: user.ID, Department: "CourseCreation"}
-	createTeacherTest(t, teacher)
-	student := &domain.Student{UserID: user2.ID, EnrollmentNumber: "Test"}
-	createStudentTest(t, student)
-	student2 := &domain.Student{UserID: user.ID, EnrollmentNumber: "TestStudent"}
-	createStudentTest(t, student2)
-	course := &domain.Course{TeacherID: teacher.UserID, Name: "GetByID", Code: "GETBYID", Semester: "GETBYIDSEMESTER", MaxStudents: 100}
-	createCourseTest(t, course)
-	course2 := &domain.Course{TeacherID: teacher.UserID, Name: "GetByID", Code: "COPY", Semester: "COPY", MaxStudents: 100}
-	createCourseTest(t, course2)
-	enrollment := &domain.Enrollment{StudentID: student.UserID, CourseID: course.ID, Status: "active"}
+	s := newEnrollmentScenario(t)
+	enrollment := &domain.Enrollment{StudentID: s.Student.UserID, CourseID: s.Course.ID, Status: "active"}
 	createEnrollmentTest(t, enrollment)
-	t.Cleanup(func() {
-		_, err := testDB.Exec("DELETE FROM enrollments WHERE id=$1", enrollment.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM courses WHERE id = $1", course.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM courses WHERE id = $1", course2.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM teachers WHERE user_id=$1", user.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM students WHERE user_id=$1", user2.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM students WHERE user_id=$1", user.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user2.ID)
-		require.NoError(t, err)
-	})
+
 	tests := []struct {
 		name       string // description of this test case
 		enrollment *domain.Enrollment
@@ -265,18 +209,18 @@ func TestEnrollmentRepo_Update(t *testing.T) {
 			enrollment: &domain.Enrollment{ID: enrollment.ID},
 			wantErr:    false,
 		}, {
-			name:       "should only edit student ID",
-			enrollment: &domain.Enrollment{ID: enrollment.ID, StudentID: student2.UserID, CourseID: 0},
-			wantErr:    false,
+			name:       "should only try to edit student ID",
+			enrollment: &domain.Enrollment{ID: enrollment.ID, StudentID: 999, CourseID: 0},
+			wantErr:    true,
 		}, {
-			name:       "should only edit course ID",
-			enrollment: &domain.Enrollment{ID: enrollment.ID, StudentID: 0, CourseID: course2.ID},
-			wantErr:    false,
+			name:       "should only try to edit course ID",
+			enrollment: &domain.Enrollment{ID: enrollment.ID, StudentID: 0, CourseID: 999},
+			wantErr:    true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewEnrollmentRepo(testDB, testLogger)
+			r := postgres.NewEnrollmentRepo(testDB, testLogger)
 			gotErr := r.Update(t.Context(), tt.enrollment)
 			if gotErr != nil {
 				if !tt.wantErr {
@@ -294,37 +238,14 @@ func TestEnrollmentRepo_Update(t *testing.T) {
 			}
 		})
 	}
+	cleanupEnrollment(t, enrollment.ID, s.Course.ID, s.Student.UserID, s.Teacher.UserID, s.User2.ID, s.User.ID)
 }
 
 func TestEnrollmentRepo_Delete(t *testing.T) {
-	user := &domain.User{Name: "Create test", Email: "createtest@email.com", CPF: "00000000000", PasswordHash: []byte("123456789")}
-	createUserTest(t, user)
-	user2 := &domain.User{Name: "Create student test", Email: "createstudent@email.com", CPF: "00000000002", PasswordHash: []byte("123456789")}
-	createUserTest(t, user2)
-	teacher := &domain.Teacher{UserID: user.ID, Department: "CourseCreation"}
-	createTeacherTest(t, teacher)
-	student := &domain.Student{UserID: user2.ID, EnrollmentNumber: "Test"}
-	createStudentTest(t, student)
-	course := &domain.Course{TeacherID: teacher.UserID, Name: "GetByID", Code: "GETBYID", Semester: "GETBYIDSEMESTER", MaxStudents: 100}
-	createCourseTest(t, course)
-	enrollment := &domain.Enrollment{StudentID: student.UserID, CourseID: course.ID, Status: "active"}
+	s := newEnrollmentScenario(t)
+	enrollment := &domain.Enrollment{StudentID: s.Student.UserID, CourseID: s.Course.ID, Status: "active"}
 	createEnrollmentTest(t, enrollment)
-	t.Cleanup(func() {
-		_, err := testDB.Exec("DELETE FROM enrollments WHERE id=$1", enrollment.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM courses WHERE id = $1", course.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM teachers WHERE user_id=$1", user.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM students WHERE user_id=$1", user2.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM students WHERE user_id=$1", user.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user2.ID)
-		require.NoError(t, err)
-	})
+	r := postgres.NewEnrollmentRepo(testDB, testLogger)
 	tests := []struct {
 		name         string // description of this test case
 		enrollmentID int64
@@ -350,7 +271,6 @@ func TestEnrollmentRepo_Delete(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewEnrollmentRepo(testDB, testLogger)
 			gotErr := r.Delete(t.Context(), tt.enrollmentID)
 			if gotErr != nil {
 				if !tt.wantErr {
@@ -363,4 +283,20 @@ func TestEnrollmentRepo_Delete(t *testing.T) {
 			}
 		})
 	}
+	t.Cleanup(func() {
+		_, err := testDB.Exec("DELETE FROM enrollments WHERE id=$1", enrollment.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM courses WHERE id = $1", s.Course.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM teachers WHERE user_id=$1", s.Teacher.UserID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM students WHERE user_id=$1", s.Student.UserID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM students WHERE user_id=$1", s.Student.UserID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", s.User.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", s.User2.ID)
+		require.NoError(t, err)
+	}) //TODO: implement cleanup func
 }

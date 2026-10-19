@@ -1,28 +1,42 @@
-package postgres
+package postgres_test
 
 import (
 	"testing"
 
+	"github.com/alvarolucio2007/Scholarly/internal/adapters/postgres"
 	"github.com/alvarolucio2007/Scholarly/internal/domain"
 	"github.com/alvarolucio2007/Scholarly/internal/ports"
 	"github.com/go-openapi/testify/require"
 )
 
+type teacherScenario struct {
+	User *domain.User
+}
+
+func newTeacherScenario(t *testing.T) teacherScenario {
+	user := &domain.User{Name: "Create teacher", Email: "createTeacher@email.com", CPF: "00000000000", PasswordHash: []byte("123456789")}
+	createUserTest(t, user)
+	return teacherScenario{User: user}
+}
+
+func cleanupTeacher(t *testing.T, teacherID, userID int64) {
+	t.Cleanup(func() {
+		_, err := testDB.Exec("DELETE FROM teachers WHERE user_id = $1", teacherID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM users where id=$1", userID)
+		require.NoError(t, err)
+	})
+}
 func createTeacherTest(t *testing.T, teacher *domain.Teacher) {
-	r := NewTeacherRepo(testDB, testLogger)
+	r := postgres.NewTeacherRepo(testDB, testLogger)
 	err := r.Create(t.Context(), teacher)
 	require.NoError(t, err)
 }
 
 func TestTeacherRepo_Create(t *testing.T) {
-	user1 := &domain.User{Name: "Test", CPF: "00000000000", Email: "test@gmail.com", PasswordHash: []byte("123456")}
-	createUserTest(t, user1)
-	t.Cleanup(func() {
-		_, err := testDB.Exec("DELETE FROM teachers WHERE user_id=$1", user1.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user1.ID)
-		require.NoError(t, err)
-	})
+	r := postgres.NewTeacherRepo(testDB, testLogger)
+	s := newTeacherScenario(t)
+	teacher := &domain.Teacher{UserID: s.User.ID, Department: "Creation"}
 	tests := []struct {
 		name    string // description of this test case
 		teacher *domain.Teacher
@@ -30,7 +44,7 @@ func TestTeacherRepo_Create(t *testing.T) {
 	}{
 		{
 			name:    "should accept valid userIDs",
-			teacher: &domain.Teacher{UserID: user1.ID, Department: "Creation"},
+			teacher: teacher,
 			wantErr: false,
 		},
 		{
@@ -40,13 +54,12 @@ func TestTeacherRepo_Create(t *testing.T) {
 		},
 		{
 			name:    "should not accept duplicated userIDs",
-			teacher: &domain.Teacher{UserID: user1.ID, Department: "Duplicated creation"},
+			teacher: &domain.Teacher{UserID: s.User.ID, Department: "Duplicated creation"},
 			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewTeacherRepo(testDB, testLogger)
 			gotErr := r.Create(t.Context(), tt.teacher)
 			if gotErr != nil {
 				if !tt.wantErr {
@@ -59,20 +72,14 @@ func TestTeacherRepo_Create(t *testing.T) {
 			}
 		})
 	}
+	cleanupTeacher(t, teacher.UserID, s.User.ID)
 }
 
 func TestTeacherRepo_GetByID(t *testing.T) {
-	user1 := &domain.User{Name: "Test", CPF: "00000000000", Email: "test@gmail.com", PasswordHash: []byte("123456")}
-	createUserTest(t, user1)
-	teacher1 := &domain.Teacher{UserID: user1.ID, Department: "Testing"}
-	createTeacherTest(t, teacher1)
-	t.Cleanup(func() {
-		_, err := testDB.Exec("DELETE FROM teachers WHERE user_id=$1", user1.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user1.ID)
-		require.NoError(t, err)
-	})
-	r := NewTeacherRepo(testDB, testLogger)
+	s := newTeacherScenario(t)
+	teacher := &domain.Teacher{UserID: s.User.ID, Department: "Testing"}
+	createTeacherTest(t, teacher)
+	r := postgres.NewTeacherRepo(testDB, testLogger)
 	tests := []struct {
 		name      string // description of this test case
 		teacherID int64
@@ -81,8 +88,8 @@ func TestTeacherRepo_GetByID(t *testing.T) {
 	}{
 		{
 			name:      "should read valid userIDs",
-			teacherID: user1.ID,
-			want:      teacher1,
+			teacherID: s.User.ID,
+			want:      teacher,
 			wantErr:   false,
 		}, {
 			name:      "should not return anything if invalid userIDs",
@@ -113,20 +120,15 @@ func TestTeacherRepo_GetByID(t *testing.T) {
 			require.EqualValues(t, got.Department, tt.want.Department)
 		})
 	}
+	cleanupTeacher(t, teacher.UserID, s.User.ID)
 }
 
 func TestTeacherRepo_List(t *testing.T) {
 	incorrectStr := "INCORRECT"
-	user1 := &domain.User{Name: "Test", CPF: "00000000000", Email: "test@gmail.com", PasswordHash: []byte("123456")}
-	createUserTest(t, user1)
-	teacher1 := &domain.Teacher{UserID: user1.ID, Department: "Testing"}
+	s := newTeacherScenario(t)
+	teacher1 := &domain.Teacher{UserID: s.User.ID, Department: "Testing"}
 	createTeacherTest(t, teacher1)
-	t.Cleanup(func() {
-		_, err := testDB.Exec("DELETE FROM teachers WHERE user_id=$1", user1.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user1.ID)
-		require.NoError(t, err)
-	})
+	r := postgres.NewTeacherRepo(testDB, testLogger)
 	tests := []struct {
 		name    string // description of this test case
 		filter  ports.TeacherFilter
@@ -147,7 +149,6 @@ func TestTeacherRepo_List(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewTeacherRepo(testDB, testLogger)
 			got, gotErr := r.List(t.Context(), tt.filter)
 			if gotErr != nil {
 				if !tt.wantErr {
@@ -164,38 +165,31 @@ func TestTeacherRepo_List(t *testing.T) {
 			}
 		})
 	}
+	cleanupTeacher(t, teacher1.UserID, s.User.ID)
 }
 
 func TestTeacherRepo_Update(t *testing.T) {
-	user1 := &domain.User{Name: "Test", CPF: "00000000000", Email: "test@gmail.com", PasswordHash: []byte("123456")}
-	createUserTest(t, user1)
-	teacher1 := &domain.Teacher{UserID: user1.ID, Department: "Testing"}
-	createTeacherTest(t, teacher1)
-	t.Cleanup(func() {
-		_, err := testDB.Exec("DELETE FROM teachers WHERE user_id=$1", user1.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", user1.ID)
-		require.NoError(t, err)
-	})
+	s := newTeacherScenario(t)
+	teacher := &domain.Teacher{UserID: s.User.ID, Department: "Testing"}
+	createTeacherTest(t, teacher)
 	tests := []struct {
-		name string // description of this test case
-		// Named input parameters for target function.
+		name    string // description of this test case
 		teacher *domain.Teacher
 		wantErr bool
 	}{
 		{
 			name:    "shouldn't edit teacher if all params are empty",
-			teacher: &domain.Teacher{UserID: user1.ID, Department: ""},
+			teacher: &domain.Teacher{UserID: s.User.ID, Department: ""},
 			wantErr: false,
 		}, {
 			name:    "should edit only department",
-			teacher: &domain.Teacher{UserID: user1.ID, Department: "Updated"},
+			teacher: &domain.Teacher{UserID: s.User.ID, Department: "Updated"},
 			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewTeacherRepo(testDB, testLogger)
+			r := postgres.NewTeacherRepo(testDB, testLogger)
 			gotErr := r.Update(t.Context(), tt.teacher)
 			if gotErr != nil {
 				if !tt.wantErr {
@@ -206,24 +200,21 @@ func TestTeacherRepo_Update(t *testing.T) {
 			if tt.wantErr {
 				t.Fatal("Update() succeeded unexpectedly")
 			}
-			updatedTeacher, err := r.GetByID(t.Context(), user1.ID)
+			updatedTeacher, err := r.GetByID(t.Context(), s.User.ID)
 			require.NoError(t, err)
 			if tt.teacher.Department != "" {
-				require.NotEqual(t, teacher1.Department, updatedTeacher.Department)
+				require.NotEqual(t, teacher.Department, updatedTeacher.Department)
 			}
 		})
 	}
+	cleanupTeacher(t, teacher.UserID, s.User.ID)
 }
 
 func TestTeacherRepo_Delete(t *testing.T) {
-	user1 := &domain.User{Name: "Test", CPF: "00000000000", Email: "test@gmail.com", PasswordHash: []byte("123456")}
-	createUserTest(t, user1)
-	teacher1 := &domain.Teacher{UserID: user1.ID, Department: "Testing"}
+	s := newTeacherScenario(t)
+	teacher1 := &domain.Teacher{UserID: s.User.ID, Department: "Testing"}
 	createTeacherTest(t, teacher1)
-	t.Cleanup(func() {
-		_, err := testDB.Exec("DELETE FROM users WHERE id=$1", user1.ID)
-		require.NoError(t, err)
-	})
+	r := postgres.NewTeacherRepo(testDB, testLogger)
 	tests := []struct {
 		name      string // description of this test case
 		teacherID int64
@@ -241,7 +232,6 @@ func TestTeacherRepo_Delete(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewTeacherRepo(testDB, testLogger)
 			gotErr := r.Delete(t.Context(), tt.teacherID)
 			if gotErr != nil {
 				if !tt.wantErr {
@@ -254,4 +244,8 @@ func TestTeacherRepo_Delete(t *testing.T) {
 			}
 		})
 	}
+	t.Cleanup(func() {
+		_, err := testDB.Exec("DELETE FROM users WHERE id=$1", s.User.ID)
+		require.NoError(t, err)
+	})
 }
