@@ -71,6 +71,9 @@ func TestUserCache_Read(t *testing.T) {
 	userCache := valkey.NewUserCache(testRDB)
 	err := userCache.Create(t.Context(), user)
 	require.NoError(t, err)
+	t.Cleanup(func() {
+		testRDB.FlushAll(t.Context())
+	})
 	tests := []struct {
 		name    string // description of this test case
 		id      int64
@@ -121,6 +124,9 @@ func TestUserCache_Delete(t *testing.T) {
 	userCache := valkey.NewUserCache(testRDB)
 	err := userCache.Create(t.Context(), user)
 	require.NoError(t, err)
+	t.Cleanup(func() {
+		testRDB.FlushAll(t.Context())
+	})
 	tests := []struct {
 		name    string // description of this test case
 		rdb     *redis.Client
