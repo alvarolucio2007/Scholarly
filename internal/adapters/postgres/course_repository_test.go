@@ -1,15 +1,21 @@
-package postgres
+package postgres_test
 
 import (
 	"testing"
 
+	"github.com/alvarolucio2007/Scholarly/internal/adapters/postgres"
 	"github.com/alvarolucio2007/Scholarly/internal/domain"
 	"github.com/alvarolucio2007/Scholarly/internal/ports"
 	"github.com/go-openapi/testify/require"
 )
 
+type courseConditions struct {
+	User    *domain.User
+	Teacher *domain.Teacher
+}
+
 func createCourseTest(t *testing.T, course *domain.Course) {
-	r := NewCourseRepo(testDB, testLogger)
+	r := postgres.NewCourseRepo(testDB, testLogger)
 	err := r.Create(t.Context(), course)
 	require.NoError(t, err)
 }
@@ -51,7 +57,7 @@ func TestCourseRepo_Create(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewCourseRepo(testDB, testLogger)
+			r := postgres.NewCourseRepo(testDB, testLogger)
 			gotErr := r.Create(t.Context(), tt.course)
 			if gotErr != nil {
 				if !tt.wantErr {
@@ -107,7 +113,7 @@ func TestCourseRepo_GetByID(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewCourseRepo(testDB, testLogger)
+			r := postgres.NewCourseRepo(testDB, testLogger)
 			got, gotErr := r.GetByID(t.Context(), tt.courseID)
 			if gotErr != nil {
 				if !tt.wantErr {
@@ -164,7 +170,7 @@ func TestCourseRepo_List(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewCourseRepo(testDB, testLogger)
+			r := postgres.NewCourseRepo(testDB, testLogger)
 			got, gotErr := r.List(t.Context(), tt.filter)
 			if gotErr != nil {
 				if !tt.wantErr {
@@ -239,7 +245,7 @@ func TestCourseRepo_Update(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewCourseRepo(testDB, testLogger)
+			r := postgres.NewCourseRepo(testDB, testLogger)
 			gotErr := r.Update(t.Context(), tt.course)
 			if gotErr != nil {
 				if !tt.wantErr {
@@ -307,7 +313,7 @@ func TestCourseRepo_Delete(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewCourseRepo(testDB, testLogger)
+			r := postgres.NewCourseRepo(testDB, testLogger)
 			gotErr := r.Delete(t.Context(), tt.courseID)
 			if gotErr != nil {
 				if !tt.wantErr {
@@ -377,7 +383,7 @@ func TestCourseRepo_EnrollStudent(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewCourseRepo(testDB, testLogger)
+			r := postgres.NewCourseRepo(testDB, testLogger)
 			got, gotErr := r.EnrollStudent(t.Context(), tt.studentID, tt.courseID)
 			if gotErr != nil {
 				if !tt.wantErr {

@@ -22,9 +22,8 @@ func cleanupUser(t *testing.T, userID int64) {
 }
 
 func TestUserRepo_Create(t *testing.T) {
-	r := postgres.NewUserRepo(testDB, testLogger)
 	user := &domain.User{Name: "Test", CPF: "00000000000", Email: "test@gmail.com", PasswordHash: []byte("123456")}
-	cleanupUser(t, user.ID)
+	r := postgres.NewUserRepo(testDB, testLogger)
 	tests := []struct {
 		name string // description of this test case
 		// Named input parameters for target function.
@@ -66,6 +65,7 @@ func TestUserRepo_Create(t *testing.T) {
 			}
 		})
 	}
+	cleanupUser(t, user.ID) //why is user.id here populated and not above? TODO: find out
 }
 
 func TestUserRepo_GetByID(t *testing.T) {
@@ -244,8 +244,8 @@ func TestUserRepo_Update(t *testing.T) {
 
 func TestUserRepo_Delete(t *testing.T) {
 	r := postgres.NewUserRepo(testDB, testLogger)
-	user1 := &domain.User{Name: "Test", CPF: "00000000000", Email: "test@gmail.com", PasswordHash: []byte("123456")}
-	createUserTest(t, user1)
+	user := &domain.User{Name: "Test", CPF: "00000000000", Email: "test@gmail.com", PasswordHash: []byte("123456")}
+	createUserTest(t, user)
 	tests := []struct {
 		name    string // description of this test case
 		userID  int64
@@ -253,11 +253,11 @@ func TestUserRepo_Delete(t *testing.T) {
 	}{
 		{
 			name:    "should delete with valid ID",
-			userID:  user1.ID,
+			userID:  user.ID,
 			wantErr: false,
 		}, {
 			name:    "shouldn't delete with invalid ID",
-			userID:  user1.ID + 1,
+			userID:  user.ID + 1,
 			wantErr: true,
 		},
 	}

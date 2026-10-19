@@ -1,8 +1,9 @@
-package postgres
+package postgres_test
 
 import (
 	"testing"
 
+	"github.com/alvarolucio2007/Scholarly/internal/adapters/postgres"
 	"github.com/alvarolucio2007/Scholarly/internal/domain"
 	"github.com/alvarolucio2007/Scholarly/internal/ports"
 	"github.com/go-openapi/testify/require"
@@ -19,7 +20,7 @@ type gradeScenario struct {
 }
 
 func createGradeTest(t *testing.T, grade *domain.Grade) {
-	r := NewGradeRepo(testDB, testLogger)
+	r := postgres.NewGradeRepo(testDB, testLogger)
 	err := r.Create(t.Context(), grade)
 	require.NoError(t, err)
 }
@@ -45,7 +46,7 @@ func cleanupGrade(t *testing.T, gradeID, testID, courseID, enrollmentID, teacher
 	})
 }
 
-func setupGradeScenario(t *testing.T) gradeScenario {
+func newGradeScenario(t *testing.T) gradeScenario {
 	user := &domain.User{Name: "Create test", Email: "createtest@email.com", CPF: "00000000000", PasswordHash: []byte("123456789")}
 	createUserTest(t, user)
 	user2 := &domain.User{Name: "Create student test", Email: "createstudent@email.com", CPF: "00000000002", PasswordHash: []byte("123456789")}
@@ -64,9 +65,10 @@ func setupGradeScenario(t *testing.T) gradeScenario {
 }
 
 func TestGradeRepo_Create(t *testing.T) {
-	s := setupGradeScenario(t)
+	s := newGradeScenario(t)
 	grade := &domain.Grade{TestID: s.Test.ID, EnrollmentID: s.Enrollment.ID, Value: 10}
 	cleanupGrade(t, grade.ID, s.Test.ID, s.Course.ID, s.Enrollment.ID, s.Teacher.UserID, s.Student.UserID, s.User.ID, s.User2.ID)
+	r := postgres.NewGradeRepo(testDB, testLogger)
 	tests := []struct {
 		name    string // description of this test case
 		grade   *domain.Grade
@@ -92,7 +94,6 @@ func TestGradeRepo_Create(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewGradeRepo(testDB, testLogger)
 			gotErr := r.Create(t.Context(), tt.grade)
 			if gotErr != nil {
 				if !tt.wantErr {
@@ -108,10 +109,11 @@ func TestGradeRepo_Create(t *testing.T) {
 }
 
 func TestGradeRepo_GetByID(t *testing.T) {
-	s := setupGradeScenario(t)
+	s := newGradeScenario(t)
 	grade := &domain.Grade{TestID: s.Test.ID, EnrollmentID: s.Enrollment.ID, Value: 10}
 	createGradeTest(t, grade)
 	cleanupGrade(t, grade.ID, s.Test.ID, s.Course.ID, s.Enrollment.ID, s.Teacher.UserID, s.Student.UserID, s.User.ID, s.User2.ID)
+	r := postgres.NewGradeRepo(testDB, testLogger)
 	tests := []struct {
 		name    string // description of this test case
 		gradeID int64
@@ -137,7 +139,6 @@ func TestGradeRepo_GetByID(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewGradeRepo(testDB, testLogger)
 			got, gotErr := r.GetByID(t.Context(), tt.gradeID)
 			if gotErr != nil {
 				if !tt.wantErr {
@@ -154,10 +155,11 @@ func TestGradeRepo_GetByID(t *testing.T) {
 }
 
 func TestGradeRepo_List(t *testing.T) {
-	s := setupGradeScenario(t)
+	s := newGradeScenario(t)
 	grade := &domain.Grade{TestID: s.Test.ID, EnrollmentID: s.Enrollment.ID, Value: 0}
 	createGradeTest(t, grade)
 	cleanupGrade(t, grade.ID, s.Test.ID, s.Course.ID, s.Enrollment.ID, s.Teacher.UserID, s.Student.UserID, s.User.ID, s.User2.ID)
+	r := postgres.NewGradeRepo(testDB, testLogger)
 	tests := []struct {
 		name    string // description of this test case
 		filter  ports.GradeFilter
@@ -188,7 +190,6 @@ func TestGradeRepo_List(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewGradeRepo(testDB, testLogger)
 			got, gotErr := r.List(t.Context(), tt.filter)
 			if gotErr != nil {
 				if !tt.wantErr {
@@ -208,10 +209,11 @@ func TestGradeRepo_List(t *testing.T) {
 }
 
 func TestGradeRepo_Update(t *testing.T) {
-	s := setupGradeScenario(t)
+	s := newGradeScenario(t)
 	grade := &domain.Grade{TestID: s.Test.ID, EnrollmentID: s.Enrollment.ID, Value: 0}
 	createGradeTest(t, grade)
 	cleanupGrade(t, grade.ID, s.Test.ID, s.Course.ID, s.Enrollment.ID, s.Teacher.UserID, s.Student.UserID, s.User.ID, s.User2.ID)
+	r := postgres.NewGradeRepo(testDB, testLogger)
 	tests := []struct {
 		name    string // description of this test case
 		grade   *domain.Grade
@@ -237,7 +239,6 @@ func TestGradeRepo_Update(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewGradeRepo(testDB, testLogger)
 			gotErr := r.Update(t.Context(), tt.grade)
 			if gotErr != nil {
 				if !tt.wantErr {
@@ -264,10 +265,11 @@ func TestGradeRepo_Update(t *testing.T) {
 }
 
 func TestGradeRepo_Delete(t *testing.T) {
-	s := setupGradeScenario(t)
+	s := newGradeScenario(t)
 	grade := &domain.Grade{TestID: s.Test.ID, EnrollmentID: s.Enrollment.ID, Value: 0}
 	createGradeTest(t, grade)
 	cleanupGrade(t, grade.ID, s.Test.ID, s.Course.ID, s.Enrollment.ID, s.Teacher.UserID, s.Student.UserID, s.User.ID, s.User2.ID)
+	r := postgres.NewGradeRepo(testDB, testLogger)
 	tests := []struct {
 		name    string // description of this test case
 		gradeID int64
@@ -293,7 +295,6 @@ func TestGradeRepo_Delete(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewGradeRepo(testDB, testLogger)
 			gotErr := r.Delete(t.Context(), tt.gradeID)
 			if gotErr != nil {
 				if !tt.wantErr {
@@ -309,10 +310,11 @@ func TestGradeRepo_Delete(t *testing.T) {
 }
 
 func TestGradeRepo_ListAverages(t *testing.T) {
-	s := setupGradeScenario(t)
+	s := newGradeScenario(t)
 	grade := &domain.Grade{TestID: s.Test.ID, EnrollmentID: s.Enrollment.ID, Value: 0}
 	createGradeTest(t, grade)
 	cleanupGrade(t, grade.ID, s.Test.ID, s.Course.ID, s.Enrollment.ID, s.Teacher.UserID, s.Student.UserID, s.User.ID, s.User2.ID)
+	r := postgres.NewGradeRepo(testDB, testLogger)
 	tests := []struct {
 		name    string // description of this test case
 		filter  ports.ReportCardFilter
@@ -328,7 +330,6 @@ func TestGradeRepo_ListAverages(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewGradeRepo(testDB, testLogger)
 			got, gotErr := r.ListAverages(t.Context(), tt.filter)
 			if gotErr != nil {
 				if !tt.wantErr {
@@ -345,10 +346,11 @@ func TestGradeRepo_ListAverages(t *testing.T) {
 }
 
 func TestGradeRepo_GetAverage(t *testing.T) {
-	s := setupGradeScenario(t)
+	s := newGradeScenario(t)
 	grade := &domain.Grade{TestID: s.Test.ID, EnrollmentID: s.Enrollment.ID, Value: 10}
 	createGradeTest(t, grade)
 	cleanupGrade(t, grade.ID, s.Test.ID, s.Course.ID, s.Enrollment.ID, s.Teacher.UserID, s.Student.UserID, s.User.ID, s.User2.ID)
+	r := postgres.NewGradeRepo(testDB, testLogger)
 	tests := []struct {
 		name      string // description of this test case
 		studentID int64
@@ -366,7 +368,6 @@ func TestGradeRepo_GetAverage(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewGradeRepo(testDB, testLogger)
 			got, gotErr := r.GetAverage(t.Context(), tt.studentID, tt.courseID)
 			if gotErr != nil {
 				if !tt.wantErr {
