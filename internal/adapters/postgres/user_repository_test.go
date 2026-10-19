@@ -71,7 +71,6 @@ func TestUserRepo_Create(t *testing.T) {
 func TestUserRepo_GetByID(t *testing.T) {
 	user1 := &domain.User{Name: "Test", CPF: "00000000000", Email: "test@gmail.com", PasswordHash: []byte("123456")}
 	createUserTest(t, user1)
-	cleanupUser(t, user1.ID)
 	r := postgres.NewUserRepo(testDB, testLogger)
 	tests := []struct {
 		name    string // description of this test case
@@ -111,6 +110,7 @@ func TestUserRepo_GetByID(t *testing.T) {
 			require.EqualValues(t, got.UpdatedAt, tt.want.UpdatedAt)
 		})
 	}
+	cleanupUser(t, user1.ID)
 }
 
 func TestUserRepo_List(t *testing.T) {
@@ -120,8 +120,6 @@ func TestUserRepo_List(t *testing.T) {
 	createUserTest(t, user1)
 	user2 := &domain.User{Name: "TestTwo", CPF: "00000000001", Email: "testTwo@gmail.com", PasswordHash: []byte("123456")}
 	createUserTest(t, user2)
-	cleanupUser(t, user1.ID)
-	cleanupUser(t, user2.ID)
 	tests := []struct {
 		name string // description of this test case
 		// Named input parameters for target function.
@@ -178,13 +176,14 @@ func TestUserRepo_List(t *testing.T) {
 			}
 		})
 	}
+	cleanupUser(t, user1.ID)
+	cleanupUser(t, user2.ID)
 }
 
 func TestUserRepo_Update(t *testing.T) {
 	r := postgres.NewUserRepo(testDB, testLogger)
 	user1 := &domain.User{Name: "Test", CPF: "00000000000", Email: "test@gmail.com", PasswordHash: []byte("123456")}
 	createUserTest(t, user1)
-	cleanupUser(t, user1.ID)
 	tests := []struct {
 		name    string // description of this test case
 		user    *domain.User
@@ -240,6 +239,7 @@ func TestUserRepo_Update(t *testing.T) {
 			}
 		})
 	}
+	cleanupUser(t, user1.ID)
 }
 
 func TestUserRepo_Delete(t *testing.T) {
