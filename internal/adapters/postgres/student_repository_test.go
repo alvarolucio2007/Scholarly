@@ -163,12 +163,7 @@ func TestStudentRepo_GetByEnrollment(t *testing.T) {
 func TestStudentRepo_Update(t *testing.T) {
 	s := newStudentScenario(t)
 	student := &domain.Student{UserID: s.User.ID, EnrollmentNumber: "Testing"}
-	t.Cleanup(func() {
-		_, err := testDB.Exec("DELETE FROM students WHERE user_id=$1", s.User.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", s.User.ID)
-		require.NoError(t, err)
-	})
+	createStudentTest(t, student)
 	tests := []struct {
 		name    string // description of this test case
 		student *domain.Student
@@ -205,7 +200,7 @@ func TestStudentRepo_Update(t *testing.T) {
 			}
 		})
 	}
-	createStudentTest(t, student)
+	cleanupStudent(t, student.UserID, s.User.ID)
 }
 
 func TestStudentRepo_Delete(t *testing.T) {
