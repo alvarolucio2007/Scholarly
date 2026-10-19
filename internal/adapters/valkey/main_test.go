@@ -48,6 +48,9 @@ func setupTestValkey() (*redis.Client, *testcontainers.DockerContainer, error) {
 			wait.ForLog("Ready to accept connections"),
 		),
 	)
+	if err != nil {
+		return nil, nil, err
+	}
 	endpoint, err := valkeyC.Endpoint(ctx, "")
 	if err != nil {
 		return nil, nil, err
