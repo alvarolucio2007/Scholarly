@@ -115,3 +115,43 @@ func TestUserCache_Read(t *testing.T) {
 		})
 	}
 }
+
+func TestUserCache_Delete(t *testing.T) {
+	user := &domain.User{ID: 10000, Name: "Test"}
+	userCache := valkey.NewUserCache(testRDB)
+	err := userCache.Create(t.Context(), user)
+	require.NoError(t, err)
+	tests := []struct {
+		name    string // description of this test case
+		rdb     *redis.Client
+		id      int64
+		wantErr bool
+	}{
+		{
+			name:    "should delete valid user",
+			rdb:     testRDB,
+			id:      user.ID,
+			wantErr: false,
+		}, {
+			name:    "shouldn't delete user that doesn't exist",
+			rdb:     testRDB,
+			id:      0,
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := valkey.NewUserCache(tt.rdb)
+			gotErr := c.Delete(t.Context(), tt.id)
+			if gotErr != nil {
+				if !tt.wantErr {
+					t.Errorf("Delete() failed: %v", gotErr)
+				}
+				return
+			}
+			if tt.wantErr {
+				t.Fatal("Delete() succeeded unexpectedly")
+			}
+		})
+	}
+}
