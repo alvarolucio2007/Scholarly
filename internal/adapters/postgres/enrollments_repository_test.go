@@ -58,7 +58,6 @@ func createEnrollmentTest(t *testing.T, enrollment *domain.Enrollment) {
 func TestEnrollmentRepo_Create(t *testing.T) {
 	s := newEnrollmentScenario(t)
 	enrollment := &domain.Enrollment{CourseID: s.Course.ID, StudentID: s.Student.UserID, Status: "active"}
-	cleanupEnrollment(t, enrollment.ID, s.Course.ID, s.Student.UserID, s.Teacher.UserID, s.User2.ID, s.User.ID)
 	r := postgres.NewEnrollmentRepo(testDB, testLogger)
 	tests := []struct {
 		name       string // description of this test case
@@ -97,13 +96,13 @@ func TestEnrollmentRepo_Create(t *testing.T) {
 			}
 		})
 	}
+	cleanupEnrollment(t, enrollment.ID, s.Course.ID, s.Student.UserID, s.Teacher.UserID, s.User2.ID, s.User.ID)
 }
 
 func TestEnrollmentRepo_GetByID(t *testing.T) {
 	s := newEnrollmentScenario(t)
 	enrollment := &domain.Enrollment{StudentID: s.Student.UserID, CourseID: s.Course.ID, Status: "active"}
 	createEnrollmentTest(t, enrollment)
-	cleanupEnrollment(t, enrollment.ID, s.Course.ID, s.Student.UserID, s.Teacher.UserID, s.User2.ID, s.User.ID)
 	r := postgres.NewEnrollmentRepo(testDB, testLogger)
 	tests := []struct {
 		name         string // description of this test case
@@ -143,13 +142,13 @@ func TestEnrollmentRepo_GetByID(t *testing.T) {
 			require.EqualValues(t, &got, &tt.want)
 		})
 	}
+	cleanupEnrollment(t, enrollment.ID, s.Course.ID, s.Student.UserID, s.Teacher.UserID, s.User2.ID, s.User.ID)
 }
 
 func TestEnrollmentRepo_List(t *testing.T) {
 	s := newEnrollmentScenario(t)
 	enrollment := &domain.Enrollment{StudentID: s.Student.UserID, CourseID: s.Course.ID, Status: "active"}
 	createEnrollmentTest(t, enrollment)
-	cleanupEnrollment(t, enrollment.ID, s.Course.ID, s.Student.UserID, s.Teacher.UserID, s.User2.ID, s.User.ID)
 	r := postgres.NewEnrollmentRepo(testDB, testLogger)
 	tests := []struct {
 		name    string // description of this test case
@@ -192,13 +191,13 @@ func TestEnrollmentRepo_List(t *testing.T) {
 			}
 		})
 	}
+	cleanupEnrollment(t, enrollment.ID, s.Course.ID, s.Student.UserID, s.Teacher.UserID, s.User2.ID, s.User.ID)
 }
 
 func TestEnrollmentRepo_Update(t *testing.T) {
 	s := newEnrollmentScenario(t)
 	enrollment := &domain.Enrollment{StudentID: s.Student.UserID, CourseID: s.Course.ID, Status: "active"}
 	createEnrollmentTest(t, enrollment)
-	cleanupEnrollment(t, enrollment.ID, s.Course.ID, s.Student.UserID, s.Teacher.UserID, s.User2.ID, s.User.ID)
 
 	tests := []struct {
 		name       string // description of this test case
@@ -239,28 +238,13 @@ func TestEnrollmentRepo_Update(t *testing.T) {
 			}
 		})
 	}
+	cleanupEnrollment(t, enrollment.ID, s.Course.ID, s.Student.UserID, s.Teacher.UserID, s.User2.ID, s.User.ID)
 }
 
 func TestEnrollmentRepo_Delete(t *testing.T) {
 	s := newEnrollmentScenario(t)
 	enrollment := &domain.Enrollment{StudentID: s.Student.UserID, CourseID: s.Course.ID, Status: "active"}
 	createEnrollmentTest(t, enrollment)
-	t.Cleanup(func() {
-		_, err := testDB.Exec("DELETE FROM enrollments WHERE id=$1", enrollment.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM courses WHERE id = $1", s.Course.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM teachers WHERE user_id=$1", s.Teacher.UserID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM students WHERE user_id=$1", s.Student.UserID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM students WHERE user_id=$1", s.Student.UserID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", s.User.ID)
-		require.NoError(t, err)
-		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", s.User2.ID)
-		require.NoError(t, err)
-	}) //TODO: implement cleanup func
 	r := postgres.NewEnrollmentRepo(testDB, testLogger)
 	tests := []struct {
 		name         string // description of this test case
@@ -299,4 +283,20 @@ func TestEnrollmentRepo_Delete(t *testing.T) {
 			}
 		})
 	}
+	t.Cleanup(func() {
+		_, err := testDB.Exec("DELETE FROM enrollments WHERE id=$1", enrollment.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM courses WHERE id = $1", s.Course.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM teachers WHERE user_id=$1", s.Teacher.UserID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM students WHERE user_id=$1", s.Student.UserID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM students WHERE user_id=$1", s.Student.UserID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", s.User.ID)
+		require.NoError(t, err)
+		_, err = testDB.Exec("DELETE FROM users WHERE id=$1", s.User2.ID)
+		require.NoError(t, err)
+	}) //TODO: implement cleanup func
 }
