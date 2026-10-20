@@ -67,3 +67,56 @@ func TestStudentCache_Create_CanceledContext(t *testing.T) {
 	require.ErrorIs(t, err, context.Canceled)
 	cleanupTest(t)
 }
+
+func TestStudentCache_Read(t *testing.T) {
+	student := &domain.Student{UserID: 1}
+	studentCache := valkey.NewStudentCache(testRDB)
+	err := studentCache.Create(t.Context(), student)
+	require.NoError(t, err)
+	cleanupTest(t)
+	tests := []struct {
+		name string // description of this test case
+		// Named input parameters for receiver constructor.
+		rdb *redis.Client
+		// Named input parameters for target function.
+		id      int64
+		want    *domain.Student
+		wantErr bool
+	}{
+		{
+			name:    "should read valid student",
+			rdb:     testRDB,
+			id:      student.UserID,
+			want:    student,
+			wantErr: false,
+		}, {
+			name:    "should not return anything if ID is invalid",
+			rdb:     testRDB,
+			id:      student.UserID + 1,
+			want:    nil,
+			wantErr: false,
+		}, {
+			name:    "shouldn't function with invalid redis connection",
+			id:      student.UserID,
+			rdb:     redis.NewClient(&redis.Options{Addr: "localhost:9999"}),
+			want:    nil,
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := valkey.NewStudentCache(tt.rdb)
+			got, gotErr := c.Read(t.Context(), tt.id)
+			if gotErr != nil {
+				if !tt.wantErr {
+					t.Errorf("Read() failed: %v", gotErr)
+				}
+				return
+			}
+			if tt.wantErr {
+				t.Fatal("Read() succeeded unexpectedly")
+			}
+			require.EqualValues(t, got, tt.want)
+		})
+	}
+}
