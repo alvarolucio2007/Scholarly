@@ -51,6 +51,9 @@ func TestTeacherCache_Create(t *testing.T) {
 			if tt.wantErr {
 				t.Fatal("Create() succeeded unexpectedly")
 			}
+			cachedTeacher, err := c.Read(t.Context(), teacher.UserID)
+			require.NoError(t, err)
+			require.EqualValues(t, teacher, cachedTeacher)
 		})
 	}
 }
