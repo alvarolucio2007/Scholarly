@@ -23,7 +23,7 @@ func NewUserCache(rdb *redis.Client) *UserCache {
 
 func (c *UserCache) Create(ctx context.Context, item *domain.User) error {
 	if item == nil {
-		return fmt.Errorf("cannot cache nil user")
+		return fmt.Errorf("cache: cannot cache nil user")
 	}
 	cacheKey := fmt.Sprintf("user:%d", item.ID)
 	json, err := json.Marshal(item)
