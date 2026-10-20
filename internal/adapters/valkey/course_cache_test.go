@@ -1,0 +1,165 @@
+package valkey_test
+
+import (
+	"context"
+	"testing"
+
+	"github.com/alvarolucio2007/Scholarly/internal/adapters/valkey"
+	"github.com/alvarolucio2007/Scholarly/internal/domain"
+	"github.com/go-openapi/testify/require"
+	"github.com/redis/go-redis/v9"
+)
+
+func TestCourseCache_Create(t *testing.T) {
+	course := &domain.Course{}
+	cleanupTest(t)
+	tests := []struct {
+		name string // description of this test case
+		// Named input parameters for receiver constructor.
+		rdb *redis.Client
+		// Named input parameters for target function.
+		item    *domain.Course
+		wantErr bool
+	}{
+		{
+			name:    "should cache valid teacher",
+			rdb:     testRDB,
+			item:    course,
+			wantErr: false,
+		}, {
+			name:    "shouldn't cache nil",
+			rdb:     testRDB,
+			item:    nil,
+			wantErr: true,
+		}, {
+			name:    "should throw err if rdb is invalid",
+			rdb:     redis.NewClient(&redis.Options{Addr: "localhost:9999"}),
+			item:    course,
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := valkey.NewCourseCache(tt.rdb)
+			gotErr := c.Create(t.Context(), tt.item)
+			if gotErr != nil {
+				if !tt.wantErr {
+					t.Errorf("Create() failed: %v", gotErr)
+				}
+				return
+			}
+			if tt.wantErr {
+				t.Fatal("Create() succeeded unexpectedly")
+			}
+			cachedCourse, err := c.Read(t.Context(), course.ID)
+			require.NoError(t, err)
+			require.EqualValues(t, course, cachedCourse)
+		})
+	}
+}
+
+func TestCourseCache_Create_CanceledContext(t *testing.T) {
+	c := valkey.NewCourseCache(testRDB)
+	course := &domain.Course{ID: 10000}
+	ctx, cancel := context.WithCancel(t.Context())
+	cancel()
+	err := c.Create(ctx, course)
+	require.ErrorIs(t, err, context.Canceled)
+	cleanupTest(t)
+}
+
+func TestCourseCache_Read(t *testing.T) {
+	course := &domain.Course{ID: 1}
+	courseCache := valkey.NewCourseCache(testRDB)
+	err := courseCache.Create(t.Context(), course)
+	require.NoError(t, err)
+	cleanupTest(t)
+	tests := []struct {
+		name string // description of this test case
+		// Named input parameters for receiver constructor.
+		rdb *redis.Client
+		// Named input parameters for target function.
+		id      int64
+		want    *domain.Course
+		wantErr bool
+	}{
+		{
+			name:    "should read valid course",
+			rdb:     testRDB,
+			id:      course.ID,
+			want:    course,
+			wantErr: false,
+		}, {
+			name:    "should not return anything if ID is invalid",
+			rdb:     testRDB,
+			id:      course.ID + 1,
+			want:    nil,
+			wantErr: false,
+		}, {
+			name:    "shouldn't function with invalid redis connection",
+			id:      course.ID,
+			rdb:     redis.NewClient(&redis.Options{Addr: "localhost:9999"}),
+			want:    nil,
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := valkey.NewCourseCache(tt.rdb)
+			got, gotErr := c.Read(t.Context(), tt.id)
+			if gotErr != nil {
+				if !tt.wantErr {
+					t.Errorf("Read() failed: %v", gotErr)
+				}
+				return
+			}
+			if tt.wantErr {
+				t.Fatal("Read() succeeded unexpectedly")
+			}
+			require.EqualValues(t, got, tt.want)
+		})
+	}
+}
+
+func TestCourseCache_Delete(t *testing.T) {
+	course := &domain.Course{ID: 1}
+	courseCache := valkey.NewCourseCache(testRDB)
+	err := courseCache.Create(t.Context(), course)
+	require.NoError(t, err)
+	cleanupTest(t)
+	tests := []struct {
+		name string // description of this test case
+		// Named input parameters for receiver constructor.
+		rdb *redis.Client
+		// Named input parameters for target function.
+		id      int64
+		wantErr bool
+	}{
+		{
+			name:    "should delete valid course",
+			rdb:     testRDB,
+			id:      course.ID,
+			wantErr: false,
+		}, {
+			name:    "shouldn't function with an invalid redis connection",
+			rdb:     redis.NewClient(&redis.Options{Addr: "localhost:9999"}),
+			id:      course.ID,
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := valkey.NewCourseCache(tt.rdb)
+			gotErr := c.Delete(t.Context(), tt.id)
+			if gotErr != nil {
+				if !tt.wantErr {
+					t.Errorf("Delete() failed: %v", gotErr)
+				}
+				return
+			}
+			if tt.wantErr {
+				t.Fatal("Delete() succeeded unexpectedly")
+			}
+		})
+	}
+}

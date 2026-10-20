@@ -22,6 +22,9 @@ func NewEnrollmentCache(rdb *redis.Client) *EnrollmentCache {
 }
 
 func (c *EnrollmentCache) Create(ctx context.Context, item *domain.Enrollment) error {
+	if item == nil {
+		return fmt.Errorf("cache: cannot cache nil enrollment")
+	}
 	cacheKey := fmt.Sprintf("enrollment:%d", item.ID)
 	json, err := json.Marshal(item)
 	if err != nil {

@@ -22,6 +22,9 @@ func NewTestCache(rdb *redis.Client) *TestCache {
 }
 
 func (c *TestCache) Create(ctx context.Context, item *domain.Test) error {
+	if item == nil {
+		return fmt.Errorf("cannot cache nil test")
+	}
 	cacheKey := fmt.Sprintf("test:%d", item.ID)
 	json, err := json.Marshal(item)
 	if err != nil {
