@@ -15,6 +15,12 @@ var (
 	testRDB *redis.Client
 )
 
+func cleanupTest(t *testing.T) {
+	t.Cleanup(func() {
+		testRDB.FlushAll(t.Context())
+	})
+}
+
 func TestMain(m *testing.M) {
 	var rct *testcontainers.DockerContainer
 	var err error
