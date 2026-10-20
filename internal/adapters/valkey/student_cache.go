@@ -22,6 +22,9 @@ func NewStudentCache(rdb *redis.Client) *StudentCache {
 }
 
 func (c *StudentCache) Create(ctx context.Context, item *domain.Student) error {
+	if item == nil {
+		return fmt.Errorf("cache: can't cache nil student")
+	}
 	cacheKey := fmt.Sprintf("student:%d", item.UserID)
 	json, err := json.Marshal(item)
 	if err != nil {
