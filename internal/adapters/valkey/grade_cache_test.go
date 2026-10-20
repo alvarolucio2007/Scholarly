@@ -120,3 +120,46 @@ func TestGradeCache_Read(t *testing.T) {
 		})
 	}
 }
+
+func TestGradeCache_Delete(t *testing.T) {
+	grade := &domain.Grade{ID: 1}
+	studentCache := valkey.NewGradeCache(testRDB)
+	err := studentCache.Create(t.Context(), grade)
+	require.NoError(t, err)
+	cleanupTest(t)
+	tests := []struct {
+		name string // description of this test case
+		// Named input parameters for receiver constructor.
+		rdb *redis.Client
+		// Named input parameters for target function.
+		id      int64
+		wantErr bool
+	}{
+		{
+			name:    "should delete valid grade",
+			rdb:     testRDB,
+			id:      grade.ID,
+			wantErr: false,
+		}, {
+			name:    "shouldn't function with an invalid redis connection",
+			rdb:     redis.NewClient(&redis.Options{Addr: "localhost:9999"}),
+			id:      grade.ID,
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := valkey.NewGradeCache(tt.rdb)
+			gotErr := c.Delete(t.Context(), tt.id)
+			if gotErr != nil {
+				if !tt.wantErr {
+					t.Errorf("Delete() failed: %v", gotErr)
+				}
+				return
+			}
+			if tt.wantErr {
+				t.Fatal("Delete() succeeded unexpectedly")
+			}
+		})
+	}
+}
