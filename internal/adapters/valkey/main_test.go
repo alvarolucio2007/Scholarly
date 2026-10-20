@@ -34,15 +34,13 @@ func TestMain(m *testing.M) {
 	if rct == nil {
 		log.Fatalf("rct is nil")
 	}
-	defer func() {
-		if err := testcontainers.TerminateContainer(rct); err != nil {
-			log.Printf("failed to terminate container: %s", err)
-		}
-		if err := testRDB.Close(); err != nil {
-			log.Printf("failed to close rdb: %v", err)
-		}
-	}()
 	code := m.Run()
+	if err := testcontainers.TerminateContainer(rct); err != nil {
+		log.Printf("failed to terminate container: %s", err)
+	}
+	if err := testRDB.Close(); err != nil {
+		log.Printf("failed to close rdb: %v", err)
+	}
 	os.Exit(code)
 }
 func setupTestValkey() (*redis.Client, *testcontainers.DockerContainer, error) {
