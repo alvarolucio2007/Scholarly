@@ -70,8 +70,8 @@ func TestCourseCache_Create_CanceledContext(t *testing.T) {
 
 func TestCourseCache_Read(t *testing.T) {
 	course := &domain.Course{ID: 1}
-	studentCache := valkey.NewCourseCache(testRDB)
-	err := studentCache.Create(t.Context(), course)
+	courseCache := valkey.NewCourseCache(testRDB)
+	err := courseCache.Create(t.Context(), course)
 	require.NoError(t, err)
 	cleanupTest(t)
 	tests := []struct {
@@ -117,6 +117,49 @@ func TestCourseCache_Read(t *testing.T) {
 				t.Fatal("Read() succeeded unexpectedly")
 			}
 			require.EqualValues(t, got, tt.want)
+		})
+	}
+}
+
+func TestCourseCache_Delete(t *testing.T) {
+	course := &domain.Course{ID: 1}
+	courseCache := valkey.NewCourseCache(testRDB)
+	err := courseCache.Create(t.Context(), course)
+	require.NoError(t, err)
+	cleanupTest(t)
+	tests := []struct {
+		name string // description of this test case
+		// Named input parameters for receiver constructor.
+		rdb *redis.Client
+		// Named input parameters for target function.
+		id      int64
+		wantErr bool
+	}{
+		{
+			name:    "should delete valid course",
+			rdb:     testRDB,
+			id:      course.ID,
+			wantErr: false,
+		}, {
+			name:    "shouldn't function with an invalid redis connection",
+			rdb:     redis.NewClient(&redis.Options{Addr: "localhost:9999"}),
+			id:      course.ID,
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := valkey.NewCourseCache(tt.rdb)
+			gotErr := c.Delete(t.Context(), tt.id)
+			if gotErr != nil {
+				if !tt.wantErr {
+					t.Errorf("Delete() failed: %v", gotErr)
+				}
+				return
+			}
+			if tt.wantErr {
+				t.Fatal("Delete() succeeded unexpectedly")
+			}
 		})
 	}
 }
