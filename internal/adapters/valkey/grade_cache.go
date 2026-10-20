@@ -22,6 +22,9 @@ func NewGradeCache(rdb *redis.Client) *GradeCache {
 }
 
 func (c *GradeCache) Create(ctx context.Context, item *domain.Grade) error {
+	if item == nil {
+		return fmt.Errorf("cache: cannot cache nil grade")
+	}
 	cacheKey := fmt.Sprintf("grade:%d", item.ID)
 	json, err := json.Marshal(item)
 	if err != nil {
