@@ -1,10 +1,12 @@
 package valkey_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/alvarolucio2007/Scholarly/internal/adapters/valkey"
 	"github.com/alvarolucio2007/Scholarly/internal/domain"
+	"github.com/go-openapi/testify/require"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -50,4 +52,12 @@ func TestTeacherCache_Create(t *testing.T) {
 			}
 		})
 	}
+}
+func TestTeacherCache_Create_CanceledContext(t *testing.T) {
+	c := valkey.NewTeacherCache(testRDB)
+	teacher := &domain.Teacher{UserID: 1}
+	ctx, cancel := context.WithCancel(t.Context())
+	cancel()
+	err := c.Create(ctx, teacher)
+	require.ErrorIs(t, err, context.Canceled)
 }
