@@ -1,10 +1,12 @@
 package valkey_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/alvarolucio2007/Scholarly/internal/adapters/valkey"
 	"github.com/alvarolucio2007/Scholarly/internal/domain"
+	"github.com/go-openapi/testify/require"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -49,6 +51,19 @@ func TestGradeCache_Create(t *testing.T) {
 			if tt.wantErr {
 				t.Fatal("Create() succeeded unexpectedly")
 			}
+			cachedGrade, err := c.Read(t.Context(), grade.ID)
+			require.NoError(t, err)
+			require.EqualValues(t, grade, cachedGrade)
 		})
 	}
+}
+
+func TestGradeCache_Create_CanceledContext(t *testing.T) {
+	c := valkey.NewGradeCache(testRDB)
+	grade := &domain.Grade{ID: 10000}
+	ctx, cancel := context.WithCancel(t.Context())
+	cancel()
+	err := c.Create(ctx, grade)
+	require.ErrorIs(t, err, context.Canceled)
+	cleanupTest(t)
 }
