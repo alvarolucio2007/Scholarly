@@ -12,9 +12,7 @@ import (
 
 func TestTestCache_Create(t *testing.T) {
 	test := &domain.Test{ID: 1}
-	t.Cleanup(func() {
-		testRDB.FlushAll(t.Context())
-	})
+	cleanupTest(t)
 	tests := []struct {
 		name    string // description of this test case
 		rdb     *redis.Client
@@ -72,9 +70,7 @@ func TestTestCache_Read(t *testing.T) {
 	testCache := valkey.NewTestCache(testRDB)
 	err := testCache.Create(t.Context(), test)
 	require.NoError(t, err)
-	t.Cleanup(func() {
-		testRDB.FlushAll(t.Context())
-	})
+	cleanupTest(t)
 	tests := []struct {
 		name    string // description of this test case
 		rdb     *redis.Client
@@ -125,9 +121,7 @@ func TestTestCache_Delete(t *testing.T) {
 	testCache := valkey.NewTestCache(testRDB)
 	err := testCache.Create(t.Context(), test)
 	require.NoError(t, err)
-	t.Cleanup(func() {
-		testRDB.FlushAll(t.Context())
-	})
+	cleanupTest(t)
 	tests := []struct {
 		name    string // description of this test case
 		rdb     *redis.Client

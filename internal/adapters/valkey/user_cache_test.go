@@ -12,9 +12,7 @@ import (
 
 func TestUserCache_Create(t *testing.T) {
 	user := &domain.User{ID: 10000, Name: "TestCreateRedis", CPF: "00000000000", Email: "test@createuserredis.com", PasswordHash: []byte("Test")}
-	t.Cleanup(func() {
-		testRDB.FlushAll(t.Context())
-	})
+	cleanupTest(t)
 	tests := []struct {
 		name    string // description of this test case
 		item    *domain.User
@@ -64,6 +62,7 @@ func TestUserCache_Create_CanceledContext(t *testing.T) {
 	cancel()
 	err := c.Create(ctx, user)
 	require.ErrorIs(t, err, context.Canceled)
+	cleanupTest(t)
 }
 
 func TestUserCache_Read(t *testing.T) {
@@ -71,9 +70,7 @@ func TestUserCache_Read(t *testing.T) {
 	userCache := valkey.NewUserCache(testRDB)
 	err := userCache.Create(t.Context(), user)
 	require.NoError(t, err)
-	t.Cleanup(func() {
-		testRDB.FlushAll(t.Context())
-	})
+	cleanupTest(t)
 	tests := []struct {
 		name    string // description of this test case
 		id      int64
@@ -124,9 +121,7 @@ func TestUserCache_Delete(t *testing.T) {
 	userCache := valkey.NewUserCache(testRDB)
 	err := userCache.Create(t.Context(), user)
 	require.NoError(t, err)
-	t.Cleanup(func() {
-		testRDB.FlushAll(t.Context())
-	})
+	cleanupTest(t)
 	tests := []struct {
 		name    string // description of this test case
 		rdb     *redis.Client
