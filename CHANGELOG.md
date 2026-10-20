@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.1](https://github.com/alvarolucio2007/Scholarly/compare/v2.1.0...v2.1.1) (2026-10-20)
+
+
+### Bug Fixes
+
+* adding nil checking to Create teacher ([09e3862](https://github.com/alvarolucio2007/Scholarly/commit/09e38627eedc0f4d1e74c1c2f09a19847d42a430))
+
 ## [2.1.0](https://github.com/alvarolucio2007/Scholarly/compare/v2.0.0...v2.1.0) (2026-10-18)
 
 
