@@ -12,6 +12,7 @@ import (
 
 func TestTeacherCache_Create(t *testing.T) {
 	teacher := &domain.Teacher{UserID: 1}
+	cleanupTest(t)
 	tests := []struct {
 		name string // description of this test case
 		// Named input parameters for receiver constructor.
@@ -60,4 +61,58 @@ func TestTeacherCache_Create_CanceledContext(t *testing.T) {
 	cancel()
 	err := c.Create(ctx, teacher)
 	require.ErrorIs(t, err, context.Canceled)
+	cleanupTest(t)
+}
+
+func TestTeacherCache_Read(t *testing.T) {
+	teacher := &domain.Teacher{UserID: 1}
+	teacherCache := valkey.NewTeacherCache(testRDB)
+	err := teacherCache.Create(t.Context(), teacher)
+	require.NoError(t, err)
+	cleanupTest(t)
+	tests := []struct {
+		name string // description of this test case
+		// Named input parameters for receiver constructor.
+		rdb *redis.Client
+		// Named input parameters for target function.
+		id      int64
+		want    *domain.Teacher
+		wantErr bool
+	}{
+		{
+			name:    "should read valid teacher",
+			rdb:     testRDB,
+			id:      teacher.UserID,
+			want:    teacher,
+			wantErr: false,
+		}, {
+			name:    "shouldn't return anything if teacher doesnt exist",
+			id:      teacher.UserID + 1,
+			rdb:     testRDB,
+			want:    nil,
+			wantErr: false,
+		}, {
+			name:    "shouldn't function with invalid redis connection",
+			id:      teacher.UserID,
+			rdb:     redis.NewClient(&redis.Options{Addr: "localhost:9999"}),
+			want:    nil,
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := valkey.NewTeacherCache(tt.rdb)
+			got, gotErr := c.Read(t.Context(), tt.id)
+			if gotErr != nil {
+				if !tt.wantErr {
+					t.Errorf("Read() failed: %v", gotErr)
+				}
+				return
+			}
+			if tt.wantErr {
+				t.Fatal("Read() succeeded unexpectedly")
+			}
+			require.EqualValues(t, got, tt.want)
+		})
+	}
 }
