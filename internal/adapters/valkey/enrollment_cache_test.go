@@ -1,6 +1,7 @@
 package valkey_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/alvarolucio2007/Scholarly/internal/adapters/valkey"
@@ -55,4 +56,13 @@ func TestEnrollmentCache_Create(t *testing.T) {
 			require.EqualValues(t, enrollment, cachedEnrollment)
 		})
 	}
+}
+func TestEnrollmentCache_Create_CanceledContext(t *testing.T) {
+	c := valkey.NewEnrollmentCache(testRDB)
+	enrollment := &domain.Enrollment{ID: 1}
+	ctx, cancel := context.WithCancel(t.Context())
+	cancel()
+	err := c.Create(ctx, enrollment)
+	require.ErrorIs(t, err, context.Canceled)
+	cleanupTest(t)
 }
