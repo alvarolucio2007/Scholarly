@@ -41,7 +41,7 @@ func (r *TeacherRepo) Create(ctx context.Context, teacher *domain.Teacher) error
 	return nil
 }
 
-func (r *TeacherRepo) GetByID(ctx context.Context, teacherID int64) (*domain.Teacher, error) {
+func (r *TeacherRepo) GetByID(ctx context.Context, teacherID int64) (domain.Teacher, error) {
 	query := `SELECT user_id,department FROM teachers WHERE user_id=$1`
 	var t domain.Teacher
 
@@ -49,15 +49,15 @@ func (r *TeacherRepo) GetByID(ctx context.Context, teacherID int64) (*domain.Tea
 	defer cancel()
 	err := r.db.QueryRowContext(ctx, query, teacherID).Scan(&t.UserID, &t.Department)
 	if errors.Is(err, sql.ErrNoRows) {
-		return nil, domain.ErrNotFound
+		return domain.Teacher{}, domain.ErrNotFound
 	}
 	if err != nil {
-		return nil, fmt.Errorf("postgres: getByID teacher: %w", err)
+		return domain.Teacher{}, fmt.Errorf("postgres: getByID teacher: %w", err)
 	}
-	return &t, nil
+	return t, nil
 }
 
-func (r *TeacherRepo) List(ctx context.Context, filter ports.TeacherFilter) ([]*domain.Teacher, error) {
+func (r *TeacherRepo) List(ctx context.Context, filter ports.TeacherFilter) ([]domain.Teacher, error) {
 	wb := newWhereBuilder()
 	if filter.Department != nil {
 		wb.addILike("department", *filter.Department)
@@ -79,13 +79,13 @@ func (r *TeacherRepo) List(ctx context.Context, filter ports.TeacherFilter) ([]*
 			r.logger.ErrorContext(ctx, "postgres: rows.close list teachers ", "error", err)
 		}
 	}()
-	var teachers []*domain.Teacher
+	var teachers []domain.Teacher
 	for rows.Next() {
 		var t domain.Teacher
 		if err := rows.Scan(&t.UserID, &t.Department); err != nil {
 			return nil, fmt.Errorf("postgres: scan teachers: %w", err)
 		}
-		teachers = append(teachers, &t)
+		teachers = append(teachers, t)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("postgres: iterate teachers: %w", err)
@@ -93,7 +93,7 @@ func (r *TeacherRepo) List(ctx context.Context, filter ports.TeacherFilter) ([]*
 	return teachers, nil
 }
 
-func (r *TeacherRepo) Update(ctx context.Context, teacher *domain.Teacher) error {
+func (r *TeacherRepo) Update(ctx context.Context, teacher domain.Teacher) error {
 	query := `UPDATE teachers
 	SET
 		department=COALESCE(NULLIF($1,''),department)
