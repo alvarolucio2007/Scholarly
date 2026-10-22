@@ -14,6 +14,6 @@ type CourseFilter struct {
 }
 type CourseRepository interface {
 	Repository[domain.Course]
-	List(ctx context.Context, filter CourseFilter) ([]*domain.Course, error)
+	List(ctx context.Context, filter CourseFilter) ([]domain.Course, error)
 	EnrollStudent(ctx context.Context, studentID, courseID int64) (int64, error)
 }

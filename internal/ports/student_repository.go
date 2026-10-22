@@ -8,5 +8,5 @@ import (
 
 type StudentRepository interface {
 	Repository[domain.Student]
-	GetByEnrollment(ctx context.Context, enrollment string) (*domain.Student, error)
+	GetByEnrollment(ctx context.Context, enrollment string) (domain.Student, error)
 }

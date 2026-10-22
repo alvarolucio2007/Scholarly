@@ -15,7 +15,7 @@ type ReportCardFilter struct {
 }
 type GradeRepository interface {
 	Repository[domain.Grade]
-	List(ctx context.Context, filter GradeFilter) ([]*domain.Grade, error)
-	ListAverages(ctx context.Context, filter ReportCardFilter) ([]*domain.ReportCard, error)
+	List(ctx context.Context, filter GradeFilter) ([]domain.Grade, error)
+	ListAverages(ctx context.Context, filter ReportCardFilter) ([]domain.ReportCard, error)
 	GetAverage(ctx context.Context, studentID, courseID int64) (float64, error)
 }
