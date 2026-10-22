@@ -14,5 +14,5 @@ type TestFilter struct {
 }
 type TestRepository interface {
 	Repository[domain.Test]
-	List(ctx context.Context, filter TestFilter) ([]*domain.Test, error)
+	List(ctx context.Context, filter TestFilter) ([]domain.Test, error)
 }

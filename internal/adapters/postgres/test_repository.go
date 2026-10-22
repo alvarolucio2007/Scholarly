@@ -39,22 +39,22 @@ func (r *TestRepo) Create(ctx context.Context, test *domain.Test) error {
 	return nil
 }
 
-func (r *TestRepo) GetByID(ctx context.Context, testID int64) (*domain.Test, error) {
+func (r *TestRepo) GetByID(ctx context.Context, testID int64) (domain.Test, error) {
 	var t domain.Test
 	query := `SELECT id,course_id,name,weight,test_date,created_at,updated_at FROM tests WHERE id=$1`
 	ctx, cancel := context.WithTimeout(ctx, PostgresQueryTimeout)
 	defer cancel()
 	err := r.db.QueryRowContext(ctx, query, testID).Scan(&t.ID, &t.CourseID, &t.Name, &t.Weight, &t.TestDate, &t.CreatedAt, &t.UpdatedAt)
 	if errors.Is(err, sql.ErrNoRows) {
-		return nil, domain.ErrNotFound
+		return domain.Test{}, domain.ErrNotFound
 	}
 	if err != nil {
-		return nil, fmt.Errorf("postgres: get test by id: %w", err)
+		return domain.Test{}, fmt.Errorf("postgres: get test by id: %w", err)
 	}
-	return &t, nil
+	return t, nil
 }
 
-func (r *TestRepo) List(ctx context.Context, filter ports.TestFilter) ([]*domain.Test, error) {
+func (r *TestRepo) List(ctx context.Context, filter ports.TestFilter) ([]domain.Test, error) {
 	wb := newWhereBuilder()
 	if filter.CourseID != nil {
 		wb.add("course_id", *filter.CourseID)
@@ -82,13 +82,13 @@ func (r *TestRepo) List(ctx context.Context, filter ports.TestFilter) ([]*domain
 			r.logger.ErrorContext(ctx, "postgres: rows.close list test", "error", err)
 		}
 	}()
-	var tests []*domain.Test
+	var tests []domain.Test
 	for rows.Next() {
 		var e domain.Test
 		if err := rows.Scan(&e.ID, &e.CourseID, &e.Name, &e.Weight, &e.TestDate, &e.CreatedAt, &e.UpdatedAt); err != nil {
 			return nil, fmt.Errorf("postgres: scan test: %w", err)
 		}
-		tests = append(tests, &e)
+		tests = append(tests, e)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("postgres: iterate test: %w", err)
@@ -96,7 +96,7 @@ func (r *TestRepo) List(ctx context.Context, filter ports.TestFilter) ([]*domain
 	return tests, nil
 }
 
-func (r *TestRepo) Update(ctx context.Context, test *domain.Test) error {
+func (r *TestRepo) Update(ctx context.Context, test domain.Test) error {
 	query := `UPDATE tests
 	SET
 		course_id=COALESCE(NULLIF($1,0),course_id),
