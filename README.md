@@ -302,6 +302,7 @@ A documentação completa, com payloads e códigos de resposta, está disponíve
 git clone https://github.com/alvarolucio2007/Scholarly.git
 cd Scholarly
 ```
+
 **2. Remova o .example do arquivo .env.example**
 
 O arquivo .env.example possui exemplos válidos de variáveis de ambiente.
@@ -313,7 +314,6 @@ DATABASE_URL = postgres://admin:root@db:5432/scholarly?sslmode=disable
 CACHE_URL = cache:6379
 SERVER_ADDR = 0.0.0.0:8080
 ```
-
 
 **3. Suba a aplicação completa (com Postgres local, para Supabase, instruções abaixo.)**
 
@@ -331,8 +331,8 @@ make migrateup
 air
 
 ```
-**(OPCIONAL) Supabase como banco de dados**
 
+**(OPCIONAL) Supabase como banco de dados**
 
 Primeiro, mude a variável `DATABASE_URL` para a URL do supabase (é altamente recomendado usar Session Pooler nas opções de conexão do Supabase)
 
@@ -341,8 +341,6 @@ Após isso, basta executar:
 ```bash
 docker compose up api cache --build --no-deps
 ```
-
-
 
 **3. Acesse o Swagger UI**
 
@@ -394,7 +392,9 @@ Este projeto é uma reescrita de um sistema acadêmico desenvolvido no semestre 
 ---
 
 ## Performance
+
 Comando
+
 ```bash
 npx autocannon -c 1000 -d 20 -V http://127.0.0.1:8080/users/1 --renderStatusCodes
 ```
@@ -410,6 +410,7 @@ npx autocannon -c 1000 -d 20 -V http://127.0.0.1:8080/users/1 --renderStatusCode
 
 - [Parte 1: Demonstração do sistema](https://youtu.be/W15-8AW7WaY)
 - [Parte 2: Recursos do banco de dados](https://youtu.be/InDuAxvD600)
+- [Parte 3: Integração com Redis e Supabase](https://youtu.be/SAQKUrK_t3c)
 
 ---
 
