@@ -8,6 +8,8 @@ import (
 	"github.com/alvarolucio2007/Scholarly/internal/ports"
 )
 
+var _ ports.Authenticator = (*PasetoAuthenticator)(nil)
+
 type PasetoAuthenticator struct {
 	key paseto.V4SymmetricKey
 }
