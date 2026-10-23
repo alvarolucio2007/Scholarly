@@ -210,8 +210,18 @@ func (h *Handler) DeleteGrade(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusNoContent)
 }
-
-//TODO: Implement DTO for both handlers below
+func newReportCardResponseDTO(reportCard domain.ReportCard) ReportCardResponseDTO {
+	return ReportCardResponseDTO{StudentID: reportCard.StudentID, CourseID: reportCard.CourseID, StudentName: reportCard.StudentName, CourseName: reportCard.CourseName, CourseCode: reportCard.CourseCode, TeacherName: reportCard.TeacherName, Average: reportCard.Average, Situation: reportCard.Situation}
+}
+func newListReportCardResponseDTO(reportCards []domain.ReportCard) ListReportCardResponseDTO {
+	responses := make([]ReportCardResponseDTO, 0, len(reportCards))
+	for _, reportCard := range reportCards {
+		responses = append(responses, newReportCardResponseDTO(reportCard))
+	}
+	return ListReportCardResponseDTO{
+		Data: responses,
+	}
+}
 
 // ListAverages godoc
 //
@@ -245,7 +255,11 @@ func (h *Handler) ListAverages(w http.ResponseWriter, r *http.Request) {
 		respondDomainError(w, err)
 		return
 	}
-	_ = writeJSONData(w, http.StatusOK, reportCards)
+	response := newListReportCardResponseDTO(reportCards)
+	_ = writeJSONData(w, http.StatusOK, response)
+}
+func newGetAverageResponseDTO(average float64) GetAverageResponseDTO {
+	return GetAverageResponseDTO{Average: average}
 }
 
 // GetAverage godoc
@@ -281,10 +295,11 @@ func (h *Handler) GetAverage(w http.ResponseWriter, r *http.Request) {
 		_ = writeJSONError(w, http.StatusBadRequest, "course_id must be at least 1")
 		return
 	}
-	res, err := h.grades.GetAverage(r.Context(), studentID, courseID)
+	average, err := h.grades.GetAverage(r.Context(), studentID, courseID)
 	if err != nil {
 		respondDomainError(w, err)
 		return
 	}
-	_ = writeJSONData(w, 200, res)
+	response := newGetAverageResponseDTO(average)
+	_ = writeJSONData(w, 200, response)
 }
