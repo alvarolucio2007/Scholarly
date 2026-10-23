@@ -11,13 +11,13 @@ import (
 )
 
 func TestEnrollmentCache_Create(t *testing.T) {
-	enrollment := &domain.Enrollment{ID: 1}
+	enrollment := domain.Enrollment{ID: 1}
 	tests := []struct {
 		name string // description of this test case
 		// Named input parameters for receiver constructor.
 		rdb *redis.Client
 		// Named input parameters for target function.
-		item    *domain.Enrollment
+		item    domain.Enrollment
 		wantErr bool
 	}{
 		{
@@ -29,7 +29,7 @@ func TestEnrollmentCache_Create(t *testing.T) {
 		{
 			name:    "shouldn't cache nil",
 			rdb:     testRDB,
-			item:    nil,
+			item:    domain.Enrollment{},
 			wantErr: true,
 		}, {
 			name:    "should throw err if rdb is invalid",
@@ -53,13 +53,13 @@ func TestEnrollmentCache_Create(t *testing.T) {
 			}
 			cachedEnrollment, err := c.Read(t.Context(), enrollment.ID)
 			require.NoError(t, err)
-			require.EqualValues(t, enrollment, cachedEnrollment)
+			require.Equal(t, enrollment, cachedEnrollment)
 		})
 	}
 }
 func TestEnrollmentCache_Create_CanceledContext(t *testing.T) {
 	c := valkey.NewEnrollmentCache(testRDB)
-	enrollment := &domain.Enrollment{ID: 1}
+	enrollment := domain.Enrollment{ID: 1}
 	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
 	err := c.Create(ctx, enrollment)
@@ -68,7 +68,7 @@ func TestEnrollmentCache_Create_CanceledContext(t *testing.T) {
 }
 
 func TestEnrollmentCache_Read(t *testing.T) {
-	enrollment := &domain.Enrollment{ID: 1}
+	enrollment := domain.Enrollment{ID: 1}
 	studentCache := valkey.NewEnrollmentCache(testRDB)
 	err := studentCache.Create(t.Context(), enrollment)
 	require.NoError(t, err)
@@ -79,7 +79,7 @@ func TestEnrollmentCache_Read(t *testing.T) {
 		rdb *redis.Client
 		// Named input parameters for target function.
 		id      int64
-		want    *domain.Enrollment
+		want    domain.Enrollment
 		wantErr bool
 	}{
 		{
@@ -92,13 +92,13 @@ func TestEnrollmentCache_Read(t *testing.T) {
 			name:    "should not return anything if ID is invalid",
 			rdb:     testRDB,
 			id:      enrollment.ID + 1,
-			want:    nil,
+			want:    domain.Enrollment{},
 			wantErr: false,
 		}, {
 			name:    "shouldn't function with invalid redis connection",
 			id:      enrollment.ID,
 			rdb:     redis.NewClient(&redis.Options{Addr: "localhost:9999"}),
-			want:    nil,
+			want:    domain.Enrollment{},
 			wantErr: true,
 		},
 	}
@@ -115,13 +115,13 @@ func TestEnrollmentCache_Read(t *testing.T) {
 			if tt.wantErr {
 				t.Fatal("Read() succeeded unexpectedly")
 			}
-			require.EqualValues(t, got, tt.want)
+			require.Equal(t, got, tt.want)
 		})
 	}
 }
 
 func TestEnrollmentCache_Delete(t *testing.T) {
-	enrollment := &domain.Enrollment{ID: 1}
+	enrollment := domain.Enrollment{ID: 1}
 	studentCache := valkey.NewEnrollmentCache(testRDB)
 	err := studentCache.Create(t.Context(), enrollment)
 	require.NoError(t, err)

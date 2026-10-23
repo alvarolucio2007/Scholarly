@@ -11,12 +11,12 @@ import (
 )
 
 func TestUserCache_Create(t *testing.T) {
-	user := &domain.User{ID: 10000, Name: "TestCreateRedis", CPF: "00000000000", Email: "test@createuserredis.com", PasswordHash: []byte("Test")}
+	user := domain.User{ID: 1}
 	cleanupTest(t)
 	tests := []struct {
 		name    string // description of this test case
-		item    *domain.User
 		rdb     *redis.Client
+		item    domain.User
 		wantErr bool
 	}{
 		{
@@ -26,12 +26,12 @@ func TestUserCache_Create(t *testing.T) {
 			wantErr: false,
 		}, {
 			name:    "should not cache nil",
-			item:    nil,
+			item:    domain.User{},
 			rdb:     testRDB,
 			wantErr: true,
 		}, {
 			name:    "should throw err if db is down",
-			item:    user,
+			item:    domain.User{},
 			rdb:     redis.NewClient(&redis.Options{Addr: "localhost:9999"}),
 			wantErr: true,
 		},
@@ -51,13 +51,13 @@ func TestUserCache_Create(t *testing.T) {
 			}
 			cachedUser, err := c.Read(t.Context(), user.ID)
 			require.NoError(t, err)
-			require.EqualValues(t, user, cachedUser)
+			require.Equal(t, user, cachedUser)
 		})
 	}
 }
 func TestUserCache_Create_CanceledContext(t *testing.T) {
 	c := valkey.NewUserCache(testRDB)
-	user := &domain.User{ID: 10000, Name: "Test"}
+	user := domain.User{ID: 10000, Name: "Test"}
 	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
 	err := c.Create(ctx, user)
@@ -66,7 +66,7 @@ func TestUserCache_Create_CanceledContext(t *testing.T) {
 }
 
 func TestUserCache_Read(t *testing.T) {
-	user := &domain.User{ID: 10000, Name: "Test"}
+	user := domain.User{ID: 1}
 	userCache := valkey.NewUserCache(testRDB)
 	err := userCache.Create(t.Context(), user)
 	require.NoError(t, err)
@@ -75,7 +75,7 @@ func TestUserCache_Read(t *testing.T) {
 		name    string // description of this test case
 		id      int64
 		rdb     *redis.Client
-		want    *domain.User
+		want    domain.User
 		wantErr bool
 	}{
 		{
@@ -88,13 +88,13 @@ func TestUserCache_Read(t *testing.T) {
 			name:    "shouldn't return anything if user doesnt exist",
 			id:      user.ID + 1,
 			rdb:     testRDB,
-			want:    nil,
+			want:    domain.User{},
 			wantErr: false,
 		}, {
 			name:    "shouldn't function with invalid redis connection",
 			id:      user.ID,
 			rdb:     redis.NewClient(&redis.Options{Addr: "localhost:9999"}),
-			want:    nil,
+			want:    domain.User{},
 			wantErr: true,
 		},
 	}
@@ -111,13 +111,13 @@ func TestUserCache_Read(t *testing.T) {
 			if tt.wantErr {
 				t.Fatal("Read() succeeded unexpectedly")
 			}
-			require.EqualValues(t, got, tt.want)
+			require.Equal(t, got, tt.want)
 		})
 	}
 }
 
 func TestUserCache_Delete(t *testing.T) {
-	user := &domain.User{ID: 10000, Name: "Test"}
+	user := domain.User{ID: 10000, Name: "Test"}
 	userCache := valkey.NewUserCache(testRDB)
 	err := userCache.Create(t.Context(), user)
 	require.NoError(t, err)
