@@ -11,8 +11,8 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func newUserResponse(user *domain.User) *UserResponseDTO {
-	return &UserResponseDTO{ID: user.ID, Name: user.Name, CPF: user.CPF, Email: user.Email, CreatedAt: user.CreatedAt, UpdatedAt: user.UpdatedAt}
+func newUserResponse(user domain.User) UserResponseDTO {
+	return UserResponseDTO{ID: user.ID, Name: user.Name, CPF: user.CPF, Email: user.Email, CreatedAt: user.CreatedAt, UpdatedAt: user.UpdatedAt}
 }
 
 // CreateUser godoc
@@ -85,6 +85,16 @@ func (h *Handler) GetUserByID(w http.ResponseWriter, r *http.Request) {
 	_ = writeJSONData(w, http.StatusOK, response)
 }
 
+func newListUserResponseDTO(users []domain.User) ListUserResponseDTO {
+	responses := make([]UserResponseDTO, 0, len(users))
+	for _, user := range users {
+		responses = append(responses, newUserResponse(user))
+	}
+	return ListUserResponseDTO{
+		Data: responses,
+	}
+}
+
 // ListUsers godoc
 //
 //	@Summary		List users by parameters
@@ -95,7 +105,7 @@ func (h *Handler) GetUserByID(w http.ResponseWriter, r *http.Request) {
 //	@Param			name	query		string	false	"filter by name"
 //	@Param			cpf		query		string	false	"filter by cpf"
 //	@Param			email	query		string	false	"filter by email"
-//	@Success		200		{array}		UserResponseDTO
+//	@Success		200		{array}		ListUserResponseDTO
 //	@Failure		400		{object}	ErrorResponse
 //	@Failure		500		{object}	ErrorResponse
 //	@Router			/users/ [get]
@@ -125,12 +135,8 @@ func (h *Handler) ListUsers(w http.ResponseWriter, r *http.Request) {
 		respondDomainError(w, err)
 		return
 	}
-	responses := make([]*UserResponseDTO, 0, len(users))
-	for _, u := range users {
-		response := newUserResponse(u)
-		responses = append(responses, response)
-	}
-	_ = writeJSONData(w, http.StatusOK, responses)
+	response := newListUserResponseDTO(users)
+	_ = writeJSONData(w, http.StatusOK, response)
 }
 
 // UpdateUser godoc
@@ -165,13 +171,12 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		Email:    nilIfEmpty(dto.Email),
 		Password: nilIfEmpty(dto.Password),
 	}
-	user, err := h.users.Update(r.Context(), updateUserPayload)
+	err := h.users.Update(r.Context(), updateUserPayload)
 	if err != nil {
 		respondDomainError(w, err)
 		return
 	}
-	response := newUserResponse(user)
-	_ = writeJSONData(w, http.StatusOK, response)
+	w.WriteHeader(http.StatusNoContent)
 }
 
 // DeleteUser godoc

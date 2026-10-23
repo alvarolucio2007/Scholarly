@@ -32,17 +32,17 @@ func (s *EnrollmentService) Create(ctx context.Context, payload CreateEnrollment
 	return enrollment, nil
 }
 
-func (s *EnrollmentService) GetByID(ctx context.Context, enrollmentID int64) (*domain.Enrollment, error) {
+func (s *EnrollmentService) GetByID(ctx context.Context, enrollmentID int64) (domain.Enrollment, error) {
 	enrollment, err := s.cache.Read(ctx, enrollmentID)
 	if err != nil {
 		s.logger.ErrorContext(ctx, "failed to fetch cached enrollment", "error", err)
 	}
-	if enrollment != nil {
+	if enrollment.ID != 0 {
 		return enrollment, nil
 	}
 	enrollment, err = s.repo.GetByID(ctx, enrollmentID)
 	if err != nil {
-		return nil, err
+		return domain.Enrollment{}, err
 	}
 	if err := s.cache.Create(ctx, enrollment); err != nil {
 		s.logger.ErrorContext(ctx, "failed to cache enrollment", "error", err)
@@ -50,7 +50,7 @@ func (s *EnrollmentService) GetByID(ctx context.Context, enrollmentID int64) (*d
 	return enrollment, nil
 }
 
-func (s *EnrollmentService) List(ctx context.Context, filter ports.EnrollmentFilter) ([]*domain.Enrollment, error) {
+func (s *EnrollmentService) List(ctx context.Context, filter ports.EnrollmentFilter) ([]domain.Enrollment, error) {
 	return s.repo.List(ctx, filter)
 }
 
@@ -60,7 +60,7 @@ type UpdateEnrollmentPayload struct {
 	CourseID  *int64
 }
 
-func (s *EnrollmentService) Update(ctx context.Context, payload UpdateEnrollmentPayload) (*domain.Enrollment, error) {
+func (s *EnrollmentService) Update(ctx context.Context, payload UpdateEnrollmentPayload) error {
 	enrollment := domain.Enrollment{ID: payload.ID}
 	if payload.StudentID != nil {
 		enrollment.StudentID = *payload.StudentID
@@ -68,16 +68,13 @@ func (s *EnrollmentService) Update(ctx context.Context, payload UpdateEnrollment
 	if payload.CourseID != nil {
 		enrollment.CourseID = *payload.CourseID
 	}
-	if err := s.repo.Update(ctx, &enrollment); err != nil {
-		return nil, err
+	if err := s.repo.Update(ctx, enrollment); err != nil {
+		return err
 	}
 	if err := s.cache.Delete(ctx, enrollment.ID); err != nil {
 		s.logger.ErrorContext(ctx, "failed to delete cached user", "error", err)
 	}
-	if err := s.cache.Create(ctx, &enrollment); err != nil {
-		s.logger.ErrorContext(ctx, "failed to cache user", "error", err)
-	}
-	return &enrollment, nil
+	return nil
 }
 
 func (s *EnrollmentService) Delete(ctx context.Context, enrollmentID int64) error {

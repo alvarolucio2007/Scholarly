@@ -40,26 +40,26 @@ func (r *GradeRepo) Create(ctx context.Context, grade *domain.Grade) error {
 	return nil
 }
 
-func (r *GradeRepo) GetByID(ctx context.Context, gradeID int64) (*domain.Grade, error) {
+func (r *GradeRepo) GetByID(ctx context.Context, gradeID int64) (domain.Grade, error) {
 	var g domain.Grade
 	query := `SELECT id,test_id,enrollment_id,value,created_at,updated_at FROM grades WHERE id=$1`
 	ctx, cancel := context.WithTimeout(ctx, PostgresQueryTimeout)
 	defer cancel()
 	err := r.db.QueryRowContext(ctx, query, gradeID).Scan(&g.ID, &g.TestID, &g.EnrollmentID, &g.Value, &g.CreatedAt, &g.UpdatedAt)
 	if errors.Is(err, sql.ErrNoRows) {
-		return nil, domain.ErrNotFound
+		return domain.Grade{}, domain.ErrNotFound
 	}
 	if err != nil {
 		translated := translateError(err)
 		if !errors.Is(err, translated) {
-			return nil, translated
+			return domain.Grade{}, translated
 		}
-		return nil, fmt.Errorf("postgres: get grade by id: %w", err)
+		return domain.Grade{}, fmt.Errorf("postgres: get grade by id: %w", err)
 	}
-	return &g, nil
+	return g, nil
 }
 
-func (r *GradeRepo) List(ctx context.Context, filter ports.GradeFilter) ([]*domain.Grade, error) {
+func (r *GradeRepo) List(ctx context.Context, filter ports.GradeFilter) ([]domain.Grade, error) {
 	wb := newWhereBuilder()
 	if filter.TestID != nil {
 		wb.add("test_id", *filter.TestID)
@@ -88,7 +88,7 @@ func (r *GradeRepo) List(ctx context.Context, filter ports.GradeFilter) ([]*doma
 			r.logger.ErrorContext(ctx, "postgres: rows.close list grade", "error", err)
 		}
 	}()
-	var grades []*domain.Grade
+	var grades []domain.Grade
 	for rows.Next() {
 		var g domain.Grade
 		if err := rows.Scan(&g.ID, &g.TestID, &g.EnrollmentID, &g.Value, &g.CreatedAt, &g.UpdatedAt); err != nil {
@@ -98,7 +98,7 @@ func (r *GradeRepo) List(ctx context.Context, filter ports.GradeFilter) ([]*doma
 			}
 			return nil, fmt.Errorf("postgres: scan grade: %w", err)
 		}
-		grades = append(grades, &g)
+		grades = append(grades, g)
 	}
 	if err := rows.Err(); err != nil {
 		translated := translateError(err)
@@ -110,7 +110,7 @@ func (r *GradeRepo) List(ctx context.Context, filter ports.GradeFilter) ([]*doma
 	return grades, nil
 }
 
-func (r *GradeRepo) Update(ctx context.Context, grade *domain.Grade) error {
+func (r *GradeRepo) Update(ctx context.Context, grade domain.Grade) error {
 	query := `UPDATE grades
 	SET
 		test_id=COALESCE(NULLIF($1,0),test_id),
@@ -165,7 +165,7 @@ func (r *GradeRepo) Delete(ctx context.Context, gradeID int64) error {
 	return nil
 }
 
-func (r *GradeRepo) ListAverages(ctx context.Context, filter ports.ReportCardFilter) ([]*domain.ReportCard, error) {
+func (r *GradeRepo) ListAverages(ctx context.Context, filter ports.ReportCardFilter) ([]domain.ReportCard, error) {
 	var query string
 	var args []any
 	if filter.StudentID != nil {
@@ -185,7 +185,7 @@ func (r *GradeRepo) ListAverages(ctx context.Context, filter ports.ReportCardFil
 			log.Printf("postgres: rows.close report card: %v", err)
 		}
 	}()
-	var reportCards []*domain.ReportCard
+	var reportCards []domain.ReportCard
 	for rows.Next() {
 		var rep domain.ReportCard
 		if err := rows.Scan(&rep.StudentID, &rep.StudentName, &rep.CourseID, &rep.CourseName, &rep.CourseCode, &rep.TeacherName, &rep.Average, &rep.Situation); err != nil {
@@ -195,7 +195,7 @@ func (r *GradeRepo) ListAverages(ctx context.Context, filter ports.ReportCardFil
 			}
 			return nil, fmt.Errorf("postgres: rows.scan report card: %w", err)
 		}
-		reportCards = append(reportCards, &rep)
+		reportCards = append(reportCards, rep)
 	}
 	if err := rows.Err(); err != nil {
 		translated := translateError(err)

@@ -11,5 +11,5 @@ type TeacherFilter struct {
 }
 type TeacherRepository interface {
 	Repository[domain.Teacher]
-	List(ctx context.Context, filter TeacherFilter) ([]*domain.Teacher, error)
+	List(ctx context.Context, filter TeacherFilter) ([]domain.Teacher, error)
 }

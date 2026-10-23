@@ -40,22 +40,22 @@ func (r *CourseRepo) Create(ctx context.Context, course *domain.Course) error {
 	return nil
 }
 
-func (r *CourseRepo) GetByID(ctx context.Context, courseID int64) (*domain.Course, error) {
+func (r *CourseRepo) GetByID(ctx context.Context, courseID int64) (domain.Course, error) {
 	var c domain.Course
 	query := `SELECT id,teacher_id,name,code,semester,max_students,created_at,updated_at FROM courses WHERE id = $1`
 	ctx, cancel := context.WithTimeout(ctx, PostgresQueryTimeout)
 	defer cancel()
 	err := r.db.QueryRowContext(ctx, query, courseID).Scan(&c.ID, &c.TeacherID, &c.Name, &c.Code, &c.Semester, &c.MaxStudents, &c.CreatedAt, &c.UpdatedAt)
 	if errors.Is(err, sql.ErrNoRows) {
-		return nil, domain.ErrNotFound
+		return domain.Course{}, domain.ErrNotFound
 	}
 	if err != nil {
-		return nil, fmt.Errorf("postgres: get course by id: %w", err)
+		return domain.Course{}, fmt.Errorf("postgres: get course by id: %w", err)
 	}
-	return &c, nil
+	return c, nil
 }
 
-func (r *CourseRepo) List(ctx context.Context, filter ports.CourseFilter) ([]*domain.Course, error) {
+func (r *CourseRepo) List(ctx context.Context, filter ports.CourseFilter) ([]domain.Course, error) {
 	wb := newWhereBuilder()
 	if filter.TeacherID != nil {
 		wb.add("teacher_id", *filter.TeacherID)
@@ -88,13 +88,13 @@ func (r *CourseRepo) List(ctx context.Context, filter ports.CourseFilter) ([]*do
 			r.logger.ErrorContext(ctx, "postgres: rows.close list courses", "error", err.Error())
 		}
 	}()
-	var courses []*domain.Course
+	var courses []domain.Course
 	for rows.Next() {
 		var c domain.Course
 		if err := rows.Scan(&c.ID, &c.TeacherID, &c.Name, &c.Code, &c.Semester, &c.MaxStudents, &c.CreatedAt, &c.UpdatedAt); err != nil {
 			return nil, fmt.Errorf("postgres: scan courses: %w", err)
 		}
-		courses = append(courses, &c)
+		courses = append(courses, c)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("postgres: iterate courses: %w", err)
@@ -102,7 +102,7 @@ func (r *CourseRepo) List(ctx context.Context, filter ports.CourseFilter) ([]*do
 	return courses, nil
 }
 
-func (r *CourseRepo) Update(ctx context.Context, course *domain.Course) error {
+func (r *CourseRepo) Update(ctx context.Context, course domain.Course) error {
 	query := ` UPDATE courses
 	SET
 		teacher_id=COALESCE(NULLIF($1,0),teacher_id),

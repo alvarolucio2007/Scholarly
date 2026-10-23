@@ -1,6 +1,10 @@
 package http
 
-import "time"
+import (
+	"time"
+
+	"github.com/alvarolucio2007/Scholarly/internal/domain"
+)
 
 type CreateGradeDTO struct {
 	TestID       int64   `json:"test_id" validate:"required,gte=1"`
@@ -21,13 +25,22 @@ type GradeResponseDTO struct {
 	CreatedAt    time.Time  `json:"created_at"`
 	UpdatedAt    *time.Time `json:"updated_at"`
 }
-type ListAverageResponseDTO struct {
-	StudentID   int64   `json:"student_id"`
-	CourseID    int64   `json:"course_id"`
-	StudentName string  `json:"student_name"`
-	CourseName  string  `json:"course_name"`
-	CourseCode  string  `json:"course_code"`
-	TeacherName string  `json:"teacher_name"`
-	Average     float64 `json:"average"`
-	Situation   string  `json:"situation"`
+type ListGradeResponseDTO struct {
+	Data []GradeResponseDTO `json:"data"`
+}
+type ReportCardResponseDTO struct {
+	StudentID   int64                  `json:"student_id"`
+	CourseID    int64                  `json:"course_id"`
+	StudentName string                 `json:"student_name"`
+	CourseName  string                 `json:"course_name"`
+	CourseCode  string                 `json:"course_code"`
+	TeacherName string                 `json:"teacher_name"`
+	Average     float64                `json:"average"`
+	Situation   domain.SituationStatus `json:"situation"`
+}
+type ListReportCardResponseDTO struct {
+	Data []ReportCardResponseDTO `json:"data"`
+}
+type GetAverageResponseDTO struct {
+	Average float64 `json:"average"`
 }

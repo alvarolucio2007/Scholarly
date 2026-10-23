@@ -23,3 +23,6 @@ type UserResponseDTO struct {
 	CreatedAt time.Time  `json:"created_at"`
 	UpdatedAt *time.Time `json:"updated_at"`
 }
+type ListUserResponseDTO struct {
+	Data []UserResponseDTO `json:"data"`
+}

@@ -21,9 +21,9 @@ func NewStudentCache(rdb *redis.Client) *StudentCache {
 	return &StudentCache{rdb: rdb}
 }
 
-func (c *StudentCache) Create(ctx context.Context, item *domain.Student) error {
-	if item == nil {
-		return fmt.Errorf("cache: can't cache nil student")
+func (c *StudentCache) Create(ctx context.Context, item domain.Student) error {
+	if item.UserID == 0 {
+		return fmt.Errorf("cache: can't cache empty student")
 	}
 	cacheKey := fmt.Sprintf("student:%d", item.UserID)
 	json, err := json.Marshal(item)
@@ -35,21 +35,21 @@ func (c *StudentCache) Create(ctx context.Context, item *domain.Student) error {
 	return c.rdb.Set(ctx, cacheKey, json, CacheExpTime).Err()
 }
 
-func (c *StudentCache) Read(ctx context.Context, id int64) (*domain.Student, error) {
+func (c *StudentCache) Read(ctx context.Context, id int64) (domain.Student, error) {
 	cacheKey := fmt.Sprintf("student:%d", id)
 	ctx, cancel := context.WithTimeout(ctx, CacheQueryTimeout)
 	defer cancel()
 	data, err := c.rdb.Get(ctx, cacheKey).Result()
 	if errors.Is(err, redis.Nil) {
-		return nil, nil
+		return domain.Student{}, nil
 	} else if err != nil {
-		return nil, fmt.Errorf("cache: read student error: %w", err)
+		return domain.Student{}, fmt.Errorf("cache: read student error: %w", err)
 	}
 	var student domain.Student
 	if err := json.Unmarshal([]byte(data), &student); err != nil {
-		return nil, err
+		return domain.Student{}, err
 	}
-	return &student, nil
+	return student, nil
 }
 
 func (c *StudentCache) Delete(ctx context.Context, id int64) error {

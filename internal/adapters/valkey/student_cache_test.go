@@ -11,14 +11,14 @@ import (
 )
 
 func TestStudentCache_Create(t *testing.T) {
-	student := &domain.Student{UserID: 1}
+	student := domain.Student{UserID: 1}
 	cleanupTest(t)
 	tests := []struct {
 		name string // description of this test case
 		// Named input parameters for receiver constructor.
 		rdb *redis.Client
 		// Named input parameters for target function.
-		item    *domain.Student
+		item    domain.Student
 		wantErr bool
 	}{
 		{
@@ -30,7 +30,7 @@ func TestStudentCache_Create(t *testing.T) {
 		{
 			name:    "shouldn't cache nil",
 			rdb:     testRDB,
-			item:    nil,
+			item:    domain.Student{},
 			wantErr: true,
 		}, {
 			name:    "should throw err if rdb is invalid",
@@ -60,7 +60,7 @@ func TestStudentCache_Create(t *testing.T) {
 }
 func TestStudentCache_Create_CanceledContext(t *testing.T) {
 	c := valkey.NewStudentCache(testRDB)
-	student := &domain.Student{UserID: 1}
+	student := domain.Student{UserID: 1}
 	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
 	err := c.Create(ctx, student)
@@ -69,7 +69,7 @@ func TestStudentCache_Create_CanceledContext(t *testing.T) {
 }
 
 func TestStudentCache_Read(t *testing.T) {
-	student := &domain.Student{UserID: 1}
+	student := domain.Student{UserID: 1}
 	studentCache := valkey.NewStudentCache(testRDB)
 	err := studentCache.Create(t.Context(), student)
 	require.NoError(t, err)
@@ -80,7 +80,7 @@ func TestStudentCache_Read(t *testing.T) {
 		rdb *redis.Client
 		// Named input parameters for target function.
 		id      int64
-		want    *domain.Student
+		want    domain.Student
 		wantErr bool
 	}{
 		{
@@ -93,13 +93,13 @@ func TestStudentCache_Read(t *testing.T) {
 			name:    "should not return anything if ID is invalid",
 			rdb:     testRDB,
 			id:      student.UserID + 1,
-			want:    nil,
+			want:    domain.Student{},
 			wantErr: false,
 		}, {
 			name:    "shouldn't function with invalid redis connection",
 			id:      student.UserID,
 			rdb:     redis.NewClient(&redis.Options{Addr: "localhost:9999"}),
-			want:    nil,
+			want:    domain.Student{},
 			wantErr: true,
 		},
 	}
@@ -116,13 +116,13 @@ func TestStudentCache_Read(t *testing.T) {
 			if tt.wantErr {
 				t.Fatal("Read() succeeded unexpectedly")
 			}
-			require.EqualValues(t, got, tt.want)
+			require.Equal(t, got, tt.want)
 		})
 	}
 }
 
 func TestStudentCache_Delete(t *testing.T) {
-	student := &domain.Student{UserID: 1}
+	student := domain.Student{UserID: 1}
 	studentCache := valkey.NewStudentCache(testRDB)
 	err := studentCache.Create(t.Context(), student)
 	require.NoError(t, err)

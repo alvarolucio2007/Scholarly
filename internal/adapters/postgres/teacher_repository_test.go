@@ -77,13 +77,13 @@ func TestTeacherRepo_Create(t *testing.T) {
 
 func TestTeacherRepo_GetByID(t *testing.T) {
 	s := newTeacherScenario(t)
-	teacher := &domain.Teacher{UserID: s.User.ID, Department: "Testing"}
-	createTeacherTest(t, teacher)
+	teacher := domain.Teacher{UserID: s.User.ID, Department: "Testing"}
+	createTeacherTest(t, &teacher)
 	r := postgres.NewTeacherRepo(testDB, testLogger)
 	tests := []struct {
 		name      string // description of this test case
 		teacherID int64
-		want      *domain.Teacher
+		want      domain.Teacher
 		wantErr   bool
 	}{
 		{
@@ -94,12 +94,12 @@ func TestTeacherRepo_GetByID(t *testing.T) {
 		}, {
 			name:      "should not return anything if invalid userIDs",
 			teacherID: -1,
-			want:      nil,
+			want:      domain.Teacher{},
 			wantErr:   true,
 		}, {
 			name:      "should not return anything if userID doesn't exist",
 			teacherID: 100,
-			want:      nil,
+			want:      domain.Teacher{},
 			wantErr:   true,
 		},
 	}
@@ -115,9 +115,7 @@ func TestTeacherRepo_GetByID(t *testing.T) {
 			if tt.wantErr {
 				t.Fatal("GetByID() succeeded unexpectedly")
 			}
-			require.EqualValues(t, &got, &tt.want)
-			require.EqualValues(t, got.UserID, tt.want.UserID)
-			require.EqualValues(t, got.Department, tt.want.Department)
+			require.Equal(t, got, tt.want)
 		})
 	}
 	cleanupTeacher(t, teacher.UserID, s.User.ID)
@@ -126,24 +124,24 @@ func TestTeacherRepo_GetByID(t *testing.T) {
 func TestTeacherRepo_List(t *testing.T) {
 	incorrectStr := "INCORRECT"
 	s := newTeacherScenario(t)
-	teacher1 := &domain.Teacher{UserID: s.User.ID, Department: "Testing"}
-	createTeacherTest(t, teacher1)
+	teacher := domain.Teacher{UserID: s.User.ID, Department: "Testing"}
+	createTeacherTest(t, &teacher)
 	r := postgres.NewTeacherRepo(testDB, testLogger)
 	tests := []struct {
 		name    string // description of this test case
 		filter  ports.TeacherFilter
-		want    []*domain.Teacher
+		want    []domain.Teacher
 		wantErr bool
 	}{
 		{
 			name:    "should list all teachers if no deparmtmentID is given",
 			filter:  ports.TeacherFilter{},
-			want:    []*domain.Teacher{teacher1},
+			want:    []domain.Teacher{teacher},
 			wantErr: false,
 		}, {
 			name:    "shouldn't list any teacher if no teachers match",
 			filter:  ports.TeacherFilter{Department: &incorrectStr},
-			want:    []*domain.Teacher{},
+			want:    []domain.Teacher{},
 			wantErr: false,
 		},
 	}
@@ -161,29 +159,29 @@ func TestTeacherRepo_List(t *testing.T) {
 			}
 			require.Equal(t, len(got), len(tt.want))
 			for i := range got {
-				require.EqualValues(t, &got[i], &tt.want[i])
+				require.Equal(t, got[i], tt.want[i])
 			}
 		})
 	}
-	cleanupTeacher(t, teacher1.UserID, s.User.ID)
+	cleanupTeacher(t, teacher.UserID, s.User.ID)
 }
 
 func TestTeacherRepo_Update(t *testing.T) {
 	s := newTeacherScenario(t)
-	teacher := &domain.Teacher{UserID: s.User.ID, Department: "Testing"}
-	createTeacherTest(t, teacher)
+	teacher := domain.Teacher{UserID: s.User.ID, Department: "Testing"}
+	createTeacherTest(t, &teacher)
 	tests := []struct {
 		name    string // description of this test case
-		teacher *domain.Teacher
+		teacher domain.Teacher
 		wantErr bool
 	}{
 		{
 			name:    "shouldn't edit teacher if all params are empty",
-			teacher: &domain.Teacher{UserID: s.User.ID, Department: ""},
+			teacher: domain.Teacher{UserID: s.User.ID, Department: ""},
 			wantErr: false,
 		}, {
 			name:    "should edit only department",
-			teacher: &domain.Teacher{UserID: s.User.ID, Department: "Updated"},
+			teacher: domain.Teacher{UserID: s.User.ID, Department: "Updated"},
 			wantErr: false,
 		},
 	}

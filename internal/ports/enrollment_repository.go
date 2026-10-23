@@ -13,5 +13,5 @@ type EnrollmentFilter struct {
 }
 type EnrollmentRepository interface {
 	Repository[domain.Enrollment] // TODO: Add status editing later for Update
-	List(ctx context.Context, filter EnrollmentFilter) ([]*domain.Enrollment, error)
+	List(ctx context.Context, filter EnrollmentFilter) ([]domain.Enrollment, error)
 }

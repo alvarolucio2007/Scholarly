@@ -11,14 +11,14 @@ import (
 )
 
 func TestTeacherCache_Create(t *testing.T) {
-	teacher := &domain.Teacher{UserID: 1}
+	teacher := domain.Teacher{UserID: 1}
 	cleanupTest(t)
 	tests := []struct {
 		name string // description of this test case
 		// Named input parameters for receiver constructor.
 		rdb *redis.Client
 		// Named input parameters for target function.
-		item    *domain.Teacher
+		item    domain.Teacher
 		wantErr bool
 	}{
 		{
@@ -29,12 +29,12 @@ func TestTeacherCache_Create(t *testing.T) {
 		}, {
 			name:    "shouldn't cache nil",
 			rdb:     testRDB,
-			item:    nil,
+			item:    domain.Teacher{},
 			wantErr: true,
 		}, {
 			name:    "should throw err if rdb is invalid",
 			rdb:     redis.NewClient(&redis.Options{Addr: "localhost:9999"}),
-			item:    teacher,
+			item:    domain.Teacher{},
 			wantErr: true,
 		},
 	}
@@ -53,13 +53,13 @@ func TestTeacherCache_Create(t *testing.T) {
 			}
 			cachedTeacher, err := c.Read(t.Context(), teacher.UserID)
 			require.NoError(t, err)
-			require.EqualValues(t, teacher, cachedTeacher)
+			require.Equal(t, teacher, cachedTeacher)
 		})
 	}
 }
 func TestTeacherCache_Create_CanceledContext(t *testing.T) {
 	c := valkey.NewTeacherCache(testRDB)
-	teacher := &domain.Teacher{UserID: 1}
+	teacher := domain.Teacher{UserID: 1}
 	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
 	err := c.Create(ctx, teacher)
@@ -68,7 +68,7 @@ func TestTeacherCache_Create_CanceledContext(t *testing.T) {
 }
 
 func TestTeacherCache_Read(t *testing.T) {
-	teacher := &domain.Teacher{UserID: 1}
+	teacher := domain.Teacher{UserID: 1}
 	teacherCache := valkey.NewTeacherCache(testRDB)
 	err := teacherCache.Create(t.Context(), teacher)
 	require.NoError(t, err)
@@ -79,7 +79,7 @@ func TestTeacherCache_Read(t *testing.T) {
 		rdb *redis.Client
 		// Named input parameters for target function.
 		id      int64
-		want    *domain.Teacher
+		want    domain.Teacher
 		wantErr bool
 	}{
 		{
@@ -92,13 +92,13 @@ func TestTeacherCache_Read(t *testing.T) {
 			name:    "shouldn't return anything if teacher doesnt exist",
 			id:      teacher.UserID + 1,
 			rdb:     testRDB,
-			want:    nil,
+			want:    domain.Teacher{},
 			wantErr: false,
 		}, {
 			name:    "shouldn't function with invalid redis connection",
 			id:      teacher.UserID,
 			rdb:     redis.NewClient(&redis.Options{Addr: "localhost:9999"}),
-			want:    nil,
+			want:    domain.Teacher{},
 			wantErr: true,
 		},
 	}
@@ -115,13 +115,13 @@ func TestTeacherCache_Read(t *testing.T) {
 			if tt.wantErr {
 				t.Fatal("Read() succeeded unexpectedly")
 			}
-			require.EqualValues(t, got, tt.want)
+			require.Equal(t, got, tt.want)
 		})
 	}
 }
 
 func TestTeacherCache_Delete(t *testing.T) {
-	teacher := &domain.Teacher{UserID: 1}
+	teacher := domain.Teacher{UserID: 1}
 	teacherCache := valkey.NewTeacherCache(testRDB)
 	err := teacherCache.Create(t.Context(), teacher)
 	require.NoError(t, err)

@@ -11,14 +11,14 @@ import (
 )
 
 func TestGradeCache_Create(t *testing.T) {
-	grade := &domain.Grade{ID: 1}
+	grade := domain.Grade{ID: 1}
 	cleanupTest(t)
 	tests := []struct {
 		name string // description of this test case
 		// Named input parameters for receiver constructor.
 		rdb *redis.Client
 		// Named input parameters for target function.
-		item    *domain.Grade
+		item    domain.Grade
 		wantErr bool
 	}{
 		{
@@ -27,9 +27,9 @@ func TestGradeCache_Create(t *testing.T) {
 			item:    grade,
 			wantErr: false,
 		}, {
-			name:    "shouldn't cache nil",
+			name:    "shouldn't cache empty",
 			rdb:     testRDB,
-			item:    nil,
+			item:    domain.Grade{},
 			wantErr: true,
 		}, {
 			name:    "should throw err if rdb is invalid",
@@ -53,14 +53,14 @@ func TestGradeCache_Create(t *testing.T) {
 			}
 			cachedGrade, err := c.Read(t.Context(), grade.ID)
 			require.NoError(t, err)
-			require.EqualValues(t, grade, cachedGrade)
+			require.Equal(t, grade, cachedGrade)
 		})
 	}
 }
 
 func TestGradeCache_Create_CanceledContext(t *testing.T) {
 	c := valkey.NewGradeCache(testRDB)
-	grade := &domain.Grade{ID: 10000}
+	grade := domain.Grade{ID: 10000}
 	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
 	err := c.Create(ctx, grade)
@@ -69,7 +69,7 @@ func TestGradeCache_Create_CanceledContext(t *testing.T) {
 }
 
 func TestGradeCache_Read(t *testing.T) {
-	grade := &domain.Grade{ID: 1}
+	grade := domain.Grade{ID: 1}
 	studentCache := valkey.NewGradeCache(testRDB)
 	err := studentCache.Create(t.Context(), grade)
 	require.NoError(t, err)
@@ -80,7 +80,7 @@ func TestGradeCache_Read(t *testing.T) {
 		rdb *redis.Client
 		// Named input parameters for target function.
 		id      int64
-		want    *domain.Grade
+		want    domain.Grade
 		wantErr bool
 	}{
 		{
@@ -93,13 +93,13 @@ func TestGradeCache_Read(t *testing.T) {
 			name:    "should not return anything if ID is invalid",
 			rdb:     testRDB,
 			id:      grade.ID + 1,
-			want:    nil,
+			want:    domain.Grade{},
 			wantErr: false,
 		}, {
 			name:    "shouldn't function with invalid redis connection",
 			id:      grade.ID,
 			rdb:     redis.NewClient(&redis.Options{Addr: "localhost:9999"}),
-			want:    nil,
+			want:    domain.Grade{},
 			wantErr: true,
 		},
 	}
@@ -122,7 +122,7 @@ func TestGradeCache_Read(t *testing.T) {
 }
 
 func TestGradeCache_Delete(t *testing.T) {
-	grade := &domain.Grade{ID: 1}
+	grade := domain.Grade{ID: 1}
 	studentCache := valkey.NewGradeCache(testRDB)
 	err := studentCache.Create(t.Context(), grade)
 	require.NoError(t, err)

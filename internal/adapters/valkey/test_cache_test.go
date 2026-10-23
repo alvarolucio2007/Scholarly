@@ -11,12 +11,12 @@ import (
 )
 
 func TestTestCache_Create(t *testing.T) {
-	test := &domain.Test{ID: 1}
+	test := domain.Test{ID: 1}
 	cleanupTest(t)
 	tests := []struct {
 		name    string // description of this test case
 		rdb     *redis.Client
-		item    *domain.Test
+		item    domain.Test
 		wantErr bool
 	}{
 		{
@@ -27,12 +27,12 @@ func TestTestCache_Create(t *testing.T) {
 		}, {
 			name:    "should not cache nil",
 			rdb:     testRDB,
-			item:    nil,
+			item:    domain.Test{},
 			wantErr: true,
 		}, {
 			name:    "should throw err if rdb is down",
 			rdb:     redis.NewClient(&redis.Options{Addr: "localhost:9999"}),
-			item:    test,
+			item:    domain.Test{},
 			wantErr: true,
 		},
 	}
@@ -51,14 +51,14 @@ func TestTestCache_Create(t *testing.T) {
 			}
 			cachedTest, err := c.Read(t.Context(), test.ID)
 			require.NoError(t, err)
-			require.EqualValues(t, test, cachedTest)
+			require.Equal(t, test, cachedTest)
 		})
 	}
 }
 
 func TestCacheTest_CancelledCacheContext(t *testing.T) {
 	c := valkey.NewTestCache(testRDB)
-	test := &domain.Test{ID: 1}
+	test := domain.Test{ID: 1}
 	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
 	err := c.Create(ctx, test)
@@ -66,7 +66,7 @@ func TestCacheTest_CancelledCacheContext(t *testing.T) {
 }
 
 func TestTestCache_Read(t *testing.T) {
-	test := &domain.Test{ID: 1}
+	test := domain.Test{ID: 1}
 	testCache := valkey.NewTestCache(testRDB)
 	err := testCache.Create(t.Context(), test)
 	require.NoError(t, err)
@@ -75,7 +75,7 @@ func TestTestCache_Read(t *testing.T) {
 		name    string // description of this test case
 		rdb     *redis.Client
 		id      int64
-		want    *domain.Test
+		want    domain.Test
 		wantErr bool
 	}{
 		{
@@ -88,13 +88,13 @@ func TestTestCache_Read(t *testing.T) {
 			name:    "shouldn't return anything if test doesn't exist",
 			rdb:     testRDB,
 			id:      0,
-			want:    nil,
+			want:    domain.Test{},
 			wantErr: false,
 		}, {
 			name:    "shouldn't function with invalid redis connection",
 			rdb:     redis.NewClient(&redis.Options{Addr: "localhost:9999"}),
 			id:      test.ID,
-			want:    nil,
+			want:    domain.Test{},
 			wantErr: true,
 		},
 	}
@@ -117,7 +117,7 @@ func TestTestCache_Read(t *testing.T) {
 }
 
 func TestTestCache_Delete(t *testing.T) {
-	test := &domain.Test{ID: 1}
+	test := domain.Test{ID: 1}
 	testCache := valkey.NewTestCache(testRDB)
 	err := testCache.Create(t.Context(), test)
 	require.NoError(t, err)

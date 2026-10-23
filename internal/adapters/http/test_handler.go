@@ -7,10 +7,15 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/alvarolucio2007/Scholarly/internal/domain"
 	"github.com/alvarolucio2007/Scholarly/internal/ports"
 	"github.com/alvarolucio2007/Scholarly/internal/services"
 	"github.com/go-chi/chi/v5"
 )
+
+func newTestResponse(test domain.Test) TestResponseDTO {
+	return TestResponseDTO{ID: test.ID, CourseID: test.CourseID, Name: test.Name, Weight: test.Weight, TestDate: test.TestDate, CreatedAt: test.CreatedAt, UpdatedAt: test.UpdatedAt}
+}
 
 // CreateTest godoc
 //
@@ -51,7 +56,8 @@ func (h *Handler) CreateTest(w http.ResponseWriter, r *http.Request) {
 		respondDomainError(w, err)
 		return
 	}
-	_ = writeJSONData(w, http.StatusCreated, test)
+	response := newTestResponse(test)
+	_ = writeJSONData(w, http.StatusCreated, response)
 }
 
 // GetTestByID godoc
@@ -82,7 +88,18 @@ func (h *Handler) GetTestByID(w http.ResponseWriter, r *http.Request) {
 		respondDomainError(w, err)
 		return
 	}
-	_ = writeJSONData(w, http.StatusOK, test)
+	response := newTestResponse(test)
+	_ = writeJSONData(w, http.StatusOK, response)
+}
+
+func newListTestResponseDTO(tests []domain.Test) ListTestResponseDTO {
+	responses := make([]TestResponseDTO, 0, len(tests))
+	for _, test := range tests {
+		responses = append(responses, newTestResponse(test))
+	}
+	return ListTestResponseDTO{
+		Data: responses,
+	}
 }
 
 // ListTests godoc
@@ -94,7 +111,7 @@ func (h *Handler) GetTestByID(w http.ResponseWriter, r *http.Request) {
 //	@Produce		json
 //	@Param			course_id	query		int		false	"filter by course ID"
 //	@Param			name		query		string	false	"filter by name"
-//	@Success		200			{array}		TestResponseDTO
+//	@Success		200			{array}		ListTestResponseDTO
 //	@Failure		400			{object}	ErrorResponse
 //	@Failure		500			{object}	ErrorResponse
 //	@Router			/tests [get]
@@ -125,7 +142,8 @@ func (h *Handler) ListTests(w http.ResponseWriter, r *http.Request) {
 		respondDomainError(w, err)
 		return
 	}
-	_ = writeJSONData(w, http.StatusOK, &tests)
+	listResponse := newListTestResponseDTO(tests)
+	_ = writeJSONData(w, http.StatusOK, listResponse)
 }
 
 // UpdateTest godoc
@@ -162,7 +180,7 @@ func (h *Handler) UpdateTest(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	test, err := h.tests.Update(r.Context(), services.UpdateTestPayload{
+	err = h.tests.Update(r.Context(), services.UpdateTestPayload{
 		ID:       dto.ID,
 		CourseID: nilIfZeroInt(dto.CourseID),
 		Name:     nilIfEmpty(dto.Name),
@@ -173,7 +191,7 @@ func (h *Handler) UpdateTest(w http.ResponseWriter, r *http.Request) {
 		respondDomainError(w, err)
 		return
 	}
-	_ = writeJSONData(w, http.StatusOK, test)
+	w.WriteHeader(http.StatusNoContent)
 }
 
 // DeleteTest godoc

@@ -5,10 +5,15 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/alvarolucio2007/Scholarly/internal/domain"
 	"github.com/alvarolucio2007/Scholarly/internal/ports"
 	"github.com/alvarolucio2007/Scholarly/internal/services"
 	"github.com/go-chi/chi/v5"
 )
+
+func newCourseResponseDTO(course domain.Course) CourseResponseDTO {
+	return CourseResponseDTO{ID: course.ID, TeacherID: course.TeacherID, Name: course.Name, Code: course.Code, Semester: course.Semester, MaxStudents: course.MaxStudents, CreatedAt: course.CreatedAt, UpdatedAt: course.UpdatedAt}
+}
 
 // CreateCourse godoc
 //
@@ -45,7 +50,8 @@ func (h *Handler) CreateCourse(w http.ResponseWriter, r *http.Request) {
 		respondDomainError(w, err)
 		return
 	}
-	_ = writeJSONData(w, http.StatusCreated, course)
+	response := newCourseResponseDTO(course)
+	_ = writeJSONData(w, http.StatusCreated, response)
 }
 
 // GetCourseByID godoc
@@ -76,7 +82,17 @@ func (h *Handler) GetCourseByID(w http.ResponseWriter, r *http.Request) {
 		respondDomainError(w, err)
 		return
 	}
-	_ = writeJSONData(w, http.StatusOK, course)
+	response := newCourseResponseDTO(course)
+	_ = writeJSONData(w, http.StatusOK, response)
+}
+func newListCourseResponseDTO(courses []domain.Course) ListCourseResponseDTO {
+	responses := make([]CourseResponseDTO, 0, len(courses))
+	for _, course := range courses {
+		responses = append(responses, newCourseResponseDTO(course))
+	}
+	return ListCourseResponseDTO{
+		Data: responses,
+	}
 }
 
 // ListCourses godoc
@@ -135,7 +151,8 @@ func (h *Handler) ListCourses(w http.ResponseWriter, r *http.Request) {
 		respondDomainError(w, err)
 		return
 	}
-	_ = writeJSONData(w, http.StatusOK, &courses)
+	response := newListCourseResponseDTO(courses)
+	_ = writeJSONData(w, http.StatusOK, response)
 }
 
 // UpdateCourse godoc
@@ -146,7 +163,7 @@ func (h *Handler) ListCourses(w http.ResponseWriter, r *http.Request) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			payload	body		UpdateCourseDTO	true	"Course DTO"
-//	@Success		201		{object}	CourseResponseDTO
+//	@Success		204
 //	@Failure		400		{object}	ErrorResponse
 //	@Failure		404		{object}	ErrorResponse
 //	@Failure		409		{object}	ErrorResponse
@@ -163,7 +180,7 @@ func (h *Handler) UpdateCourse(w http.ResponseWriter, r *http.Request) {
 		_ = writeJSONError(w, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
-	course, err := h.courses.Update(r.Context(), services.UpdateCoursePayload{
+	err := h.courses.Update(r.Context(), services.UpdateCoursePayload{
 		ID:          dto.ID,
 		TeacherID:   dto.TeacherID,
 		Name:        dto.Name,
@@ -175,7 +192,8 @@ func (h *Handler) UpdateCourse(w http.ResponseWriter, r *http.Request) {
 		respondDomainError(w, err)
 		return
 	}
-	_ = writeJSONData(w, http.StatusOK, course)
+
+	w.WriteHeader(http.StatusNoContent)
 }
 
 // DeleteCourse godoc

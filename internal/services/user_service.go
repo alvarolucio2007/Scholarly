@@ -37,24 +37,24 @@ type UserResponse struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 }
 
-func (s *UserService) Create(ctx context.Context, payload CreateUserPayload) (*domain.User, error) {
-	user := &domain.User{
+func (s *UserService) Create(ctx context.Context, payload CreateUserPayload) (domain.User, error) {
+	user := domain.User{
 		Name:  payload.Name,
 		CPF:   payload.CPF,
 		Email: payload.Email,
 	}
 	if err := user.ValidateCPF(); err != nil {
-		return nil, err
+		return domain.User{}, err
 	}
 
 	hash, err := s.hasher.Hash(payload.Password)
 	if err != nil {
-		return nil, fmt.Errorf("service: hash password: %w", err)
+		return domain.User{}, fmt.Errorf("service: hash password: %w", err)
 	}
 	user.PasswordHash = []byte(hash)
 
-	if err := s.repo.Create(ctx, user); err != nil {
-		return nil, err
+	if err := s.repo.Create(ctx, &user); err != nil {
+		return domain.User{}, err
 	}
 	if err := s.cache.Create(ctx, user); err != nil {
 		s.logger.ErrorContext(ctx, "failed to cache user", "error", err)
@@ -62,17 +62,17 @@ func (s *UserService) Create(ctx context.Context, payload CreateUserPayload) (*d
 	return user, nil
 }
 
-func (s *UserService) GetByID(ctx context.Context, userID int64) (*domain.User, error) {
+func (s *UserService) GetByID(ctx context.Context, userID int64) (domain.User, error) {
 	user, err := s.cache.Read(ctx, userID)
 	if err != nil {
 		s.logger.ErrorContext(ctx, "failed to fetch cached user", "error", err)
 	}
-	if user != nil {
+	if user.ID != 0 {
 		return user, nil
 	}
 	user, err = s.repo.GetByID(ctx, userID)
 	if err != nil {
-		return nil, err
+		return domain.User{}, err
 	}
 	if err := s.cache.Create(ctx, user); err != nil {
 		s.logger.ErrorContext(ctx, "failed to cache user", "error", err)
@@ -80,7 +80,7 @@ func (s *UserService) GetByID(ctx context.Context, userID int64) (*domain.User, 
 	return user, nil
 }
 
-func (s *UserService) List(ctx context.Context, filter ports.UserFilter) ([]*domain.User, error) {
+func (s *UserService) List(ctx context.Context, filter ports.UserFilter) ([]domain.User, error) {
 	return s.repo.List(ctx, filter)
 }
 
@@ -92,7 +92,7 @@ type UpdateUserPayload struct {
 	Password *string
 }
 
-func (s *UserService) Update(ctx context.Context, payload UpdateUserPayload) (*domain.User, error) {
+func (s *UserService) Update(ctx context.Context, payload UpdateUserPayload) error {
 	user := domain.User{ID: payload.ID}
 	if payload.Name != nil {
 		user.Name = *payload.Name
@@ -100,33 +100,30 @@ func (s *UserService) Update(ctx context.Context, payload UpdateUserPayload) (*d
 	if payload.CPF != nil {
 		user.CPF = *payload.CPF
 		if err := user.ValidateCPF(); err != nil {
-			return nil, err
+			return err
 		}
 	}
 	if payload.Email != nil {
 		if err := user.ValidateEmail(); err != nil {
-			return nil, err
+			return err
 		}
 		user.Email = *payload.Email
 	}
 	if payload.Password != nil {
 		hash, err := s.hasher.Hash(*payload.Password)
 		if err != nil {
-			return nil, fmt.Errorf("service: hash password: %w", err)
+			return fmt.Errorf("service: hash password: %w", err)
 		}
 		user.PasswordHash = []byte(hash)
 	}
 
-	if err := s.repo.Update(ctx, &user); err != nil {
-		return nil, err
+	if err := s.repo.Update(ctx, user); err != nil {
+		return err
 	}
 	if err := s.cache.Delete(ctx, user.ID); err != nil {
 		s.logger.ErrorContext(ctx, "failed to delete cached user", "error", err)
 	}
-	if err := s.cache.Create(ctx, &user); err != nil {
-		s.logger.ErrorContext(ctx, "failed to cache user", "error", err)
-	}
-	return &user, nil
+	return nil
 }
 
 func (s *UserService) Delete(ctx context.Context, userID int64) error {

@@ -21,9 +21,9 @@ func NewGradeCache(rdb *redis.Client) *GradeCache {
 	return &GradeCache{rdb: rdb}
 }
 
-func (c *GradeCache) Create(ctx context.Context, item *domain.Grade) error {
-	if item == nil {
-		return fmt.Errorf("cache: cannot cache nil grade")
+func (c *GradeCache) Create(ctx context.Context, item domain.Grade) error {
+	if item.ID == 0 {
+		return fmt.Errorf("cache: cannot cache empty grade")
 	}
 	cacheKey := fmt.Sprintf("grade:%d", item.ID)
 	json, err := json.Marshal(item)
@@ -35,21 +35,21 @@ func (c *GradeCache) Create(ctx context.Context, item *domain.Grade) error {
 	return c.rdb.Set(ctx, cacheKey, json, CacheExpTime).Err()
 }
 
-func (c *GradeCache) Read(ctx context.Context, id int64) (*domain.Grade, error) {
+func (c *GradeCache) Read(ctx context.Context, id int64) (domain.Grade, error) {
 	cacheKey := fmt.Sprintf("grade:%d", id)
 	ctx, cancel := context.WithTimeout(ctx, CacheQueryTimeout)
 	defer cancel()
 	data, err := c.rdb.Get(ctx, cacheKey).Result()
 	if errors.Is(err, redis.Nil) {
-		return nil, nil
+		return domain.Grade{}, nil
 	} else if err != nil {
-		return nil, fmt.Errorf("cache: read grade error: %w", err)
+		return domain.Grade{}, fmt.Errorf("cache: read grade error: %w", err)
 	}
 	var grade domain.Grade
 	if err := json.Unmarshal([]byte(data), &grade); err != nil {
-		return nil, err
+		return domain.Grade{}, err
 	}
-	return &grade, nil
+	return grade, nil
 }
 
 func (c *GradeCache) Delete(ctx context.Context, id int64) error {

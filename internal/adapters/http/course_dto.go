@@ -27,6 +27,9 @@ type CourseResponseDTO struct {
 	CreatedAt   time.Time  `json:"created_at"`
 	UpdatedAt   *time.Time `json:"updated_at"`
 }
+type ListCourseResponseDTO struct {
+	Data []CourseResponseDTO `json:"data"`
+}
 type EnrollStudentDTO struct {
 	StudentID int64 `json:"student_id" validate:"required,gte=1"`
 	CourseID  int64 `json:"course_id" validate:"required,gte=1"`

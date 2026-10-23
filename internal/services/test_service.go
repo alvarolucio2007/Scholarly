@@ -26,10 +26,10 @@ type CreateTestPayload struct {
 	TestDate time.Time
 }
 
-func (s *TestService) Create(ctx context.Context, payload CreateTestPayload) (*domain.Test, error) {
-	test := &domain.Test{CourseID: payload.CourseID, Name: payload.Name, Weight: payload.Weight, TestDate: payload.TestDate}
-	if err := s.repo.Create(ctx, test); err != nil {
-		return nil, err
+func (s *TestService) Create(ctx context.Context, payload CreateTestPayload) (domain.Test, error) {
+	test := domain.Test{CourseID: payload.CourseID, Name: payload.Name, Weight: payload.Weight, TestDate: payload.TestDate}
+	if err := s.repo.Create(ctx, &test); err != nil {
+		return domain.Test{}, err
 	}
 	if err := s.cache.Create(ctx, test); err != nil {
 		s.logger.ErrorContext(ctx, "failed to cache test", "error", err)
@@ -37,17 +37,17 @@ func (s *TestService) Create(ctx context.Context, payload CreateTestPayload) (*d
 	return test, nil
 }
 
-func (s *TestService) GetByID(ctx context.Context, testID int64) (*domain.Test, error) {
+func (s *TestService) GetByID(ctx context.Context, testID int64) (domain.Test, error) {
 	test, err := s.cache.Read(ctx, testID)
 	if err != nil {
 		s.logger.ErrorContext(ctx, "failed to fetch cached tests", "error", err)
 	}
-	if test != nil {
+	if test.ID != 0 {
 		return test, nil
 	}
 	test, err = s.repo.GetByID(ctx, testID)
 	if err != nil {
-		return nil, err
+		return domain.Test{}, err
 	}
 	if err := s.cache.Create(ctx, test); err != nil {
 		s.logger.ErrorContext(ctx, "failed to cache test", "error", err)
@@ -55,7 +55,7 @@ func (s *TestService) GetByID(ctx context.Context, testID int64) (*domain.Test, 
 	return test, nil
 }
 
-func (s *TestService) List(ctx context.Context, filter ports.TestFilter) ([]*domain.Test, error) {
+func (s *TestService) List(ctx context.Context, filter ports.TestFilter) ([]domain.Test, error) {
 	return s.repo.List(ctx, filter)
 }
 
@@ -67,7 +67,7 @@ type UpdateTestPayload struct {
 	TestDate *time.Time
 }
 
-func (s *TestService) Update(ctx context.Context, payload UpdateTestPayload) (*domain.Test, error) {
+func (s *TestService) Update(ctx context.Context, payload UpdateTestPayload) error {
 	test := domain.Test{ID: payload.ID}
 	if payload.Name != nil {
 		test.Name = *payload.Name
@@ -81,16 +81,13 @@ func (s *TestService) Update(ctx context.Context, payload UpdateTestPayload) (*d
 	if payload.TestDate != nil {
 		test.TestDate = *payload.TestDate
 	}
-	if err := s.repo.Update(ctx, &test); err != nil {
-		return nil, err
+	if err := s.repo.Update(ctx, test); err != nil {
+		return err
 	}
 	if err := s.cache.Delete(ctx, test.ID); err != nil {
 		s.logger.ErrorContext(ctx, "failed to delete cached test", "error", err)
 	}
-	if err := s.cache.Create(ctx, &test); err != nil {
-		s.logger.ErrorContext(ctx, "failed to cache test", "error", err)
-	}
-	return &test, nil
+	return nil
 }
 
 func (s *TestService) Delete(ctx context.Context, testID int64) error {

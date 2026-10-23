@@ -13,5 +13,5 @@ type UserFilter struct {
 }
 type UserRepository interface {
 	Repository[domain.User]
-	List(ctx context.Context, filter UserFilter) ([]*domain.User, error)
+	List(ctx context.Context, filter UserFilter) ([]domain.User, error)
 }

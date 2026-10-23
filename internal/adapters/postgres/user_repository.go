@@ -40,26 +40,26 @@ func (r *UserRepo) Create(ctx context.Context, user *domain.User) error {
 	return nil
 }
 
-func (r *UserRepo) GetByID(ctx context.Context, userID int64) (*domain.User, error) {
+func (r *UserRepo) GetByID(ctx context.Context, userID int64) (domain.User, error) {
 	var u domain.User
 	query := `SELECT id,name,cpf,email,created_at,updated_at FROM users WHERE id = $1`
 	ctx, cancel := context.WithTimeout(ctx, PostgresQueryTimeout)
 	defer cancel()
 	err := r.db.QueryRowContext(ctx, query, userID).Scan(&u.ID, &u.Name, &u.CPF, &u.Email, &u.CreatedAt, &u.UpdatedAt)
 	if errors.Is(err, sql.ErrNoRows) {
-		return nil, domain.ErrNotFound
+		return domain.User{}, domain.ErrNotFound
 	}
 	if err != nil {
 		translated := translateError(err)
 		if !errors.Is(err, translated) {
-			return nil, translated
+			return domain.User{}, translated
 		}
-		return nil, fmt.Errorf("postgres: getByID user: %w", err)
+		return domain.User{}, fmt.Errorf("postgres: getByID user: %w", err)
 	}
-	return &u, nil
+	return u, nil
 }
 
-func (r *UserRepo) List(ctx context.Context, filter ports.UserFilter) ([]*domain.User, error) {
+func (r *UserRepo) List(ctx context.Context, filter ports.UserFilter) ([]domain.User, error) {
 	wb := newWhereBuilder()
 	if filter.Name != nil {
 		wb.addILike("name", *filter.Name)
@@ -89,13 +89,13 @@ func (r *UserRepo) List(ctx context.Context, filter ports.UserFilter) ([]*domain
 			r.logger.Error("postgres: rows.close list users", "error", err)
 		}
 	}()
-	var users []*domain.User
+	var users []domain.User
 	for rows.Next() {
 		var u domain.User
 		if err := rows.Scan(&u.ID, &u.Name, &u.CPF, &u.Email, &u.CreatedAt, &u.UpdatedAt); err != nil {
 			return nil, fmt.Errorf("postgres: scan users: %w", err)
 		}
-		users = append(users, &u)
+		users = append(users, u)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("postgres: iterate users: %w", err)
@@ -103,7 +103,7 @@ func (r *UserRepo) List(ctx context.Context, filter ports.UserFilter) ([]*domain
 	return users, nil
 }
 
-func (r *UserRepo) Update(ctx context.Context, user *domain.User) error {
+func (r *UserRepo) Update(ctx context.Context, user domain.User) error {
 	query := `UPDATE users
 	SET
 		name=COALESCE(NULLIF($1,''),name),

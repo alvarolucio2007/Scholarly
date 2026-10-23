@@ -116,41 +116,41 @@ func TestUserRepo_GetByID(t *testing.T) {
 func TestUserRepo_List(t *testing.T) {
 	incorrectStr := "INCORRECT"
 	r := postgres.NewUserRepo(testDB, testLogger)
-	user1 := &domain.User{Name: "TestOne", CPF: "00000000000", Email: "testOne@gmail.com", PasswordHash: []byte("123456")}
-	createUserTest(t, user1)
-	user2 := &domain.User{Name: "TestTwo", CPF: "00000000001", Email: "testTwo@gmail.com", PasswordHash: []byte("123456")}
-	createUserTest(t, user2)
+	user1 := domain.User{Name: "TestOne", CPF: "00000000000", Email: "testOne@gmail.com", PasswordHash: []byte("123456")}
+	createUserTest(t, &user1)
+	user2 := domain.User{Name: "TestTwo", CPF: "00000000001", Email: "testTwo@gmail.com", PasswordHash: []byte("123456")}
+	createUserTest(t, &user2)
 	tests := []struct {
 		name string // description of this test case
 		// Named input parameters for target function.
 		filter  ports.UserFilter
-		want    []*domain.User
+		want    []domain.User
 		wantErr bool
 	}{
 		{
 			name:    "with no filter, should return all users",
 			filter:  ports.UserFilter{},
-			want:    []*domain.User{user2, user1}, // reversed because of the ORDER BY created_at DESC in line 78 of user_repository
+			want:    []domain.User{user2, user1}, // reversed because of the ORDER BY created_at DESC in line 78 of user_repository
 			wantErr: false,
 		}, {
 			name:    "should filter by name",
 			filter:  ports.UserFilter{Name: &user1.Name},
-			want:    []*domain.User{user1},
+			want:    []domain.User{user1},
 			wantErr: false,
 		}, {
 			name:    "should filter by CPF",
 			filter:  ports.UserFilter{CPF: &user1.CPF},
-			want:    []*domain.User{user1},
+			want:    []domain.User{user1},
 			wantErr: false,
 		}, {
 			name:    "should filter by email",
 			filter:  ports.UserFilter{Email: &user1.Email},
-			want:    []*domain.User{user1},
+			want:    []domain.User{user1},
 			wantErr: false,
 		}, {
 			name:    "should not return anyone if filters are invalid",
 			filter:  ports.UserFilter{Name: &incorrectStr},
-			want:    []*domain.User{},
+			want:    []domain.User{},
 			wantErr: false,
 		},
 	}
@@ -182,32 +182,32 @@ func TestUserRepo_List(t *testing.T) {
 
 func TestUserRepo_Update(t *testing.T) {
 	r := postgres.NewUserRepo(testDB, testLogger)
-	user1 := &domain.User{Name: "Test", CPF: "00000000000", Email: "test@gmail.com", PasswordHash: []byte("123456")}
-	createUserTest(t, user1)
+	user1 := domain.User{Name: "Test", CPF: "00000000000", Email: "test@gmail.com", PasswordHash: []byte("123456")}
+	createUserTest(t, &user1)
 	tests := []struct {
 		name    string // description of this test case
-		user    *domain.User
+		user    domain.User
 		wantErr bool
 	}{
 		{
 			name:    "shouldn't edit user if all params are empty",
-			user:    &domain.User{ID: user1.ID, Name: "", CPF: "", Email: "", PasswordHash: []byte("")},
+			user:    domain.User{ID: user1.ID, Name: "", CPF: "", Email: "", PasswordHash: []byte("")},
 			wantErr: false,
 		}, {
 			name:    "should edit only name",
-			user:    &domain.User{ID: user1.ID, Name: "changed", CPF: "", Email: "", PasswordHash: []byte("")},
+			user:    domain.User{ID: user1.ID, Name: "changed", CPF: "", Email: "", PasswordHash: []byte("")},
 			wantErr: false,
 		}, {
 			name:    "should edit only CPF",
-			user:    &domain.User{ID: user1.ID, Name: "", CPF: "00000000001", Email: "", PasswordHash: []byte("")},
+			user:    domain.User{ID: user1.ID, Name: "", CPF: "00000000001", Email: "", PasswordHash: []byte("")},
 			wantErr: false,
 		}, {
 			name:    "should edit only email",
-			user:    &domain.User{ID: user1.ID, Name: "", CPF: "", Email: "changed@gmail.com", PasswordHash: []byte("")},
+			user:    domain.User{ID: user1.ID, Name: "", CPF: "", Email: "changed@gmail.com", PasswordHash: []byte("")},
 			wantErr: false,
 		}, {
 			name:    "should edit only password",
-			user:    &domain.User{ID: user1.ID, Name: "", CPF: "", Email: "", PasswordHash: []byte("changed")},
+			user:    domain.User{ID: user1.ID, Name: "", CPF: "", Email: "", PasswordHash: []byte("changed")},
 			wantErr: false,
 		},
 	}

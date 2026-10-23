@@ -21,9 +21,9 @@ func NewTeacherCache(rdb *redis.Client) *TeacherCache {
 	return &TeacherCache{rdb: rdb}
 }
 
-func (c *TeacherCache) Create(ctx context.Context, item *domain.Teacher) error {
-	if item == nil {
-		return fmt.Errorf("cache: cannot cache nil teacher")
+func (c *TeacherCache) Create(ctx context.Context, item domain.Teacher) error {
+	if item.UserID == 0 {
+		return fmt.Errorf("cache: cannot cache empty teacher")
 	}
 	cacheKey := fmt.Sprintf("teacher:%d", item.UserID)
 	json, err := json.Marshal(item)
@@ -35,21 +35,21 @@ func (c *TeacherCache) Create(ctx context.Context, item *domain.Teacher) error {
 	return c.rdb.Set(ctx, cacheKey, json, CacheExpTime).Err()
 }
 
-func (c *TeacherCache) Read(ctx context.Context, id int64) (*domain.Teacher, error) {
+func (c *TeacherCache) Read(ctx context.Context, id int64) (domain.Teacher, error) {
 	cacheKey := fmt.Sprintf("teacher:%d", id)
 	ctx, cancel := context.WithTimeout(ctx, CacheQueryTimeout)
 	defer cancel()
 	data, err := c.rdb.Get(ctx, cacheKey).Result()
 	if errors.Is(err, redis.Nil) {
-		return nil, nil
+		return domain.Teacher{}, nil
 	} else if err != nil {
-		return nil, fmt.Errorf("cache: read teacher error: %w", err)
+		return domain.Teacher{}, fmt.Errorf("cache: read teacher error: %w", err)
 	}
 	var teacher domain.Teacher
 	if err := json.Unmarshal([]byte(data), &teacher); err != nil {
-		return nil, err
+		return domain.Teacher{}, err
 	}
-	return &teacher, nil
+	return teacher, nil
 }
 
 func (c *TeacherCache) Delete(ctx context.Context, id int64) error {

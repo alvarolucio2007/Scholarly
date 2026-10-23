@@ -11,14 +11,14 @@ import (
 )
 
 func TestCourseCache_Create(t *testing.T) {
-	course := &domain.Course{}
+	course := domain.Course{ID: 1}
 	cleanupTest(t)
 	tests := []struct {
 		name string // description of this test case
 		// Named input parameters for receiver constructor.
 		rdb *redis.Client
 		// Named input parameters for target function.
-		item    *domain.Course
+		item    domain.Course
 		wantErr bool
 	}{
 		{
@@ -29,7 +29,7 @@ func TestCourseCache_Create(t *testing.T) {
 		}, {
 			name:    "shouldn't cache nil",
 			rdb:     testRDB,
-			item:    nil,
+			item:    domain.Course{},
 			wantErr: true,
 		}, {
 			name:    "should throw err if rdb is invalid",
@@ -53,14 +53,14 @@ func TestCourseCache_Create(t *testing.T) {
 			}
 			cachedCourse, err := c.Read(t.Context(), course.ID)
 			require.NoError(t, err)
-			require.EqualValues(t, course, cachedCourse)
+			require.Equal(t, course, cachedCourse)
 		})
 	}
 }
 
 func TestCourseCache_Create_CanceledContext(t *testing.T) {
 	c := valkey.NewCourseCache(testRDB)
-	course := &domain.Course{ID: 10000}
+	course := domain.Course{ID: 10000}
 	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
 	err := c.Create(ctx, course)
@@ -69,7 +69,7 @@ func TestCourseCache_Create_CanceledContext(t *testing.T) {
 }
 
 func TestCourseCache_Read(t *testing.T) {
-	course := &domain.Course{ID: 1}
+	course := domain.Course{ID: 1}
 	courseCache := valkey.NewCourseCache(testRDB)
 	err := courseCache.Create(t.Context(), course)
 	require.NoError(t, err)
@@ -80,7 +80,7 @@ func TestCourseCache_Read(t *testing.T) {
 		rdb *redis.Client
 		// Named input parameters for target function.
 		id      int64
-		want    *domain.Course
+		want    domain.Course
 		wantErr bool
 	}{
 		{
@@ -93,13 +93,13 @@ func TestCourseCache_Read(t *testing.T) {
 			name:    "should not return anything if ID is invalid",
 			rdb:     testRDB,
 			id:      course.ID + 1,
-			want:    nil,
+			want:    domain.Course{},
 			wantErr: false,
 		}, {
 			name:    "shouldn't function with invalid redis connection",
 			id:      course.ID,
 			rdb:     redis.NewClient(&redis.Options{Addr: "localhost:9999"}),
-			want:    nil,
+			want:    domain.Course{},
 			wantErr: true,
 		},
 	}
@@ -122,7 +122,7 @@ func TestCourseCache_Read(t *testing.T) {
 }
 
 func TestCourseCache_Delete(t *testing.T) {
-	course := &domain.Course{ID: 1}
+	course := domain.Course{ID: 1}
 	courseCache := valkey.NewCourseCache(testRDB)
 	err := courseCache.Create(t.Context(), course)
 	require.NoError(t, err)
