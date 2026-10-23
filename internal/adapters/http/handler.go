@@ -8,15 +8,16 @@ import (
 )
 
 type Handler struct {
-	users       *services.UserService
-	students    *services.StudentService
-	teachers    *services.TeacherService
-	courses     *services.CourseService
-	enrollments *services.EnrollmentService
-	tests       *services.TestService
-	grades      *services.GradeService
-	logger      *slog.Logger
-	healthcheck *services.HealthService
+	users         *services.UserService
+	students      *services.StudentService
+	teachers      *services.TeacherService
+	courses       *services.CourseService
+	enrollments   *services.EnrollmentService
+	tests         *services.TestService
+	grades        *services.GradeService
+	logger        *slog.Logger
+	healthcheck   *services.HealthService
+	authenticator *services.AuthenticatorService
 }
 
 func NewHandler(
