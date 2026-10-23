@@ -110,13 +110,13 @@ func TestGradeRepo_Create(t *testing.T) {
 
 func TestGradeRepo_GetByID(t *testing.T) {
 	s := newGradeScenario(t)
-	grade := &domain.Grade{TestID: s.Test.ID, EnrollmentID: s.Enrollment.ID, Value: 10}
-	createGradeTest(t, grade)
+	grade := domain.Grade{TestID: s.Test.ID, EnrollmentID: s.Enrollment.ID, Value: 10}
+	createGradeTest(t, &grade)
 	r := postgres.NewGradeRepo(testDB, testLogger)
 	tests := []struct {
 		name    string // description of this test case
 		gradeID int64
-		want    *domain.Grade
+		want    domain.Grade
 		wantErr bool
 	}{
 		{
@@ -127,12 +127,12 @@ func TestGradeRepo_GetByID(t *testing.T) {
 		}, {
 			name:    "should not return anything if grade ID is invalid",
 			gradeID: -1,
-			want:    nil,
+			want:    domain.Grade{},
 			wantErr: true,
 		}, {
 			name:    "should not return anythign if grade ID doesn't exist",
 			gradeID: grade.ID + 1,
-			want:    nil,
+			want:    domain.Grade{},
 			wantErr: true,
 		},
 	}
@@ -156,34 +156,34 @@ func TestGradeRepo_GetByID(t *testing.T) {
 
 func TestGradeRepo_List(t *testing.T) {
 	s := newGradeScenario(t)
-	grade := &domain.Grade{TestID: s.Test.ID, EnrollmentID: s.Enrollment.ID, Value: 0}
-	createGradeTest(t, grade)
+	grade := domain.Grade{TestID: s.Test.ID, EnrollmentID: s.Enrollment.ID, Value: 0}
+	createGradeTest(t, &grade)
 	r := postgres.NewGradeRepo(testDB, testLogger)
 	tests := []struct {
 		name    string // description of this test case
 		filter  ports.GradeFilter
-		want    []*domain.Grade
+		want    []domain.Grade
 		wantErr bool
 	}{
 		{
 			name:    "should list all grades if no parameters are given",
 			filter:  ports.GradeFilter{},
-			want:    []*domain.Grade{grade},
+			want:    []domain.Grade{grade},
 			wantErr: false,
 		}, {
 			name:    "should'nt list any grades if no enrollment IDs match",
 			filter:  ports.GradeFilter{EnrollmentID: &s.Test.ID},
-			want:    []*domain.Grade{},
+			want:    []domain.Grade{},
 			wantErr: false,
 		}, {
 			name:    "shouldn't list any grades if no test IDs match",
 			filter:  ports.GradeFilter{EnrollmentID: &s.Teacher.UserID},
-			want:    []*domain.Grade{},
+			want:    []domain.Grade{},
 			wantErr: false,
 		}, {
 			name:    "should list only select grades if right parameters are given",
 			filter:  ports.GradeFilter{TestID: &s.Test.ID, EnrollmentID: &s.Enrollment.ID},
-			want:    []*domain.Grade{grade},
+			want:    []domain.Grade{grade},
 			wantErr: false,
 		},
 	}
@@ -201,7 +201,7 @@ func TestGradeRepo_List(t *testing.T) {
 			}
 			require.Equal(t, len(got), len(tt.want))
 			for i := range got {
-				require.EqualValues(t, tt.want[i], got[i])
+				require.Equal(t, tt.want[i], got[i])
 			}
 		})
 	}
@@ -210,29 +210,29 @@ func TestGradeRepo_List(t *testing.T) {
 
 func TestGradeRepo_Update(t *testing.T) {
 	s := newGradeScenario(t)
-	grade := &domain.Grade{TestID: s.Test.ID, EnrollmentID: s.Enrollment.ID, Value: 0}
-	createGradeTest(t, grade)
+	grade := domain.Grade{TestID: s.Test.ID, EnrollmentID: s.Enrollment.ID, Value: 0}
+	createGradeTest(t, &grade)
 	r := postgres.NewGradeRepo(testDB, testLogger)
 	tests := []struct {
 		name    string // description of this test case
-		grade   *domain.Grade
+		grade   domain.Grade
 		wantErr bool
 	}{
 		{
 			name:    "shouldn't edit anything if all params are empty",
-			grade:   &domain.Grade{ID: grade.ID},
+			grade:   domain.Grade{ID: grade.ID},
 			wantErr: false,
 		}, {
 			name:    "should try to edit only testID (and throw error because FK constraint)",
-			grade:   &domain.Grade{ID: grade.ID, TestID: 999},
+			grade:   domain.Grade{ID: grade.ID, TestID: 999},
 			wantErr: true,
 		}, {
 			name:    "should try to edit only enrollmentID (and throw error because FK constraint)",
-			grade:   &domain.Grade{ID: grade.ID, EnrollmentID: 999},
+			grade:   domain.Grade{ID: grade.ID, EnrollmentID: 999},
 			wantErr: true,
 		}, {
 			name:    "should edit only value",
-			grade:   &domain.Grade{ID: grade.ID, Value: 5},
+			grade:   domain.Grade{ID: grade.ID, Value: 5},
 			wantErr: false,
 		},
 	}
@@ -266,8 +266,8 @@ func TestGradeRepo_Update(t *testing.T) {
 
 func TestGradeRepo_Delete(t *testing.T) {
 	s := newGradeScenario(t)
-	grade := &domain.Grade{TestID: s.Test.ID, EnrollmentID: s.Enrollment.ID, Value: 0}
-	createGradeTest(t, grade)
+	grade := domain.Grade{TestID: s.Test.ID, EnrollmentID: s.Enrollment.ID, Value: 0}
+	createGradeTest(t, &grade)
 	r := postgres.NewGradeRepo(testDB, testLogger)
 	tests := []struct {
 		name    string // description of this test case
@@ -317,13 +317,13 @@ func TestGradeRepo_ListAverages(t *testing.T) {
 	tests := []struct {
 		name    string // description of this test case
 		filter  ports.ReportCardFilter
-		want    []*domain.ReportCard
+		want    []domain.ReportCard
 		wantErr bool
 	}{
 		{
 			name:    "should list all averages",
 			filter:  ports.ReportCardFilter{StudentID: &s.Student.UserID},
-			want:    []*domain.ReportCard{{StudentID: s.Student.UserID, StudentName: s.User2.Name, CourseID: s.Course.ID, CourseName: s.Course.Name, CourseCode: s.Course.Code, TeacherName: s.User.Name, Average: 0, Situation: domain.SituationStatus("failed")}},
+			want:    []domain.ReportCard{{StudentID: s.Student.UserID, StudentName: s.User2.Name, CourseID: s.Course.ID, CourseName: s.Course.Name, CourseCode: s.Course.Code, TeacherName: s.User.Name, Average: 0, Situation: domain.SituationStatus("failed")}},
 			wantErr: false,
 		},
 	}
@@ -347,8 +347,8 @@ func TestGradeRepo_ListAverages(t *testing.T) {
 
 func TestGradeRepo_GetAverage(t *testing.T) {
 	s := newGradeScenario(t)
-	grade := &domain.Grade{TestID: s.Test.ID, EnrollmentID: s.Enrollment.ID, Value: 10}
-	createGradeTest(t, grade)
+	grade := domain.Grade{TestID: s.Test.ID, EnrollmentID: s.Enrollment.ID, Value: 10}
+	createGradeTest(t, &grade)
 	r := postgres.NewGradeRepo(testDB, testLogger)
 	tests := []struct {
 		name      string // description of this test case

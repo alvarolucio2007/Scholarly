@@ -74,12 +74,12 @@ func TestStudentRepo_Create(t *testing.T) {
 func TestStudentRepo_GetByID(t *testing.T) {
 	r := postgres.NewStudentRepo(testDB)
 	s := newStudentScenario(t)
-	student := &domain.Student{UserID: s.User.ID, EnrollmentNumber: "Testing"}
-	createStudentTest(t, student)
+	student := domain.Student{UserID: s.User.ID, EnrollmentNumber: "Testing"}
+	createStudentTest(t, &student)
 	tests := []struct {
 		name      string // description of this test case
 		studentID int64
-		want      *domain.Student
+		want      domain.Student
 		wantErr   bool
 	}{
 		{
@@ -91,13 +91,13 @@ func TestStudentRepo_GetByID(t *testing.T) {
 		{
 			name:      "should not return anything if userID is invalid",
 			studentID: -1,
-			want:      nil,
+			want:      domain.Student{},
 			wantErr:   true,
 		},
 		{
 			name:      "should not return anything if userID doesn't exist",
 			studentID: 100,
-			want:      nil,
+			want:      domain.Student{},
 			wantErr:   true,
 		},
 	}
@@ -113,7 +113,7 @@ func TestStudentRepo_GetByID(t *testing.T) {
 			if tt.wantErr {
 				t.Fatal("GetByID() succeeded unexpectedly")
 			}
-			require.EqualValues(t, &tt.want, &got)
+			require.Equal(t, tt.want, got)
 		})
 	}
 	cleanupStudent(t, student.UserID, s.User.ID)
@@ -121,12 +121,12 @@ func TestStudentRepo_GetByID(t *testing.T) {
 
 func TestStudentRepo_GetByEnrollment(t *testing.T) {
 	s := newStudentScenario(t)
-	student := &domain.Student{UserID: s.User.ID, EnrollmentNumber: "Testing"}
-	createStudentTest(t, student)
+	student := domain.Student{UserID: s.User.ID, EnrollmentNumber: "Testing"}
+	createStudentTest(t, &student)
 	tests := []struct {
 		name       string // description of this test case
 		enrollment string
-		want       *domain.Student
+		want       domain.Student
 		wantErr    bool
 	}{
 		{
@@ -137,7 +137,7 @@ func TestStudentRepo_GetByEnrollment(t *testing.T) {
 		}, {
 			name:       "should not return anything if userID doesn't exist",
 			enrollment: "DOESN'T EXIST",
-			want:       nil,
+			want:       domain.Student{},
 			wantErr:    true,
 		},
 	}
@@ -154,7 +154,7 @@ func TestStudentRepo_GetByEnrollment(t *testing.T) {
 			if tt.wantErr {
 				t.Fatal("GetByEnrollment() succeeded unexpectedly")
 			}
-			require.EqualValues(t, &tt.want, &got)
+			require.EqualValues(t, tt.want, got)
 		})
 	}
 	cleanupStudent(t, student.UserID, s.User.ID)
@@ -162,21 +162,21 @@ func TestStudentRepo_GetByEnrollment(t *testing.T) {
 
 func TestStudentRepo_Update(t *testing.T) {
 	s := newStudentScenario(t)
-	student := &domain.Student{UserID: s.User.ID, EnrollmentNumber: "Testing"}
-	createStudentTest(t, student)
+	student := domain.Student{UserID: s.User.ID, EnrollmentNumber: "Testing"}
+	createStudentTest(t, &student)
 	tests := []struct {
 		name    string // description of this test case
-		student *domain.Student
+		student domain.Student
 		wantErr bool
 	}{
 		{
 			name:    "shouldn't edit student if all params are empty",
-			student: &domain.Student{UserID: s.User.ID, EnrollmentNumber: ""},
+			student: domain.Student{UserID: s.User.ID, EnrollmentNumber: ""},
 			wantErr: false,
 		},
 		{
 			name:    "should edit only enrollment number",
-			student: &domain.Student{UserID: s.User.ID, EnrollmentNumber: "UPDATED"},
+			student: domain.Student{UserID: s.User.ID, EnrollmentNumber: "UPDATED"},
 			wantErr: false,
 		},
 	}

@@ -98,13 +98,13 @@ func TestTestRepo_Create(t *testing.T) {
 
 func TestTestRepo_GetByID(t *testing.T) {
 	s := newTestScenario(t)
-	test := &domain.Test{CourseID: s.Course.ID, Name: "Successful test creation", Weight: 6}
-	createTestTest(t, test)
+	test := domain.Test{CourseID: s.Course.ID, Name: "Successful test creation", Weight: 6}
+	createTestTest(t, &test)
 	r := postgres.NewTestRepo(testDB, testLogger)
 	tests := []struct {
 		name    string // description of this test case
 		testID  int64
-		want    *domain.Test
+		want    domain.Test
 		wantErr bool
 	}{
 		{
@@ -115,12 +115,12 @@ func TestTestRepo_GetByID(t *testing.T) {
 		}, {
 			name:    "should't return anything if incorrect ID",
 			testID:  0,
-			want:    nil,
+			want:    domain.Test{},
 			wantErr: true,
 		}, {
 			name:    "shouldn't return anything if ID is invalid",
 			testID:  -1,
-			want:    nil,
+			want:    domain.Test{},
 			wantErr: true,
 		},
 	}
@@ -136,7 +136,7 @@ func TestTestRepo_GetByID(t *testing.T) {
 			if tt.wantErr {
 				t.Fatal("GetByID() succeeded unexpectedly")
 			}
-			require.EqualValues(t, &got, &tt.want)
+			require.Equal(t, got, tt.want)
 		})
 	}
 	cleanupTest(t, test.ID, s.Course.ID, s.Teacher.UserID, s.User.ID)
@@ -145,31 +145,31 @@ func TestTestRepo_GetByID(t *testing.T) {
 func TestTestRepo_List(t *testing.T) {
 	incorrectName := "Not a valid test name"
 	s := newTestScenario(t)
-	test := &domain.Test{CourseID: s.Course.ID, Name: "Successful test creation", Weight: 6}
-	createTestTest(t, test)
-	test2 := &domain.Test{CourseID: s.Course.ID, Name: "Test 2", Weight: 4}
-	createTestTest(t, test2)
+	test := domain.Test{CourseID: s.Course.ID, Name: "Successful test creation", Weight: 6}
+	createTestTest(t, &test)
+	test2 := domain.Test{CourseID: s.Course.ID, Name: "Test 2", Weight: 4}
+	createTestTest(t, &test2)
 	r := postgres.NewTestRepo(testDB, testLogger)
 	tests := []struct {
 		name    string // description of this test case
 		filter  ports.TestFilter
-		want    []*domain.Test
+		want    []domain.Test
 		wantErr bool
 	}{
 		{
 			name:    "should list all tests if no paramameters are given",
 			filter:  ports.TestFilter{},
-			want:    []*domain.Test{test2, test},
+			want:    []domain.Test{test2, test},
 			wantErr: false,
 		}, {
 			name:    "shouldn't list any test if no tests match",
 			filter:  ports.TestFilter{Name: &incorrectName},
-			want:    []*domain.Test{},
+			want:    []domain.Test{},
 			wantErr: false,
 		}, {
 			name:    "should list only select tests if right parameters are given",
 			filter:  ports.TestFilter{Name: &test.Name},
-			want:    []*domain.Test{test},
+			want:    []domain.Test{test},
 			wantErr: false,
 		},
 	}
@@ -187,7 +187,7 @@ func TestTestRepo_List(t *testing.T) {
 			}
 			require.Equal(t, len(got), len(tt.want))
 			for i := range got {
-				require.EqualValues(t, got[i], tt.want[i])
+				require.Equal(t, got[i], tt.want[i])
 			}
 		})
 	}
@@ -201,10 +201,10 @@ func TestTestRepo_List(t *testing.T) {
 func TestTestRepo_Update(t *testing.T) {
 	s := newTestScenario(t)
 	course2 := &domain.Course{TeacherID: s.Teacher.UserID, Name: "Course2", Code: "Test", MaxStudents: 100}
-	test := &domain.Test{CourseID: s.Course.ID, Name: "Successful test creation", Weight: 6}
-	createTestTest(t, test)
-	test2 := &domain.Test{CourseID: s.Course.ID, Name: "Test 2", Weight: 4}
-	createTestTest(t, test2)
+	test := domain.Test{CourseID: s.Course.ID, Name: "Successful test creation", Weight: 6}
+	createTestTest(t, &test)
+	test2 := domain.Test{CourseID: s.Course.ID, Name: "Test 2", Weight: 4}
+	createTestTest(t, &test2)
 	t.Cleanup(func() {
 		_, err := testDB.Exec("DELETE FROM tests WHERE id = $1", test.ID)
 		require.NoError(t, err)
@@ -212,28 +212,28 @@ func TestTestRepo_Update(t *testing.T) {
 	r := postgres.NewTestRepo(testDB, testLogger)
 	tests := []struct {
 		name    string // description of this test case
-		test    *domain.Test
+		test    domain.Test
 		wantErr bool
 	}{
 		{
 			name:    "shouldn't edit the test if all params are empty",
-			test:    &domain.Test{ID: test.ID},
+			test:    domain.Test{ID: test.ID},
 			wantErr: false,
 		}, {
 			name:    "should only edit courseID",
-			test:    &domain.Test{ID: test.ID, CourseID: course2.ID, Name: ""},
+			test:    domain.Test{ID: test.ID, CourseID: course2.ID, Name: ""},
 			wantErr: false,
 		}, {
 			name:    "should only edit name",
-			test:    &domain.Test{ID: test.ID, CourseID: 0, Name: "New name", Weight: 0},
+			test:    domain.Test{ID: test.ID, CourseID: 0, Name: "New name", Weight: 0},
 			wantErr: false,
 		}, {
 			name:    "should only edit weight",
-			test:    &domain.Test{ID: test.ID, CourseID: 0, Name: "", Weight: 9},
+			test:    domain.Test{ID: test.ID, CourseID: 0, Name: "", Weight: 9},
 			wantErr: false,
 		}, {
 			name:    "should return error if not found",
-			test:    &domain.Test{},
+			test:    domain.Test{},
 			wantErr: true,
 		},
 	}
