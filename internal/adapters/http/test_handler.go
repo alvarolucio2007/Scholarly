@@ -143,7 +143,7 @@ func (h *Handler) ListTests(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	listResponse := newListTestResponseDTO(tests)
-	_ = writeJSONData(w, http.StatusOK, listResponse)
+	_ = writeJSON(w, http.StatusOK, listResponse)
 }
 
 // UpdateTest godoc

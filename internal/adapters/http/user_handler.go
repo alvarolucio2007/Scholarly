@@ -136,7 +136,7 @@ func (h *Handler) ListUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	response := newListUserResponseDTO(users)
-	_ = writeJSONData(w, http.StatusOK, response)
+	_ = writeJSON(w, http.StatusOK, response)
 }
 
 // UpdateUser godoc

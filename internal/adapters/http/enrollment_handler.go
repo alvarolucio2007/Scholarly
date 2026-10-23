@@ -111,7 +111,7 @@ func (h *Handler) ListEnrollments(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	response := newListEnrollmentResponseDTO(enrollments)
-	_ = writeJSONData(w, http.StatusOK, response)
+	_ = writeJSON(w, http.StatusOK, response)
 }
 
 // UpdateEnrollment godoc

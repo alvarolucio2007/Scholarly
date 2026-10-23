@@ -121,7 +121,7 @@ func (h *Handler) ListTeachers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	response := newListTeacherResponseDTO(teachers)
-	_ = writeJSONData(w, http.StatusOK, response)
+	_ = writeJSON(w, http.StatusOK, response)
 }
 
 // UpdateTeacher godoc
