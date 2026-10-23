@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.0.1](https://github.com/alvarolucio2007/Scholarly/compare/v3.0.0...v3.0.1) (2026-10-23)
+
+
+### Bug Fixes
+
+* replacing writeJSONData with writeJSON in ListX handlers ([26ea1b8](https://github.com/alvarolucio2007/Scholarly/commit/26ea1b883605e0902a206ab3bbbce876cd76803c))
+* replacing writeJSONData with writeJSON in ListX handlers ([291109c](https://github.com/alvarolucio2007/Scholarly/commit/291109c7c203b9f09d895b3e399ca4911f4fa9a8))
+
 ## [3.0.0](https://github.com/alvarolucio2007/Scholarly/compare/v2.1.1...v3.0.0) (2026-10-23)
 
 
