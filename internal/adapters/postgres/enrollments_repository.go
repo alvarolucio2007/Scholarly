@@ -40,26 +40,26 @@ func (r *EnrollmentRepo) Create(ctx context.Context, enrollment *domain.Enrollme
 	return nil
 }
 
-func (r *EnrollmentRepo) GetByID(ctx context.Context, enrollmentID int64) (*domain.Enrollment, error) {
+func (r *EnrollmentRepo) GetByID(ctx context.Context, enrollmentID int64) (domain.Enrollment, error) {
 	var e domain.Enrollment
 	query := `SELECT id,student_id,course_id,enrolled_at,status FROM enrollments WHERE id=$1`
 	ctx, cancel := context.WithTimeout(ctx, PostgresQueryTimeout)
 	defer cancel()
 	err := r.db.QueryRowContext(ctx, query, enrollmentID).Scan(&e.ID, &e.StudentID, &e.CourseID, &e.EnrolledAt, &e.Status)
 	if errors.Is(err, sql.ErrNoRows) {
-		return nil, domain.ErrNotFound
+		return domain.Enrollment{}, domain.ErrNotFound
 	}
 	if err != nil {
 		translated := translateError(err)
 		if !errors.Is(err, translated) {
-			return nil, translated
+			return domain.Enrollment{}, translated
 		}
-		return nil, fmt.Errorf("postgres: get enrollment by id: %w", err)
+		return domain.Enrollment{}, fmt.Errorf("postgres: get enrollment by id: %w", err)
 	}
-	return &e, nil
+	return e, nil
 }
 
-func (r *EnrollmentRepo) List(ctx context.Context, filter ports.EnrollmentFilter) ([]*domain.Enrollment, error) {
+func (r *EnrollmentRepo) List(ctx context.Context, filter ports.EnrollmentFilter) ([]domain.Enrollment, error) {
 	wb := newWhereBuilder()
 	if filter.StudentID != nil {
 		wb.add("student_id", *filter.StudentID)
@@ -91,7 +91,7 @@ func (r *EnrollmentRepo) List(ctx context.Context, filter ports.EnrollmentFilter
 			r.logger.ErrorContext(ctx, "postgres: rows.close list enrollment:", "error", err)
 		}
 	}()
-	var enrollments []*domain.Enrollment
+	var enrollments []domain.Enrollment
 	for rows.Next() {
 		var e domain.Enrollment
 		if err := rows.Scan(&e.ID, &e.StudentID, &e.CourseID, &e.EnrolledAt, &e.Status); err != nil {
@@ -101,7 +101,7 @@ func (r *EnrollmentRepo) List(ctx context.Context, filter ports.EnrollmentFilter
 			}
 			return nil, fmt.Errorf("postgres: scan enrollments: %w", err)
 		}
-		enrollments = append(enrollments, &e)
+		enrollments = append(enrollments, e)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("postgres: iterate enrollments: %w", err)
@@ -109,7 +109,7 @@ func (r *EnrollmentRepo) List(ctx context.Context, filter ports.EnrollmentFilter
 	return enrollments, nil
 }
 
-func (r *EnrollmentRepo) Update(ctx context.Context, enrollment *domain.Enrollment) error {
+func (r *EnrollmentRepo) Update(ctx context.Context, enrollment domain.Enrollment) error {
 	query := `UPDATE enrollments
 	SET
 		student_id=COALESCE(NULLIF($1,0),student_id),
