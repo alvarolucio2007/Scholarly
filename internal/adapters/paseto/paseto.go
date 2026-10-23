@@ -27,7 +27,10 @@ func (p *PasetoAuthenticator) CreateToken(claims ports.Claims) (string, error) {
 	token.SetExpiration(claims.ExpiresAt)
 	token.SetString("id", claims.ID.String())
 	token.SetString("email", claims.Email)
-	token.Set("user_id", claims.UserID)
+	err := token.Set("user_id", claims.UserID)
+	if err != nil {
+		return "", fmt.Errorf("paseto: CreateToken: couldnt set user_id: %w", err)
+	}
 
 	return token.V4Encrypt(p.key, nil), nil
 }
