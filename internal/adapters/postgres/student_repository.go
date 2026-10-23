@@ -38,7 +38,7 @@ func (r *StudentRepo) Create(ctx context.Context, student *domain.Student) error
 	return nil
 }
 
-func (r *StudentRepo) GetByID(ctx context.Context, studentID int64) (*domain.Student, error) {
+func (r *StudentRepo) GetByID(ctx context.Context, studentID int64) (domain.Student, error) {
 	query := `SELECT user_id,enrollment_number FROM students WHERE user_id=$1`
 	var s domain.Student
 
@@ -46,15 +46,15 @@ func (r *StudentRepo) GetByID(ctx context.Context, studentID int64) (*domain.Stu
 	defer cancel()
 	err := r.db.QueryRowContext(ctx, query, studentID).Scan(&s.UserID, &s.EnrollmentNumber)
 	if errors.Is(err, sql.ErrNoRows) {
-		return nil, domain.ErrNotFound
+		return domain.Student{}, domain.ErrNotFound
 	}
 	if err != nil {
-		return nil, fmt.Errorf("postgres: getByID student: %w", err)
+		return domain.Student{}, fmt.Errorf("postgres: getByID student: %w", err)
 	}
-	return &s, nil
+	return s, nil
 }
 
-func (r *StudentRepo) GetByEnrollment(ctx context.Context, enrollment string) (*domain.Student, error) {
+func (r *StudentRepo) GetByEnrollment(ctx context.Context, enrollment string) (domain.Student, error) {
 	query := `SELECT user_id,enrollment_number FROM students WHERE enrollment_number=$1`
 	var s domain.Student
 
@@ -62,15 +62,15 @@ func (r *StudentRepo) GetByEnrollment(ctx context.Context, enrollment string) (*
 	defer cancel()
 	err := r.db.QueryRowContext(ctx, query, enrollment).Scan(&s.UserID, &s.EnrollmentNumber)
 	if errors.Is(err, sql.ErrNoRows) {
-		return nil, domain.ErrNotFound
+		return domain.Student{}, domain.ErrNotFound
 	}
 	if err != nil {
-		return nil, fmt.Errorf("postgres: getByEnrollment student: %w", err)
+		return domain.Student{}, fmt.Errorf("postgres: getByEnrollment student: %w", err)
 	}
-	return &s, nil
+	return s, nil
 }
 
-func (r *StudentRepo) Update(ctx context.Context, student *domain.Student) error {
+func (r *StudentRepo) Update(ctx context.Context, student domain.Student) error {
 	query := `UPDATE students
 	SET
 		enrollment_number=COALESCE(NULLIF($1,''),enrollment_number)
@@ -109,19 +109,4 @@ func (r *StudentRepo) Delete(ctx context.Context, studentID int64) error {
 		return domain.ErrNotFound
 	}
 	return nil
-}
-
-func (r *StudentRepo) GetWeightedAverage(ctx context.Context, studentID, courseID int64) (float64, error) {
-	query := `SELECT fn_weighted_average($1,$2)`
-	ctx, cancel := context.WithTimeout(ctx, PostgresQueryTimeout)
-	defer cancel()
-	var res float64
-	if err := r.db.QueryRowContext(ctx, query, studentID, courseID).Scan(&res); err != nil {
-		translated := translateError(err)
-		if !errors.Is(err, translated) {
-			return 0, translated
-		}
-		return 0, fmt.Errorf("postgres: get weighed average : %w", err)
-	}
-	return res, nil
 }
