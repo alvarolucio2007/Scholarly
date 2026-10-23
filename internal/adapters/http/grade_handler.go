@@ -5,10 +5,15 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/alvarolucio2007/Scholarly/internal/domain"
 	"github.com/alvarolucio2007/Scholarly/internal/ports"
 	"github.com/alvarolucio2007/Scholarly/internal/services"
 	"github.com/go-chi/chi/v5"
 )
+
+func newGradeResponseDTO(grade domain.Grade) GradeResponseDTO {
+	return GradeResponseDTO{ID: grade.ID, TestID: grade.TestID, EnrollmentID: grade.EnrollmentID, Value: grade.Value, CreatedAt: grade.CreatedAt, UpdatedAt: grade.UpdatedAt}
+}
 
 // CreateGrade godoc
 //
@@ -43,7 +48,8 @@ func (h *Handler) CreateGrade(w http.ResponseWriter, r *http.Request) {
 		respondDomainError(w, err)
 		return
 	}
-	_ = writeJSONData(w, http.StatusCreated, grade)
+	response := newGradeResponseDTO(grade)
+	_ = writeJSONData(w, http.StatusCreated, response)
 }
 
 // GetGradeByID godoc
@@ -74,7 +80,18 @@ func (h *Handler) GetGradeByID(w http.ResponseWriter, r *http.Request) {
 		respondDomainError(w, err)
 		return
 	}
-	_ = writeJSONData(w, http.StatusOK, grade)
+	response := newGradeResponseDTO(grade)
+	_ = writeJSONData(w, http.StatusOK, response)
+}
+
+func newListGradeResponseDTO(grades []domain.Grade) ListGradeResponseDTO {
+	responses := make([]GradeResponseDTO, 0, len(grades))
+	for _, grade := range grades {
+		responses = append(responses, newGradeResponseDTO(grade))
+	}
+	return ListGradeResponseDTO{
+		Data: responses,
+	}
 }
 
 // ListGrades godoc
@@ -122,7 +139,8 @@ func (h *Handler) ListGrades(w http.ResponseWriter, r *http.Request) {
 		respondDomainError(w, err)
 		return
 	}
-	_ = writeJSONData(w, http.StatusOK, &grades)
+	response := newListGradeResponseDTO(grades)
+	_ = writeJSONData(w, http.StatusOK, response)
 }
 
 // UpdateGrade godoc
@@ -133,7 +151,7 @@ func (h *Handler) ListGrades(w http.ResponseWriter, r *http.Request) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			payload	body		UpdateGradeDTO	true	"Grade DTO"
-//	@Success		200		{object}	GradeResponseDTO
+//	@Success		204
 //	@Failure		400		{object}	ErrorResponse
 //	@Failure		404		{object}	ErrorResponse
 //	@Failure		409		{object}	ErrorResponse
@@ -150,7 +168,7 @@ func (h *Handler) UpdateGrade(w http.ResponseWriter, r *http.Request) {
 		_ = writeJSONError(w, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
-	grade, err := h.grades.Update(r.Context(), services.UpdateGradePayload{
+	err := h.grades.Update(r.Context(), services.UpdateGradePayload{
 		ID:           dto.ID,
 		TestID:       nilIfZeroInt(dto.TestID),
 		EnrollmentID: nilIfZeroInt(dto.EnrollmentID),
@@ -160,7 +178,7 @@ func (h *Handler) UpdateGrade(w http.ResponseWriter, r *http.Request) {
 		respondDomainError(w, err)
 		return
 	}
-	_ = writeJSONData(w, http.StatusOK, grade)
+	w.WriteHeader(http.StatusNoContent)
 }
 
 // DeleteGrade godoc
@@ -192,6 +210,8 @@ func (h *Handler) DeleteGrade(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusNoContent)
 }
+
+//TODO: Implement DTO for both handlers below
 
 // ListAverages godoc
 //

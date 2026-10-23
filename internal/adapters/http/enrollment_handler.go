@@ -11,6 +11,10 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
+func newEnrollmentResponse(enrollment domain.Enrollment) EnrollmentResponseDTO {
+	return EnrollmentResponseDTO{ID: enrollment.ID, StudentID: enrollment.StudentID, CourseID: enrollment.CourseID, EnrolledAt: enrollment.EnrolledAt, Status: enrollment.Status}
+}
+
 // GetEnrollmentByID godoc
 //
 //	@Summary		Fetch an enrollment by it's ID
@@ -39,7 +43,18 @@ func (h *Handler) GetEnrollmentByID(w http.ResponseWriter, r *http.Request) {
 		respondDomainError(w, err)
 		return
 	}
-	_ = writeJSONData(w, http.StatusOK, enrollment)
+	response := newEnrollmentResponse(enrollment)
+	_ = writeJSONData(w, http.StatusOK, response)
+}
+
+func newListEnrollmentResponseDTO(enrollments []domain.Enrollment) ListEnrollmentResponseDTO {
+	responses := make([]EnrollmentResponseDTO, 0, len(enrollments))
+	for _, enrollment := range enrollments {
+		responses = append(responses, newEnrollmentResponse(enrollment))
+	}
+	return ListEnrollmentResponseDTO{
+		Data: responses,
+	}
 }
 
 // ListEnrollments godoc
@@ -95,7 +110,8 @@ func (h *Handler) ListEnrollments(w http.ResponseWriter, r *http.Request) {
 		respondDomainError(w, err)
 		return
 	}
-	_ = writeJSONData(w, http.StatusOK, &enrollments)
+	response := newListEnrollmentResponseDTO(enrollments)
+	_ = writeJSONData(w, http.StatusOK, response)
 }
 
 // UpdateEnrollment godoc
@@ -106,7 +122,7 @@ func (h *Handler) ListEnrollments(w http.ResponseWriter, r *http.Request) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			payload	body		UpdateEnrollmentDTO	true	"enrollment DTO"
-//	@Success		201		{object}	EnrollmentResponseDTO
+//	@Success		204
 //	@Failure		400		{object}	ErrorResponse
 //	@Failure		404		{object}	ErrorResponse
 //	@Failure		409		{object}	ErrorResponse
@@ -123,7 +139,7 @@ func (h *Handler) UpdateEnrollment(w http.ResponseWriter, r *http.Request) {
 		_ = writeJSONError(w, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
-	enrollment, err := h.enrollments.Update(r.Context(), services.UpdateEnrollmentPayload{
+	err := h.enrollments.Update(r.Context(), services.UpdateEnrollmentPayload{
 		ID:        dto.ID,
 		StudentID: dto.StudentID,
 		CourseID:  dto.CourseID,
@@ -132,7 +148,7 @@ func (h *Handler) UpdateEnrollment(w http.ResponseWriter, r *http.Request) {
 		respondDomainError(w, err)
 		return
 	}
-	_ = writeJSONData(w, http.StatusOK, enrollment)
+	w.WriteHeader(http.StatusNoContent)
 }
 
 // DeleteEnrollment godoc

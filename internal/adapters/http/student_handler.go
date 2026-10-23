@@ -5,9 +5,14 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/alvarolucio2007/Scholarly/internal/domain"
 	"github.com/alvarolucio2007/Scholarly/internal/services"
 	"github.com/go-chi/chi/v5"
 )
+
+func newStudentResponseDTO(student domain.Student) StudentResponseDTO {
+	return StudentResponseDTO{UserID: student.UserID, EnrollmentNumber: student.EnrollmentNumber}
+}
 
 // CreateStudent godoc
 //
@@ -41,7 +46,8 @@ func (h *Handler) CreateStudent(w http.ResponseWriter, r *http.Request) {
 		respondDomainError(w, err)
 		return
 	}
-	_ = writeJSONData(w, http.StatusCreated, student)
+	response := newStudentResponseDTO(student)
+	_ = writeJSONData(w, http.StatusCreated, response)
 }
 
 // GetStudentByID godoc
@@ -72,10 +78,8 @@ func (h *Handler) GetStudentByID(w http.ResponseWriter, r *http.Request) {
 		respondDomainError(w, err)
 		return
 	}
-	if err := writeJSONData(w, http.StatusOK, student); err != nil {
-		_ = writeJSONError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
+	response := newStudentResponseDTO(student)
+	_ = writeJSONData(w, http.StatusOK, response)
 }
 
 // GetStudentByEnrollment godoc
@@ -102,10 +106,8 @@ func (h *Handler) GetStudentByEnrollment(w http.ResponseWriter, r *http.Request)
 		respondDomainError(w, err)
 		return
 	}
-	if err := writeJSONData(w, http.StatusOK, student); err != nil {
-		_ = writeJSONError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
+	response := newStudentResponseDTO(student)
+	_ = writeJSONData(w, http.StatusOK, response)
 }
 
 // UpdateStudent godoc
@@ -116,7 +118,7 @@ func (h *Handler) GetStudentByEnrollment(w http.ResponseWriter, r *http.Request)
 //	@Accept			json
 //	@Produce		json
 //	@Param			payload	body		UpdateStudentDTO	true	"StudentDTO"
-//	@Success		201		{object}	StudentResponseDTO
+//	@Success		204
 //	@Failure		400		{object}	ErrorResponse
 //	@Failure		404		{object}	ErrorResponse
 //	@Failure		409		{object}	ErrorResponse
@@ -133,7 +135,7 @@ func (h *Handler) UpdateStudent(w http.ResponseWriter, r *http.Request) {
 		_ = writeJSONError(w, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
-	student, err := h.students.Update(r.Context(), services.UpdateStudentPayload{
+	err := h.students.Update(r.Context(), services.UpdateStudentPayload{
 		UserID:           dto.UserID,
 		EnrollmentNumber: dto.EnrollmentNumber,
 	})
@@ -141,7 +143,7 @@ func (h *Handler) UpdateStudent(w http.ResponseWriter, r *http.Request) {
 		respondDomainError(w, err)
 		return
 	}
-	_ = writeJSONData(w, http.StatusOK, student)
+	w.WriteHeader(http.StatusNoContent)
 }
 
 // DeleteStudent godoc

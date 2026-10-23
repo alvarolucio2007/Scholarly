@@ -5,10 +5,15 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/alvarolucio2007/Scholarly/internal/domain"
 	"github.com/alvarolucio2007/Scholarly/internal/ports"
 	"github.com/alvarolucio2007/Scholarly/internal/services"
 	"github.com/go-chi/chi/v5"
 )
+
+func newTeacherResponseDTO(teacher domain.Teacher) TeacherResponseDTO {
+	return TeacherResponseDTO{UserID: teacher.UserID, Department: teacher.Department}
+}
 
 // CreateTeacher godoc
 //
@@ -42,7 +47,8 @@ func (h *Handler) CreateTeacher(w http.ResponseWriter, r *http.Request) {
 		respondDomainError(w, err)
 		return
 	}
-	_ = writeJSONData(w, http.StatusCreated, teacher)
+	response := newTeacherResponseDTO(teacher)
+	_ = writeJSONData(w, http.StatusCreated, response)
 }
 
 // GetTeacherByID godoc
@@ -73,9 +79,17 @@ func (h *Handler) GetTeacherByID(w http.ResponseWriter, r *http.Request) {
 		respondDomainError(w, err)
 		return
 	}
-	if err := writeJSONData(w, http.StatusOK, user); err != nil {
-		_ = writeJSONError(w, http.StatusInternalServerError, err.Error())
-		return
+	response := newTeacherResponseDTO(user)
+	_ = writeJSONData(w, http.StatusOK, response)
+}
+
+func newListTeacherResponseDTO(teachers []domain.Teacher) ListTeacherResponseDTO {
+	responses := make([]TeacherResponseDTO, 0, len(teachers))
+	for _, teacher := range teachers {
+		responses = append(responses, newTeacherResponseDTO(teacher))
+	}
+	return ListTeacherResponseDTO{
+		Data: responses,
 	}
 }
 
@@ -87,7 +101,7 @@ func (h *Handler) GetTeacherByID(w http.ResponseWriter, r *http.Request) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			department	query		string	false	"filter by department"
-//	@Success		200			{array}		TeacherResponseDTO
+//	@Success		200			{array}		ListTeacherResponseDTO
 //	@Failure		400			{object}	ErrorResponse
 //	@Failure		500			{object}	ErrorResponse
 //	@Router			/teachers [get]
@@ -106,7 +120,8 @@ func (h *Handler) ListTeachers(w http.ResponseWriter, r *http.Request) {
 		respondDomainError(w, err)
 		return
 	}
-	_ = writeJSONData(w, http.StatusOK, teachers)
+	response := newListTeacherResponseDTO(teachers)
+	_ = writeJSONData(w, http.StatusOK, response)
 }
 
 // UpdateTeacher godoc
@@ -117,7 +132,7 @@ func (h *Handler) ListTeachers(w http.ResponseWriter, r *http.Request) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			payload	body		UpdateTeacherDTO	true	"Teacher DTO"
-//	@Success		201		{object}	TeacherResponseDTO
+//	@Success		204
 //	@Failure		400		{object}	ErrorResponse
 //	@Failure		404		{object}	ErrorResponse
 //	@Failure		409		{object}	ErrorResponse
@@ -134,7 +149,7 @@ func (h *Handler) UpdateTeacher(w http.ResponseWriter, r *http.Request) {
 		_ = writeJSONError(w, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
-	teacher, err := h.teachers.Update(r.Context(), services.UpdateTeacherPayload{
+	err := h.teachers.Update(r.Context(), services.UpdateTeacherPayload{
 		UserID:     dto.UserID,
 		Department: dto.Department,
 	})
@@ -142,7 +157,7 @@ func (h *Handler) UpdateTeacher(w http.ResponseWriter, r *http.Request) {
 		respondDomainError(w, err)
 		return
 	}
-	_ = writeJSONData(w, http.StatusOK, teacher)
+	w.WriteHeader(http.StatusNoContent)
 }
 
 // DeleteTeacher godoc
