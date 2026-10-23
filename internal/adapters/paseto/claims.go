@@ -1,7 +1,6 @@
 package paseto
 
 import (
-	"crypto/rand"
 	"errors"
 	"time"
 	"uuid"
@@ -25,17 +24,4 @@ func NewClaims(email string, duration time.Duration, userID int64) (ports.Claims
 		ExpiresAt: now.Add(duration),
 	}
 	return payload, nil
-}
-
-func isValidClaims(claims *ports.Claims) error {
-	if time.Now().After(claims.ExpiresAt) {
-		return ErrExpiredToken
-	}
-	return nil
-}
-
-func generateSymmetricKey() ([]byte, error) {
-	key := make([]byte, 32)
-	_, err := rand.Read(key)
-	return key, err
 }
