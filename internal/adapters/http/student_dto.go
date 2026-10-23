@@ -12,3 +12,6 @@ type StudentResponseDTO struct {
 	UserID           int64  `json:"user_id"`
 	EnrollmentNumber string `json:"enrollment_number"`
 }
+type ListStudentResponseDTO struct {
+	Data []StudentResponseDTO `json:"data"`
+}

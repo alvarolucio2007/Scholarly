@@ -21,6 +21,9 @@ type GradeResponseDTO struct {
 	CreatedAt    time.Time  `json:"created_at"`
 	UpdatedAt    *time.Time `json:"updated_at"`
 }
+type ListGradeResponseDTO struct {
+	Data []GradeResponseDTO `json:"data"`
+}
 type ListAverageResponseDTO struct {
 	StudentID   int64   `json:"student_id"`
 	CourseID    int64   `json:"course_id"`
