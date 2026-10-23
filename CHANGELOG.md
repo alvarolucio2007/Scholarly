@@ -1,5 +1,34 @@
 # Changelog
 
+## [3.0.0](https://github.com/alvarolucio2007/Scholarly/compare/v2.1.1...v3.0.0) (2026-10-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* Adding proper DTO response to ListAverages and GetAverage
+* Adding proper response DTOs and changing all updates to return 204
+
+### minor
+
+* Adding proper DTO response to ListAverages and GetAverage ([ca0be86](https://github.com/alvarolucio2007/Scholarly/commit/ca0be868240620b4d6ca8dffabc350b0f0e7570c))
+
+
+### Bug Fixes
+
+* Adding proper response DTOs and changing all updates to return 204 ([731e034](https://github.com/alvarolucio2007/Scholarly/commit/731e0347fc45128b3c218f175c54e2542b8fff07))
+
+
+### Performance Improvements
+
+* Removing unnecessary pointers ([adac3c3](https://github.com/alvarolucio2007/Scholarly/commit/adac3c318ee4adfdfa3ce249b401a79099c84d53))
+* Removing unnecessary pointers ([636147c](https://github.com/alvarolucio2007/Scholarly/commit/636147c447704946127226b77beed5765213beef))
+* Removing unnecessary pointers and adjusting functions accordingly. ([bb81878](https://github.com/alvarolucio2007/Scholarly/commit/bb81878a8120ada36483b8824953d8315112664d))
+* Removing unnecessary pointers from functions ([a5fa47a](https://github.com/alvarolucio2007/Scholarly/commit/a5fa47ac9fe285793334f18641d9026e68f4ae27))
+* Removing unnecessary pointers from functions ([aa0f806](https://github.com/alvarolucio2007/Scholarly/commit/aa0f80692a72288b19a83a92c482a6df56021443))
+* Removing unnecessary pointers from interfaces ([b629295](https://github.com/alvarolucio2007/Scholarly/commit/b629295c96bb68d59f8c74306548d7e8e600b6c4))
+* Removing unnecessary pointers in GetByID and Update ([33383f1](https://github.com/alvarolucio2007/Scholarly/commit/33383f11b038e2dfaa395c0dbfcc1abddf4e5a88))
+* Removing unnecessary pointers to satisfy new interface. ([c45e9cb](https://github.com/alvarolucio2007/Scholarly/commit/c45e9cb88b710877c189cc199b0b26ccb908db95))
+
 ## [2.1.1](https://github.com/alvarolucio2007/Scholarly/compare/v2.1.0...v2.1.1) (2026-10-20)
 
 
