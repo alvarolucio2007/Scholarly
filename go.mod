@@ -8,6 +8,7 @@ require (
 	github.com/go-faker/faker/v4 v4.12.0
 	github.com/go-openapi/testify v0.0.0-20251001202347-e909893202bd
 	github.com/go-playground/validator/v10 v10.30.5
+	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/golang-migrate/migrate/v4 v4.20.1
 	github.com/jackc/pgx/v5 v5.11.0
 	github.com/joho/godotenv v1.5.1
@@ -20,6 +21,8 @@ require (
 )
 
 require (
+	aidanwoods.dev/go-paseto v1.6.0 // indirect
+	aidanwoods.dev/go-result v0.3.1 // indirect
 	dario.cat/mergo v1.0.2 // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c // indirect
 	github.com/KyleBanks/depth v1.2.1 // indirect
