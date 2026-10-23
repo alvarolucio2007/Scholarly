@@ -101,13 +101,13 @@ func TestEnrollmentRepo_Create(t *testing.T) {
 
 func TestEnrollmentRepo_GetByID(t *testing.T) {
 	s := newEnrollmentScenario(t)
-	enrollment := &domain.Enrollment{StudentID: s.Student.UserID, CourseID: s.Course.ID, Status: "active"}
-	createEnrollmentTest(t, enrollment)
+	enrollment := domain.Enrollment{StudentID: s.Student.UserID, CourseID: s.Course.ID, Status: "active"}
+	createEnrollmentTest(t, &enrollment)
 	r := postgres.NewEnrollmentRepo(testDB, testLogger)
 	tests := []struct {
 		name         string // description of this test case
 		enrollmentID int64
-		want         *domain.Enrollment
+		want         domain.Enrollment
 		wantErr      bool
 	}{
 		{
@@ -118,12 +118,12 @@ func TestEnrollmentRepo_GetByID(t *testing.T) {
 		}, {
 			name:         "should not return anything if enrollment ID is invalid",
 			enrollmentID: -1,
-			want:         nil,
+			want:         domain.Enrollment{},
 			wantErr:      true,
 		}, {
 			name:         "should not return anything if enrollment ID doesn't exist",
 			enrollmentID: enrollment.ID + 1,
-			want:         nil,
+			want:         domain.Enrollment{},
 			wantErr:      true,
 		},
 	}
@@ -139,7 +139,7 @@ func TestEnrollmentRepo_GetByID(t *testing.T) {
 			if tt.wantErr {
 				t.Fatal("GetByID() succeeded unexpectedly")
 			}
-			require.EqualValues(t, &got, &tt.want)
+			require.Equal(t, got, tt.want)
 		})
 	}
 	cleanupEnrollment(t, enrollment.ID, s.Course.ID, s.Student.UserID, s.Teacher.UserID, s.User2.ID, s.User.ID)
@@ -147,29 +147,29 @@ func TestEnrollmentRepo_GetByID(t *testing.T) {
 
 func TestEnrollmentRepo_List(t *testing.T) {
 	s := newEnrollmentScenario(t)
-	enrollment := &domain.Enrollment{StudentID: s.Student.UserID, CourseID: s.Course.ID, Status: "active"}
-	createEnrollmentTest(t, enrollment)
+	enrollment := domain.Enrollment{StudentID: s.Student.UserID, CourseID: s.Course.ID, Status: "active"}
+	createEnrollmentTest(t, &enrollment)
 	r := postgres.NewEnrollmentRepo(testDB, testLogger)
 	tests := []struct {
 		name    string // description of this test case
 		filter  ports.EnrollmentFilter
-		want    []*domain.Enrollment
+		want    []domain.Enrollment
 		wantErr bool
 	}{
 		{
 			name:    "should list all enrollments if no paramenters are given",
 			filter:  ports.EnrollmentFilter{},
-			want:    []*domain.Enrollment{enrollment},
+			want:    []domain.Enrollment{enrollment},
 			wantErr: false,
 		}, {
 			name:    "shouldn't list any enrollment if no enrollments match",
 			filter:  ports.EnrollmentFilter{StudentID: &s.Teacher.UserID},
-			want:    []*domain.Enrollment{},
+			want:    []domain.Enrollment{},
 			wantErr: false,
 		}, {
 			name:    "should list only select courses if right paramenters are given",
 			filter:  ports.EnrollmentFilter{StudentID: &s.Student.UserID},
-			want:    []*domain.Enrollment{enrollment},
+			want:    []domain.Enrollment{enrollment},
 			wantErr: false,
 		},
 	}
@@ -187,7 +187,7 @@ func TestEnrollmentRepo_List(t *testing.T) {
 			}
 			require.Equal(t, len(got), len(tt.want))
 			for i := range got {
-				require.EqualValues(t, &got[i], &tt.want[i])
+				require.Equal(t, got[i], tt.want[i])
 			}
 		})
 	}
@@ -196,25 +196,25 @@ func TestEnrollmentRepo_List(t *testing.T) {
 
 func TestEnrollmentRepo_Update(t *testing.T) {
 	s := newEnrollmentScenario(t)
-	enrollment := &domain.Enrollment{StudentID: s.Student.UserID, CourseID: s.Course.ID, Status: "active"}
-	createEnrollmentTest(t, enrollment)
+	enrollment := domain.Enrollment{StudentID: s.Student.UserID, CourseID: s.Course.ID, Status: "active"}
+	createEnrollmentTest(t, &enrollment)
 
 	tests := []struct {
 		name       string // description of this test case
-		enrollment *domain.Enrollment
+		enrollment domain.Enrollment
 		wantErr    bool
 	}{
 		{
 			name:       "shouldn't edit enrollment if all params are empty",
-			enrollment: &domain.Enrollment{ID: enrollment.ID},
+			enrollment: domain.Enrollment{ID: enrollment.ID},
 			wantErr:    false,
 		}, {
 			name:       "should only try to edit student ID",
-			enrollment: &domain.Enrollment{ID: enrollment.ID, StudentID: 999, CourseID: 0},
+			enrollment: domain.Enrollment{ID: enrollment.ID, StudentID: 999, CourseID: 0},
 			wantErr:    true,
 		}, {
 			name:       "should only try to edit course ID",
-			enrollment: &domain.Enrollment{ID: enrollment.ID, StudentID: 0, CourseID: 999},
+			enrollment: domain.Enrollment{ID: enrollment.ID, StudentID: 0, CourseID: 999},
 			wantErr:    true,
 		},
 	}
@@ -243,8 +243,8 @@ func TestEnrollmentRepo_Update(t *testing.T) {
 
 func TestEnrollmentRepo_Delete(t *testing.T) {
 	s := newEnrollmentScenario(t)
-	enrollment := &domain.Enrollment{StudentID: s.Student.UserID, CourseID: s.Course.ID, Status: "active"}
-	createEnrollmentTest(t, enrollment)
+	enrollment := domain.Enrollment{StudentID: s.Student.UserID, CourseID: s.Course.ID, Status: "active"}
+	createEnrollmentTest(t, &enrollment)
 	r := postgres.NewEnrollmentRepo(testDB, testLogger)
 	tests := []struct {
 		name         string // description of this test case

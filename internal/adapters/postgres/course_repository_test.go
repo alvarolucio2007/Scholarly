@@ -82,12 +82,12 @@ func TestCourseRepo_Create(t *testing.T) {
 
 func TestCourseRepo_GetByID(t *testing.T) {
 	s := newCourseScenario(t)
-	course := &domain.Course{TeacherID: s.Teacher.UserID, Name: "GetByID", Code: "GETBYID", Semester: "GETBYIDSEMESTER", MaxStudents: 100}
-	createCourseTest(t, course)
+	course := domain.Course{TeacherID: s.Teacher.UserID, Name: "GetByID", Code: "GETBYID", Semester: "GETBYIDSEMESTER", MaxStudents: 100}
+	createCourseTest(t, &course)
 	tests := []struct {
 		name     string // description of this test case
 		courseID int64
-		want     *domain.Course
+		want     domain.Course
 		wantErr  bool
 	}{
 		{
@@ -98,12 +98,12 @@ func TestCourseRepo_GetByID(t *testing.T) {
 		}, {
 			name:     "should not return anything if courseID is invalid",
 			courseID: -1,
-			want:     nil,
+			want:     domain.Course{},
 			wantErr:  true,
 		}, {
 			name:     "should not return anything if courseID doesn't exist",
 			courseID: 1000,
-			want:     nil,
+			want:     domain.Course{},
 			wantErr:  true,
 		},
 	}
@@ -120,7 +120,7 @@ func TestCourseRepo_GetByID(t *testing.T) {
 			if tt.wantErr {
 				t.Fatal("GetByID() succeeded unexpectedly")
 			}
-			require.EqualValues(t, &course, &got)
+			require.Equal(t, course, got)
 		})
 	}
 	cleanupCourse(t, course.ID, s.Teacher.UserID, s.User.ID)
@@ -129,28 +129,28 @@ func TestCourseRepo_GetByID(t *testing.T) {
 func TestCourseRepo_List(t *testing.T) {
 	incorrectStr := "INCORRECT"
 	s := newCourseScenario(t)
-	course := &domain.Course{TeacherID: s.Teacher.UserID, Name: "GetByID", Code: "GETBYID", Semester: "GETBYIDSEMESTER", MaxStudents: 100}
-	createCourseTest(t, course)
+	course := domain.Course{TeacherID: s.Teacher.UserID, Name: "GetByID", Code: "GETBYID", Semester: "GETBYIDSEMESTER", MaxStudents: 100}
+	createCourseTest(t, &course)
 	tests := []struct {
 		name    string // description of this test case
 		filter  ports.CourseFilter
-		want    []*domain.Course
+		want    []domain.Course
 		wantErr bool
 	}{
 		{
 			name:    "should list all courses if no parameters are given",
 			filter:  ports.CourseFilter{},
-			want:    []*domain.Course{course},
+			want:    []domain.Course{course},
 			wantErr: false,
 		}, {
 			name:    "shouldn't list any course if no courses match",
 			filter:  ports.CourseFilter{Name: &incorrectStr},
-			want:    []*domain.Course{},
+			want:    []domain.Course{},
 			wantErr: false,
 		}, {
 			name:    "should list only select courses if right paramenters are given",
 			filter:  ports.CourseFilter{Name: &course.Name},
-			want:    []*domain.Course{course},
+			want:    []domain.Course{course},
 			wantErr: false,
 		},
 	}
@@ -169,7 +169,7 @@ func TestCourseRepo_List(t *testing.T) {
 			}
 			require.Equal(t, len(got), len(tt.want))
 			for i := range got {
-				require.EqualValues(t, &got[i], &tt.want[i])
+				require.Equal(t, got[i], tt.want[i])
 			}
 		})
 	}
@@ -182,36 +182,36 @@ func TestCourseRepo_Update(t *testing.T) {
 	createUserTest(t, user2)
 	teacher2 := &domain.Teacher{UserID: user2.ID, Department: "CourseCreation2"}
 	createTeacherTest(t, teacher2)
-	course := &domain.Course{TeacherID: s.Teacher.UserID, Name: "GetByID", Code: "GETBYID", Semester: "GETBYIDSEMESTER", MaxStudents: 100}
-	createCourseTest(t, course)
+	course := domain.Course{TeacherID: s.Teacher.UserID, Name: "GetByID", Code: "GETBYID", Semester: "GETBYIDSEMESTER", MaxStudents: 100}
+	createCourseTest(t, &course)
 	tests := []struct {
 		name    string // description of this test case
-		course  *domain.Course
+		course  domain.Course
 		wantErr bool
 	}{
 		{
 			name:    "shouldn't edit course if all params are empty",
-			course:  &domain.Course{ID: course.ID},
+			course:  domain.Course{ID: course.ID},
 			wantErr: false,
 		}, {
 			name:    "should only edit teacherID",
-			course:  &domain.Course{ID: course.ID, TeacherID: teacher2.UserID, Name: "", Code: "", Semester: "", MaxStudents: 0},
+			course:  domain.Course{ID: course.ID, TeacherID: teacher2.UserID, Name: "", Code: "", Semester: "", MaxStudents: 0},
 			wantErr: false,
 		}, {
 			name:    "should only edit name",
-			course:  &domain.Course{ID: course.ID, TeacherID: 0, Name: "EDITED NAME", Code: "", Semester: "", MaxStudents: 0},
+			course:  domain.Course{ID: course.ID, TeacherID: 0, Name: "EDITED NAME", Code: "", Semester: "", MaxStudents: 0},
 			wantErr: false,
 		}, {
 			name:    "should only edit code",
-			course:  &domain.Course{ID: course.ID, TeacherID: 0, Name: "", Code: "EDITED CODE", Semester: "", MaxStudents: 0},
+			course:  domain.Course{ID: course.ID, TeacherID: 0, Name: "", Code: "EDITED CODE", Semester: "", MaxStudents: 0},
 			wantErr: false,
 		}, {
 			name:    "should only edit semester",
-			course:  &domain.Course{ID: course.ID, TeacherID: 0, Name: "", Code: "", Semester: "EDITED Semester", MaxStudents: 0},
+			course:  domain.Course{ID: course.ID, TeacherID: 0, Name: "", Code: "", Semester: "EDITED Semester", MaxStudents: 0},
 			wantErr: false,
 		}, {
 			name:    "should only edit max students",
-			course:  &domain.Course{ID: course.ID, TeacherID: 0, Name: "", Code: "", Semester: "", MaxStudents: 1},
+			course:  domain.Course{ID: course.ID, TeacherID: 0, Name: "", Code: "", Semester: "", MaxStudents: 1},
 			wantErr: false,
 		},
 	}
@@ -263,8 +263,8 @@ func TestCourseRepo_Update(t *testing.T) {
 
 func TestCourseRepo_Delete(t *testing.T) {
 	s := newCourseScenario(t)
-	course := &domain.Course{TeacherID: s.Teacher.UserID, Name: "GetByID", Code: "GETBYID", Semester: "GETBYIDSEMESTER", MaxStudents: 100}
-	createCourseTest(t, course)
+	course := domain.Course{TeacherID: s.Teacher.UserID, Name: "GetByID", Code: "GETBYID", Semester: "GETBYIDSEMESTER", MaxStudents: 100}
+	createCourseTest(t, &course)
 	tests := []struct {
 		name     string // description of this test case
 		courseID int64
