@@ -21,10 +21,11 @@ func NewUserCache(rdb *redis.Client) *UserCache {
 	return &UserCache{rdb: rdb}
 }
 
-func (c *UserCache) Create(ctx context.Context, item *domain.User) error {
-	if item == nil {
-		return fmt.Errorf("cache: cannot cache nil user")
-	}
+func (c *UserCache) Create(ctx context.Context, item domain.User) error {
+	if item.ID == 0 {
+		return fmt.Errorf("cache: cannot cache an empty user (ID is 0)")
+	} // this will never happen as
+
 	cacheKey := fmt.Sprintf("user:%d", item.ID)
 	json, err := json.Marshal(item)
 	if err != nil {
@@ -35,21 +36,21 @@ func (c *UserCache) Create(ctx context.Context, item *domain.User) error {
 	return c.rdb.Set(ctx, cacheKey, json, CacheExpTime).Err()
 }
 
-func (c *UserCache) Read(ctx context.Context, id int64) (*domain.User, error) {
+func (c *UserCache) Read(ctx context.Context, id int64) (domain.User, error) {
 	cacheKey := fmt.Sprintf("user:%d", id)
 	ctx, cancel := context.WithTimeout(ctx, CacheQueryTimeout)
 	defer cancel()
 	data, err := c.rdb.Get(ctx, cacheKey).Result()
 	if errors.Is(err, redis.Nil) {
-		return nil, nil
+		return domain.User{}, nil
 	} else if err != nil {
-		return nil, fmt.Errorf("cache: read user error: %w", err)
+		return domain.User{}, fmt.Errorf("cache: read user error: %w", err)
 	}
 	var user domain.User
 	if err := json.Unmarshal([]byte(data), &user); err != nil {
-		return nil, err
+		return domain.User{}, err
 	}
-	return &user, nil
+	return user, nil
 }
 
 func (c *UserCache) Delete(ctx context.Context, id int64) error {

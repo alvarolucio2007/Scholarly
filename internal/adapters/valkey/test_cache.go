@@ -21,9 +21,9 @@ func NewTestCache(rdb *redis.Client) *TestCache {
 	return &TestCache{rdb: rdb}
 }
 
-func (c *TestCache) Create(ctx context.Context, item *domain.Test) error {
-	if item == nil {
-		return fmt.Errorf("cannot cache nil test")
+func (c *TestCache) Create(ctx context.Context, item domain.Test) error {
+	if item.ID == 0 {
+		return fmt.Errorf("cannot cache empty test")
 	}
 	cacheKey := fmt.Sprintf("test:%d", item.ID)
 	json, err := json.Marshal(item)
@@ -35,21 +35,21 @@ func (c *TestCache) Create(ctx context.Context, item *domain.Test) error {
 	return c.rdb.Set(ctx, cacheKey, json, CacheExpTime).Err()
 }
 
-func (c *TestCache) Read(ctx context.Context, id int64) (*domain.Test, error) {
+func (c *TestCache) Read(ctx context.Context, id int64) (domain.Test, error) {
 	cacheKey := fmt.Sprintf("test:%d", id)
 	ctx, cancel := context.WithTimeout(ctx, CacheQueryTimeout)
 	defer cancel()
 	data, err := c.rdb.Get(ctx, cacheKey).Result()
 	if errors.Is(err, redis.Nil) {
-		return nil, nil
+		return domain.Test{}, nil
 	} else if err != nil {
-		return nil, fmt.Errorf("cache: read test error: %w", err)
+		return domain.Test{}, fmt.Errorf("cache: read test error: %w", err)
 	}
 	var test domain.Test
 	if err := json.Unmarshal([]byte(data), &test); err != nil {
-		return nil, err
+		return domain.Test{}, err
 	}
-	return &test, nil
+	return test, nil
 }
 
 func (c *TestCache) Delete(ctx context.Context, id int64) error {

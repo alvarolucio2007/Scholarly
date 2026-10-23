@@ -21,8 +21,8 @@ func NewEnrollmentCache(rdb *redis.Client) *EnrollmentCache {
 	return &EnrollmentCache{rdb: rdb}
 }
 
-func (c *EnrollmentCache) Create(ctx context.Context, item *domain.Enrollment) error {
-	if item == nil {
+func (c *EnrollmentCache) Create(ctx context.Context, item domain.Enrollment) error {
+	if item.ID == 0 {
 		return fmt.Errorf("cache: cannot cache nil enrollment")
 	}
 	cacheKey := fmt.Sprintf("enrollment:%d", item.ID)
@@ -35,21 +35,21 @@ func (c *EnrollmentCache) Create(ctx context.Context, item *domain.Enrollment) e
 	return c.rdb.Set(ctx, cacheKey, json, CacheExpTime).Err()
 }
 
-func (c *EnrollmentCache) Read(ctx context.Context, id int64) (*domain.Enrollment, error) {
+func (c *EnrollmentCache) Read(ctx context.Context, id int64) (domain.Enrollment, error) {
 	cacheKey := fmt.Sprintf("enrollment:%d", id)
 	ctx, cancel := context.WithTimeout(ctx, CacheQueryTimeout)
 	defer cancel()
 	data, err := c.rdb.Get(ctx, cacheKey).Result()
 	if errors.Is(err, redis.Nil) {
-		return nil, nil
+		return domain.Enrollment{}, nil
 	} else if err != nil {
-		return nil, fmt.Errorf("cache: read enrollment error: %w", err)
+		return domain.Enrollment{}, fmt.Errorf("cache: read enrollment error: %w", err)
 	}
 	var enrollment domain.Enrollment
 	if err := json.Unmarshal([]byte(data), &enrollment); err != nil {
-		return nil, err
+		return domain.Enrollment{}, err
 	}
-	return &enrollment, nil
+	return enrollment, nil
 }
 
 func (c *EnrollmentCache) Delete(ctx context.Context, id int64) error {
