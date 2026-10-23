@@ -140,7 +140,7 @@ func (h *Handler) ListGrades(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	response := newListGradeResponseDTO(grades)
-	_ = writeJSONData(w, http.StatusOK, response)
+	_ = writeJSON(w, http.StatusOK, response)
 }
 
 // UpdateGrade godoc
@@ -256,7 +256,7 @@ func (h *Handler) ListAverages(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	response := newListReportCardResponseDTO(reportCards)
-	_ = writeJSONData(w, http.StatusOK, response)
+	_ = writeJSON(w, http.StatusOK, response)
 }
 func newGetAverageResponseDTO(average float64) GetAverageResponseDTO {
 	return GetAverageResponseDTO{Average: average}

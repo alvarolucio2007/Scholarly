@@ -152,7 +152,7 @@ func (h *Handler) ListCourses(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	response := newListCourseResponseDTO(courses)
-	_ = writeJSONData(w, http.StatusOK, response)
+	_ = writeJSON(w, http.StatusOK, response)
 }
 
 // UpdateCourse godoc
