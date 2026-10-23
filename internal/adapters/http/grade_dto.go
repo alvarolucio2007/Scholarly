@@ -41,3 +41,6 @@ type ReportCardResponseDTO struct {
 type ListReportCardResponseDTO struct {
 	Data []ReportCardResponseDTO `json:"data"`
 }
+type GetAverageResponseDTO struct {
+	Average float64 `json:"average"`
+}
