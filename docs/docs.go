@@ -2118,6 +2118,11 @@ const docTemplate = `{
         },
         "/users/{id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Fetch an user by it's ID",
                 "consumes": [
                     "application/json"
