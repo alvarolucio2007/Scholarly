@@ -2,11 +2,13 @@
 package app
 
 import (
+	"crypto/rand"
 	"database/sql"
 	"log/slog"
 
 	"github.com/alvarolucio2007/Scholarly/internal/adapters/argon2"
 	"github.com/alvarolucio2007/Scholarly/internal/adapters/http"
+	"github.com/alvarolucio2007/Scholarly/internal/adapters/paseto"
 	"github.com/alvarolucio2007/Scholarly/internal/adapters/postgres"
 	"github.com/alvarolucio2007/Scholarly/internal/adapters/valkey"
 	"github.com/alvarolucio2007/Scholarly/internal/services"
@@ -17,11 +19,17 @@ type App struct {
 	Handler *http.Handler
 }
 
-func New(db *sql.DB, rdb *redis.Client, logger *slog.Logger) *App {
+func New(db *sql.DB, rdb *redis.Client, logger *slog.Logger, symmetricKey []byte) (*App, error) {
+	pasetoAuth, err := paseto.NewPasetoAuthenticator(symmetricKey)
+	if err != nil {
+		return nil, err
+	}
+	pasetoService := services.NewAuthenticatorService(pasetoAuth)
+
 	userRepo := postgres.NewUserRepo(db, logger)
 	hasher := argon2.NewArgon2Hasher(64*1024, 3, 2)
 	userCache := valkey.NewUserCache(rdb)
-	userSvc := services.NewUserService(userRepo, hasher, userCache, logger)
+	userSvc := services.NewUserService(userRepo, hasher, userCache, logger, pasetoAuth)
 
 	studentRepo := postgres.NewStudentRepo(db)
 	studentCache := valkey.NewStudentCache(rdb)
@@ -51,6 +59,12 @@ func New(db *sql.DB, rdb *redis.Client, logger *slog.Logger) *App {
 	healthCache := valkey.NewHealthChecker(rdb)
 	healthSvc := services.NewHealthService(healthRepo, healthCache)
 
-	handler := http.NewHandler(userSvc, studentSvc, teacherSvc, courseSvc, enrollmentSvc, testSvc, gradeSvc, logger, healthSvc)
-	return &App{Handler: handler}
+	handler := http.NewHandler(userSvc, studentSvc, teacherSvc, courseSvc, enrollmentSvc, testSvc, gradeSvc, logger, healthSvc, pasetoService)
+	return &App{Handler: handler}, nil
+}
+
+func GenerateSymmetricKey() ([]byte, error) {
+	key := make([]byte, 32)
+	_, err := rand.Read(key)
+	return key, err
 }
