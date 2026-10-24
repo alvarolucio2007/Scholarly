@@ -32,7 +32,13 @@ func (h *Handler) Mount() http.Handler {
 		MaxAge:           300,
 	}))
 	r.Use(middleware.Timeout(60 * time.Second))
-	r.Get("/health", h.healthCheckHandler)
+	r.Group(func(r chi.Router) {
+		r.Get("/health", h.healthCheckHandler)
+		r.Route("/authentication", func(r chi.Router) {
+			r.Post("/register", h.CreateUser)
+			r.Post("/token", h.createTokenHandler)
+		})
+	})
 	r.Group(func(r chi.Router) {
 		r.Use(h.BasicAuthMiddleware())
 		r.Mount("/debug", middleware.Profiler())
@@ -43,7 +49,6 @@ func (h *Handler) Mount() http.Handler {
 	r.Group(func(r chi.Router) {
 		r.Use(h.AuthTokenMiddleware)
 		r.Route("/users", func(r chi.Router) {
-			r.Post("/", h.CreateUser)
 			r.Get("/", h.ListUsers)
 			r.Put("/", h.UpdateUser)
 			r.Route("/{id}", func(r chi.Router) {
@@ -113,9 +118,6 @@ func (h *Handler) Mount() http.Handler {
 		})
 	})
 
-	r.Route("/authentication", func(r chi.Router) {
-		r.Post("/token", h.createTokenHandler)
-	})
 	return r
 }
 
