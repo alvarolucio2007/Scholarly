@@ -28,7 +28,7 @@ func newUserResponse(user domain.User) UserResponseDTO {
 //	@Failure		409		{object}	ErrorResponse
 //	@Failure		422		{object}	ErrorResponse
 //	@Failure		500		{object}	ErrorResponse
-//	@Router			/create-users [post]
+//	@Router			/authentication/register [post]
 func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var dto CreateUserDTO
 	if err := json.NewDecoder(r.Body).Decode(&dto); err != nil {
