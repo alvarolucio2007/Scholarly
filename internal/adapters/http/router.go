@@ -36,7 +36,7 @@ func (h *Handler) Mount() http.Handler {
 	r.Group(func(r chi.Router) {
 		r.Get("/health", h.healthCheckHandler)
 		r.Route("/authentication", func(r chi.Router) {
-			r.Use(httprate.LimitBy(100, time.Minute, func(r *http.Request) (string, error) {
+			r.Use(httprate.LimitBy(20, time.Minute, func(r *http.Request) (string, error) {
 				return httprate.CanonicalizeIP(middleware.GetClientIP(r.Context())), nil
 			}))
 			r.Post("/register", h.CreateUser)
