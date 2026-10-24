@@ -34,6 +34,10 @@ func (h *Handler) BasicAuthMiddleware() func(http.Handler) http.Handler {
 			username := os.Getenv("BASIC_AUTH_USER")
 			password := os.Getenv("BASIC_AUTH_PASS")
 			creds := strings.SplitN(string(decoded), ":", 2)
+			if len(creds) != 2 {
+				writeJSONError(w, 401, "invalid credentials")
+				return
+			}
 			userMatch := subtle.ConstantTimeCompare([]byte(creds[0]), []byte(username)) == 1
 			passMatch := subtle.ConstantTimeCompare([]byte(creds[1]), []byte(password)) == 1
 
@@ -67,7 +71,7 @@ func (h *Handler) AuthTokenMiddleware(next http.Handler) http.Handler {
 		ctx := r.Context()
 		user, err := h.users.GetByID(ctx, pasetoToken.UserID)
 		if err != nil {
-			writeJSONError(w, 401, err.Error())
+			writeJSONError(w, 401, "unauthorized")
 			return
 		}
 		ctx = context.WithValue(ctx, userCtx, user)
