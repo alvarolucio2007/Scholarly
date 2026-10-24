@@ -1,5 +1,26 @@
 # Changelog
 
+## [4.0.0](https://github.com/alvarolucio2007/Scholarly/compare/v3.0.1...v4.0.0) (2026-10-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* adding user registration function (just CreateUser in a different
+* replacing Route with Group, and adding Authentication route
+* adding basic auth middleware to debug,metrics and swagger routes,
+
+### Features
+
+* adding basic auth middleware to debug,metrics and swagger routes, ([176f071](https://github.com/alvarolucio2007/Scholarly/commit/176f0711d53ffbd6cadb8fa0de50637345312a14))
+* Adding PASETO token creation handler ([5f6c105](https://github.com/alvarolucio2007/Scholarly/commit/5f6c105570d374eaa90b9005a2266bdce765d33c))
+* adding user registration function (just CreateUser in a different ([502404f](https://github.com/alvarolucio2007/Scholarly/commit/502404f29a2e50d2b5ea3b637188dc5a190f06e9))
+
+
+### Bug Fixes
+
+* Adding creds length verification ([44d730c](https://github.com/alvarolucio2007/Scholarly/commit/44d730cbcd74b777870d473d8e16daccd7ef940b))
+* replacing Route with Group, and adding Authentication route ([95ddc70](https://github.com/alvarolucio2007/Scholarly/commit/95ddc70f7bf3fdd62857cf124609541b282bd9bf))
+
 ## [3.0.1](https://github.com/alvarolucio2007/Scholarly/compare/v3.0.0...v3.0.1) (2026-10-23)
 
 
