@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.0](https://github.com/alvarolucio2007/Scholarly/compare/v4.0.0...v4.1.0) (2026-10-24)
+
+
+### Features
+
+* Implementing rate limiter (100rpm limit) ([59b075e](https://github.com/alvarolucio2007/Scholarly/commit/59b075e970edde5a16f875e0a13f940aea404826))
+
 ## [4.0.0](https://github.com/alvarolucio2007/Scholarly/compare/v3.0.1...v4.0.0) (2026-10-24)
 
 
