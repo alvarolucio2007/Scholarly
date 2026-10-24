@@ -420,6 +420,44 @@ info:
   termsOfService: http://swagger.io/terms/
   title: Scholarly API
 paths:
+  /authentication/register:
+    post:
+      consumes:
+      - application/json
+      description: Create an user account
+      parameters:
+      - description: User DTO
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/internal_adapters_http.CreateUserDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/internal_adapters_http.UserResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      summary: Create an user account
+      tags:
+      - users
   /authentication/token:
     post:
       consumes:
@@ -1635,43 +1673,6 @@ paths:
       tags:
       - tests
   /users:
-    post:
-      consumes:
-      - application/json
-      description: Create an user account
-      parameters:
-      - description: User DTO
-        in: body
-        name: payload
-        required: true
-        schema:
-          $ref: '#/definitions/internal_adapters_http.CreateUserDTO'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/internal_adapters_http.UserResponseDTO'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
-        "422":
-          description: Unprocessable Entity
-          schema:
-            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
-      summary: Create an user account
-      tags:
-      - users
     put:
       consumes:
       - application/json
