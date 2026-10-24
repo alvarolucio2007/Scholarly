@@ -14,6 +14,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
+	"github.com/go-chi/httprate"
 	httpSwagger "github.com/swaggo/http-swagger/v2"
 )
 
@@ -35,6 +36,9 @@ func (h *Handler) Mount() http.Handler {
 	r.Group(func(r chi.Router) {
 		r.Get("/health", h.healthCheckHandler)
 		r.Route("/authentication", func(r chi.Router) {
+			r.Use(httprate.LimitBy(100, time.Minute, func(r *http.Request) (string, error) {
+				return httprate.CanonicalizeIP(middleware.GetClientIP(r.Context())), nil
+			}))
 			r.Post("/register", h.CreateUser)
 			r.Post("/token", h.createTokenHandler)
 		})
@@ -47,6 +51,9 @@ func (h *Handler) Mount() http.Handler {
 	})
 	// TODO: make it so that it gets user ID from path, all updates for that matter.(really gotta do this)
 	r.Group(func(r chi.Router) {
+		r.Use(httprate.LimitBy(100, time.Minute, func(r *http.Request) (string, error) {
+			return httprate.CanonicalizeIP(middleware.GetClientIP(r.Context())), nil
+		}))
 		r.Use(h.AuthTokenMiddleware)
 		r.Route("/users", func(r chi.Router) {
 			r.Get("/", h.ListUsers)
