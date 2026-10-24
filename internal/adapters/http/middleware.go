@@ -18,7 +18,7 @@ func (h *Handler) BasicAuthMiddleware() func(http.Handler) http.Handler {
 			w.Header().Set("WWW-Authenticate", `Basic realm="Restricted"`)
 			username, password, ok := r.BasicAuth()
 			if !ok {
-				writeJSONError(w, 401, "authorization header is missing or malformed")
+				_ = writeJSONError(w, 401, "authorization header is missing or malformed")
 				return
 			}
 
@@ -29,7 +29,7 @@ func (h *Handler) BasicAuthMiddleware() func(http.Handler) http.Handler {
 			passMatch := subtle.ConstantTimeCompare([]byte(password), []byte(expectedPass)) == 1
 
 			if !userMatch || !passMatch {
-				writeJSONError(w, 401, "invalid credentials")
+				_ = writeJSONError(w, 401, "invalid credentials")
 				return
 			}
 
@@ -42,24 +42,24 @@ func (h *Handler) AuthTokenMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("Authorization")
 		if authHeader == "" {
-			writeJSONError(w, 401, "authorization header is missing")
+			_ = writeJSONError(w, 401, "authorization header is missing")
 			return
 		}
 		parts := strings.Split(authHeader, " ")
 		if len(parts) != 2 || parts[0] != "Bearer" {
-			writeJSONError(w, 401, "authorization header is malformed")
+			_ = writeJSONError(w, 401, "authorization header is malformed")
 			return
 		}
 		token := parts[1]
 		pasetoToken, err := h.authenticator.VerifyToken(token)
 		if err != nil {
-			writeJSONError(w, 401, "unauthorized")
+			_ = writeJSONError(w, 401, "unauthorized")
 			return
 		}
 		ctx := r.Context()
 		user, err := h.users.GetByID(ctx, pasetoToken.UserID)
 		if err != nil {
-			writeJSONError(w, 401, "unauthorized")
+			_ = writeJSONError(w, 401, "unauthorized")
 			return
 		}
 		ctx = context.WithValue(ctx, userCtx, user)
