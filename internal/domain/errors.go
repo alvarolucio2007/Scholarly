@@ -4,8 +4,9 @@ import "errors"
 
 var (
 	// User
-	ErrInvalidCPF   = errors.New("invalid CPF")
-	ErrInvalidEmail = errors.New("invalid email")
+	ErrInvalidCPF         = errors.New("invalid CPF")
+	ErrInvalidEmail       = errors.New("invalid email")
+	ErrInvalidCredentials = errors.New("invalid credentials")
 
 	// Student
 	ErrStudentNotFound          = errors.New("student not found")
