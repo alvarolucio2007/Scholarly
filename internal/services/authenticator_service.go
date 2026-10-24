@@ -8,6 +8,9 @@ type AuthenticatorService struct {
 	auth ports.Authenticator
 }
 
+func NewAuthenticatorService(auth ports.Authenticator) *AuthenticatorService {
+	return &AuthenticatorService{auth}
+}
 func (s *AuthenticatorService) CreateToken(claims ports.Claims) (string, error) {
 	return s.auth.CreateToken(claims)
 }
