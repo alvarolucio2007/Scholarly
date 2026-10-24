@@ -16,20 +16,21 @@
     - [Function](#function)
     - [Procedure](#procedure)
   - [Endpoints da API](#endpoints-da-api)
-    - [Infraestrutura](#infraestrutura)
-    - [Users](#users)
-    - [Students](#students)
-    - [Teachers](#teachers)
-    - [Courses](#courses)
-    - [Enrollments](#enrollments)
-    - [Tests](#tests)
-    - [Grades](#grades)
-    - [Relatórios](#relatórios)
+    - [Infraestrutura & Autenticação (Público)](#infraestrutura--autenticação-público)
+    - [Administração (Basic Auth)](#administração-basic-auth)
+    - [Users](#users-bearer-token)
+    - [Students](#students-bearer-token)
+    - [Teachers](#teachers-bearer-token)
+    - [Courses](#courses-bearer-token)
+    - [Enrollments](#enrollments-bearer-token)
+    - [Tests](#tests-bearer-token)
+    - [Grades](#grades-bearer-token)
   - [Como executar](#como-executar)
     - [Requisitos](#requisitos)
     - [Passos](#passos)
   - [Decisões de projeto](#decisões-de-projeto)
     - [Arquitetura hexagonal](#arquitetura-hexagonal)
+    - [Autenticação e Segurança](#autenticação-e-segurança)
     - [DTOs de entrada e saída](#dtos-de-entrada-e-saída)
     - [Erros de domínio](#erros-de-domínio)
     - [Uso dos recursos do PostgreSQL](#uso-dos-recursos-do-postgresql)
@@ -57,7 +58,10 @@ Além dos requisitos mínimos, o projeto foi construído seguindo práticas adot
 
 - **Arquitetura hexagonal (ports and adapters)**, com separação estrita entre domínio, casos de uso, contratos e adaptadores de infraestrutura.
 - **Camada de domínio pura**, independente de frameworks, drivers de banco de dados ou bibliotecas HTTP, permitindo que as regras de negócio sejam testadas sem dependências externas.
+- **Autenticação stateless com PASETO v4**, utilizando criptografia simétrica (XChaCha20-Poly1305) e proteção contra ataques de análise de tempo (timing attacks).
 - **Hash de senha com Argon2id**, utilizando parâmetros acima da recomendação mínima do OWASP.
+- **Rate Limiting e proteção contra DDoS/Brute Force**, limitando requisições por IP e garantindo a estabilidade da API sob cargas maliciosas.
+- **Observabilidade nativa**, com endpoints de profiling (`pprof`) e métricas (`expvar`) protegidos por autenticação.
 - **DTOs específicos por camada**, isolando o contrato HTTP das entidades de domínio e evitando a exposição de campos sensíveis como `password_hash`.
 - **Tradução de erros do PostgreSQL**, mapeando códigos SQLSTATE (`23505`, `23503` e códigos customizados da aplicação como `P0S01`, `P0C01`) para erros de domínio.
 - **Documentação interativa com Swagger UI**, permitindo que todos os endpoints sejam explorados e testados sem ferramentas adicionais.
@@ -65,7 +69,7 @@ Além dos requisitos mínimos, o projeto foi construído seguindo práticas adot
 - **Integração contínua com GitHub Actions**, executando `go vet`, `staticcheck` e testes automatizados a cada push.
 - **Hot reload em desenvolvimento** com Air.
 - **Migrações de banco de dados com golang-migrate em docker**, versionando a evolução do schema.
-- Programa inteiramente containe
+- Programa inteiramente containerizado.
 
 ---
 
@@ -78,6 +82,8 @@ Além dos requisitos mínimos, o projeto foi construído seguindo práticas adot
 | Cache | Valkey 9 |
 | Roteador HTTP | chi |
 | Driver PostgreSQL | pgx/v5 |
+| Autenticação | PASETO v4 (aidantwoods) |
+| Rate Limiting | httprate |
 | Hash de senha | Argon2id |
 | Documentação da API | Swagger (swaggo) |
 | Containerização | Docker e Docker Compose |
@@ -103,7 +109,7 @@ O projeto segue os princípios da **arquitetura hexagonal**, com dependências f
 │  Domain (entidades e regras)            │
 └─────────────────────────────────────────┘
          ▲
-         │  Adapters de saída (Postgres, Argon2, Valkey)
+         │  Adapters de saída (Postgres, Argon2, Valkey, PASETO)
 ```
 
 A camada de domínio não possui conhecimento de HTTP, bancos de dados ou qualquer biblioteca de infraestrutura. Os serviços dependem apenas de interfaces (`ports`), e os adaptadores implementam essas interfaces — permitindo substituir PostgreSQL por outro banco de dados, ou chi por outro roteador, sem alterações no núcleo da aplicação.
@@ -123,9 +129,10 @@ Scholarly/
 │   └── adapters/
 │       ├── argon2/          # Implementação de hash de senha        
 │       ├── http/            # Handlers HTTP, DTOs, middlewares
-|       ├── logger/          # Logger
+│       ├── logger/          # Logger
+│       ├── paseto/          # Autenticação PASETO
 │       ├── postgres/        # PostgreSQL (Banco de dados Relacional)
-|       ├── valkey/          # Valkey (Cache não relacional)
+│       └── valkey/          # Valkey (Cache não relacional)
 ├── database/
 │   ├── tables/              # Scripts de criação de tabelas
 │   ├── views/               # Scripts de criação de Views
@@ -199,89 +206,92 @@ Retorna o `id` da matrícula criada via parâmetro `OUT`.
 
 ## Endpoints da API
 
-### Infraestrutura
+### Infraestrutura & Autenticação (Público)
 
 | Método | Rota | Descrição |
 | --- | --- | --- |
 | GET | `/health` | Health check |
-| GET | `/swagger/*` | Swagger UI |
+| POST | `/authentication/register` | Cria um novo usuário (Registro) |
+| POST | `/authentication/token` | Autentica e gera o token PASETO (Login) |
 
-### Users
+### Administração (Basic Auth)
 
 | Método | Rota | Descrição |
 | --- | --- | --- |
-| POST | `/users` | Cria usuário |
+| GET | `/swagger/*` | Documentação interativa Swagger UI |
+| GET | `/metrics` | Métricas da aplicação (expvar) |
+| GET | `/debug/*` | Profiling da aplicação (pprof) |
+
+### Users (Bearer Token)
+
+| Método | Rota | Descrição |
+| --- | --- | --- |
 | GET | `/users` | Lista usuários com filtros |
+| PUT | `/users` | Atualiza usuário |
 | GET | `/users/{id}` | Busca usuário por ID |
-| PUT | `/users/{id}` | Atualiza usuário |
 | DELETE | `/users/{id}` | Remove usuário |
 
-### Students
+### Students (Bearer Token)
 
 | Método | Rota | Descrição |
 | --- | --- | --- |
 | POST | `/students` | Cria aluno |
-| GET | `/students/enrollment/{enrollment}` | Busca aluno por número de matrícula |
+| PUT | `/students` | Atualiza aluno |
+| GET | `/students/enrollment/{id}` | Busca aluno por número de matrícula |
 | GET | `/students/{id}` | Busca aluno por ID |
-| PUT | `/students/{id}` | Atualiza aluno |
 | DELETE | `/students/{id}` | Remove aluno |
 
-### Teachers
+### Teachers (Bearer Token)
 
 | Método | Rota | Descrição |
 | --- | --- | --- |
 | POST | `/teachers` | Cria professor |
+| PUT | `/teachers` | Atualiza professor |
 | GET | `/teachers` | Lista professores |
 | GET | `/teachers/{id}` | Busca professor por ID |
-| PUT | `/teachers/{id}` | Atualiza professor |
 | DELETE | `/teachers/{id}` | Remove professor |
 
-### Courses
+### Courses (Bearer Token)
 
 | Método | Rota | Descrição |
 | --- | --- | --- |
 | POST | `/courses` | Cria disciplina |
+| PUT | `/courses` | Atualiza disciplina |
 | GET | `/courses` | Lista disciplinas |
 | GET | `/courses/{id}` | Busca disciplina por ID |
-| PUT | `/courses/{id}` | Atualiza disciplina |
 | DELETE | `/courses/{id}` | Remove disciplina |
 | POST | `/courses/enroll/` | Matricula aluno em uma disciplina (utiliza Procedure) |
 
-### Enrollments
+### Enrollments (Bearer Token)
 
 | Método | Rota | Descrição |
 | --- | --- | --- |
+| PUT | `/enrollments` | Atualiza matrícula |
 | GET | `/enrollments` | Lista matrículas |
 | GET | `/enrollments/{id}` | Busca matrícula por ID |
-| PUT | `/enrollments/{id}` | Atualiza matrícula |
 | DELETE | `/enrollments/{id}` | Remove matrícula |
 
-### Tests
+### Tests (Bearer Token)
 
 | Método | Rota | Descrição |
 | --- | --- | --- |
 | POST | `/tests` | Cria prova |
+| PUT | `/tests` | Atualiza prova |
 | GET | `/tests` | Lista provas |
 | GET | `/tests/{id}` | Busca prova por ID |
-| PUT | `/tests/{id}` | Atualiza prova |
 | DELETE | `/tests/{id}` | Remove prova |
 
-### Grades
+### Grades (Bearer Token)
 
 | Método | Rota | Descrição |
 | --- | --- | --- |
 | POST | `/grades` | Cria nota |
+| PUT | `/grades` | Atualiza nota |
 | GET | `/grades` | Lista notas |
 | GET | `/grades/{id}` | Busca nota por ID |
-| PUT | `/grades/{id}` | Atualiza nota |
 | DELETE | `/grades/{id}` | Remove nota |
-
-### Relatórios
-
-| Método | Rota | Recurso do banco |
-| --- | --- | --- |
-| GET | `/students/{student_id}/report` | View `vw_student_report_card` |
-| GET | `/students/{student_id}/courses/{course_id}/average` | Function `fn_weighted_average` |
+| GET | `/grades/average/list` | Lista as médias consolidadas |
+| GET | `/grades/average/{student_id}/{course_id}` | Consulta a média ponderada (Function) |
 
 A documentação completa, com payloads e códigos de resposta, está disponível via Swagger UI em `http://localhost:8080/swagger/index.html`.
 
@@ -313,6 +323,8 @@ Ele possui as seguintes variáveis:
 DATABASE_URL = postgres://admin:root@db:5432/scholarly?sslmode=disable
 CACHE_URL = cache:6379
 SERVER_ADDR = 0.0.0.0:8080
+BASIC_AUTH_USER = (SEU-USER-AUTH-AQUI)
+BASIC_AUTH_PASS = (SEU-PASS-AUTH-AQUI)
 ```
 
 **3. Suba a aplicação completa (com Postgres local, para Supabase, instruções abaixo.)**
@@ -329,12 +341,11 @@ Em modo de desenvolvimento com hot reload (é necessário ter a ferramenta [Make
 docker compose up db cache -d
 make migrateup
 air
-
 ```
 
 **(OPCIONAL) Supabase como banco de dados**
 
-Primeiro, mude a variável `DATABASE_URL` para a URL do supabase (é altamente recomendado usar Session Pooler nas opções de conexão do Supabase)
+Primeiro, mude a variável `DATABASE_URL` para a URL do supabase (é altamente recomendado usar Session Pooler nas opções de conexão do Supabase).
 
 Após isso, basta executar:
 
@@ -342,7 +353,7 @@ Após isso, basta executar:
 docker compose up api cache --build --no-deps
 ```
 
-**3. Acesse o Swagger UI**
+**4. Acesse o Swagger UI**
 
 ```
 http://127.0.0.1:8080/swagger/index.html
@@ -356,13 +367,19 @@ http://127.0.0.1:8080/swagger/index.html
 
 A arquitetura hexagonal foi escolhida para isolar o domínio de dependências externas. Isso permite que as regras de negócio sejam testadas sem banco de dados, que adaptadores sejam substituídos sem impacto no núcleo, e que o projeto evolua sem acumular acoplamento.
 
+### Autenticação e Segurança
+
+- **PASETO v4 em vez de JWT:** O PASETO elimina vulnerabilidades comuns de JWT (como algoritmos de criptografia configuráveis de forma insegura), forçando versões estritas e seguras por padrão.
+- **Rate Limiting (`httprate`):** Aplicado em duas camadas. Uma restrição mais severa no login (`/authentication/token`) para mitigar *brute force*, e um limite global nas rotas da API para evitar abusos e sobrecarga.
+- **Basic Auth:** Utilizado para rotas administrativas e de infraestrutura (Swagger, Pprof e Métricas), garantindo que dados sensíveis de monitoramento não fiquem expostos publicamente.
+
 ### DTOs de entrada e saída
 
 A aplicação utiliza DTOs específicos para HTTP, mantidos separados das entidades de domínio. Isso evita a exposição de campos sensíveis como `password_hash`, desacopla o contrato da API das entidades internas e simplifica a geração da documentação Swagger.
 
 ### Erros de domínio
 
-Erros são definidos no pacote `domain` (`ErrNotFound`, `ErrEmailAlreadyExists`, `ErrCourseFull`, entre outros) e traduzidos no adaptador PostgreSQL a partir de códigos SQLSTATE. O handler HTTP é responsável por mapear cada erro de domínio para o status HTTP apropriado, mantendo o núcleo independente de detalhes de infraestrutura.
+Erros são definidos no pacote `domain` (`ErrNotFound`, `ErrEmailAlreadyExists`, `ErrCourseFull`, `ErrInvalidCredentials`, entre outros) e traduzidos no adaptador PostgreSQL a partir de códigos SQLSTATE. O handler HTTP é responsável por mapear cada erro de domínio para o status HTTP apropriado, mantendo o núcleo independente de detalhes de infraestrutura.
 
 ### Uso dos recursos do PostgreSQL
 
@@ -383,9 +400,12 @@ Este projeto é uma reescrita de um sistema acadêmico desenvolvido no semestre 
 | Arquitetura | Arquitetura em camadas | Hexagonal (ports and adapters) |
 | Persistência | Sem FKs, sem índices | FKs, índices e constraints |
 | Recursos SQL | Sem View, Function ou Procedure | View, Function e Procedure integrados |
+| Autenticação | Inexistente | PASETO v4 (XChaCha20-Poly1305) |
 | Hash de senha | Inexistente | Argon2id |
+| Segurança da API | Nenhuma | Rate Limiting e Basic Auth (admin) |
+| Observabilidade | Inexistente | pprof e expvar (métricas) |
 | Documentação | Inexistente | Swagger |
-| Testes | Testes unitários | Testes unitários |
+| Testes | Testes unitários básicos | Testes unitários e de integração |
 | CI/CD | Inexistente | GitHub Actions |
 | Containerização | Docker e Docker Compose | Docker e Docker Compose |
 
@@ -393,16 +413,34 @@ Este projeto é uma reescrita de um sistema acadêmico desenvolvido no semestre 
 
 ## Performance
 
-Comando
+Os testes de carga foram realizados utilizando a ferramenta **Autocannon** com 1.000 conexões simultâneas.
+
+### Cache Hit vs Cache Miss
+Otimização da rota `GET /users/1` com implementação do padrão *Cache-Aside* no Valkey:
 
 ```bash
 npx autocannon -c 1000 -d 20 -V http://127.0.0.1:8080/users/1 --renderStatusCodes
 ```
 
-| Cenário | Req/s | p50 | p99 |
+| Cenário | Requisições/Seg | Latência (p50) | Latência (p99) |
 | --- | --- | --- | --- |
-| Sem cache | 4,900 | 202ms | 290ms |
-| Com cache | 47,000 | 21ms | 40ms |
+| Sem cache | 4.900 | 202ms | 290ms |
+| Com cache | 47.000 | 21ms | 40ms |
+
+### Resiliência do Rate Limiter
+Teste de estresse forçando o bloqueio de IP para validar a proteção contra DDoS e *Brute Force*:
+
+```bash
+npx autocannon -c 1000 -d 20 -V http://127.0.0.1:8080/users/1
+```
+
+| Métrica | Valor |
+| --- | --- |
+| Requisições/Seg (Bloqueadas) | ~49.000 |
+| Latência Média de Bloqueio | 20 ms |
+| Total de Bloqueios (429) | 979.702 |
+
+*Mesmo sob um ataque massivo de 1 milhão de requisições em 20 segundos, a API manteve a estabilidade e respondeu instantaneamente com os bloqueios.*
 
 ---
 

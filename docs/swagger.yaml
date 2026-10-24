@@ -1818,6 +1818,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Fetch an user by it's ID
       tags:
       - users
