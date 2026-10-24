@@ -10,10 +10,29 @@ import (
 	"github.com/alvarolucio2007/Scholarly/internal/app"
 )
 
+//	@title			Scholarly API
+//	@description	This is a sample Scholarly server.
+//	@termsOfService	http://swagger.io/terms/
+
+//	@contact.name	API Support
+//	@contact.url	http://www.swagger.io/support
+//	@contact.email	support@swagger.io
+
+//	@license.name	MIT
+//	@license.url	https://mit-license.org/
+
+// @securityDefinitions.apikey	ApiKeyAuth
+// @in							header
+// @name						Authorization
+// @description
 func main() {
 	logger := logger.New()
 
 	logger.Info("starting app")
+	symmetricKey, err := app.GenerateSymmetricKey()
+	if err != nil {
+		logger.Error("main: error while trying to generate symmetric key", "error", err)
+	}
 	if err := app.LoadEnv(".env"); err != nil {
 		logger.Error("main:error while trying to read env", "error", err)
 	}
@@ -48,7 +67,11 @@ func main() {
 
 	logger.Info("trying to start server")
 
-	app := app.New(db, rdb, logger)
+	app, err := app.New(db, rdb, logger, symmetricKey)
+	if err != nil {
+		logger.Error("main:error while building app", "error", err)
+		os.Exit(1)
+	}
 
 	addr := os.Getenv("SERVER_ADDR")
 	if addr == "" {

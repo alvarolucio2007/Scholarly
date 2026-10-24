@@ -27,6 +27,7 @@ func newStudentResponseDTO(student domain.Student) StudentResponseDTO {
 //	@Failure		409		{object}	ErrorResponse
 //	@Failure		422		{object}	ErrorResponse
 //	@Failure		500		{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/students [post]
 func (h *Handler) CreateStudent(w http.ResponseWriter, r *http.Request) {
 	var dto CreateStudentDTO
@@ -62,6 +63,7 @@ func (h *Handler) CreateStudent(w http.ResponseWriter, r *http.Request) {
 //	@Failure		400	{object}	ErrorResponse
 //	@Failure		404	{object}	ErrorResponse
 //	@Failure		500	{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/students/{id} [get]
 func (h *Handler) GetStudentByID(w http.ResponseWriter, r *http.Request) {
 	studentID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
@@ -94,6 +96,7 @@ func (h *Handler) GetStudentByID(w http.ResponseWriter, r *http.Request) {
 //	@Failure		400	{object}	ErrorResponse
 //	@Failure		404	{object}	ErrorResponse
 //	@Failure		500	{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/students/enrollment/{id} [get]
 func (h *Handler) GetStudentByEnrollment(w http.ResponseWriter, r *http.Request) {
 	studentEnrollment := chi.URLParam(r, "id")
@@ -117,13 +120,14 @@ func (h *Handler) GetStudentByEnrollment(w http.ResponseWriter, r *http.Request)
 //	@Tags			students
 //	@Accept			json
 //	@Produce		json
-//	@Param			payload	body		UpdateStudentDTO	true	"StudentDTO"
+//	@Param			payload	body	UpdateStudentDTO	true	"StudentDTO"
 //	@Success		204
-//	@Failure		400		{object}	ErrorResponse
-//	@Failure		404		{object}	ErrorResponse
-//	@Failure		409		{object}	ErrorResponse
-//	@Failure		422		{object}	ErrorResponse
-//	@Failure		500		{object}	ErrorResponse
+//	@Failure		400	{object}	ErrorResponse
+//	@Failure		404	{object}	ErrorResponse
+//	@Failure		409	{object}	ErrorResponse
+//	@Failure		422	{object}	ErrorResponse
+//	@Failure		500	{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/students [put]
 func (h *Handler) UpdateStudent(w http.ResponseWriter, r *http.Request) {
 	var dto UpdateStudentDTO
@@ -158,6 +162,7 @@ func (h *Handler) UpdateStudent(w http.ResponseWriter, r *http.Request) {
 //	@Failure		400	{object}	ErrorResponse
 //	@Failure		404	{object}	ErrorResponse
 //	@Failure		500	{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/students/{id} [delete]
 func (h *Handler) DeleteStudent(w http.ResponseWriter, r *http.Request) {
 	studentID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)

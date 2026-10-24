@@ -28,6 +28,7 @@ func newCourseResponseDTO(course domain.Course) CourseResponseDTO {
 //	@Failure		409		{object}	ErrorResponse
 //	@Failure		422		{object}	ErrorResponse
 //	@Failure		500		{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/courses [post]
 func (h *Handler) CreateCourse(w http.ResponseWriter, r *http.Request) {
 	var dto CreateCourseDTO
@@ -66,6 +67,7 @@ func (h *Handler) CreateCourse(w http.ResponseWriter, r *http.Request) {
 //	@Failure		400	{object}	ErrorResponse
 //	@Failure		404	{object}	ErrorResponse
 //	@Failure		500	{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/courses/{id} [get]
 func (h *Handler) GetCourseByID(w http.ResponseWriter, r *http.Request) {
 	courseID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
@@ -109,6 +111,7 @@ func newListCourseResponseDTO(courses []domain.Course) ListCourseResponseDTO {
 //	@Success		200			{array}		CourseResponseDTO
 //	@Failure		400			{object}	ErrorResponse
 //	@Failure		500			{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/courses [get]
 func (h *Handler) ListCourses(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
@@ -162,13 +165,14 @@ func (h *Handler) ListCourses(w http.ResponseWriter, r *http.Request) {
 //	@Tags			courses
 //	@Accept			json
 //	@Produce		json
-//	@Param			payload	body		UpdateCourseDTO	true	"Course DTO"
+//	@Param			payload	body	UpdateCourseDTO	true	"Course DTO"
 //	@Success		204
-//	@Failure		400		{object}	ErrorResponse
-//	@Failure		404		{object}	ErrorResponse
-//	@Failure		409		{object}	ErrorResponse
-//	@Failure		422		{object}	ErrorResponse
-//	@Failure		500		{object}	ErrorResponse
+//	@Failure		400	{object}	ErrorResponse
+//	@Failure		404	{object}	ErrorResponse
+//	@Failure		409	{object}	ErrorResponse
+//	@Failure		422	{object}	ErrorResponse
+//	@Failure		500	{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/courses [put]
 func (h *Handler) UpdateCourse(w http.ResponseWriter, r *http.Request) {
 	var dto UpdateCourseDTO
@@ -208,6 +212,7 @@ func (h *Handler) UpdateCourse(w http.ResponseWriter, r *http.Request) {
 //	@Failure		400	{object}	ErrorResponse
 //	@Failure		404	{object}	ErrorResponse
 //	@Failure		500	{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/courses/{id} [delete]
 func (h *Handler) DeleteCourse(w http.ResponseWriter, r *http.Request) {
 	courseID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
@@ -239,6 +244,7 @@ func (h *Handler) DeleteCourse(w http.ResponseWriter, r *http.Request) {
 //	@Failure		409		{object}	ErrorResponse
 //	@Failure		422		{object}	ErrorResponse
 //	@Failure		500		{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/courses/enroll/ [post]
 func (h *Handler) EnrollStudent(w http.ResponseWriter, r *http.Request) {
 	var dto EnrollStudentDTO

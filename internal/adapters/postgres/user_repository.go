@@ -59,6 +59,24 @@ func (r *UserRepo) GetByID(ctx context.Context, userID int64) (domain.User, erro
 	return u, nil
 }
 
+func (r *UserRepo) GetByEmail(ctx context.Context, email string) (domain.User, error) {
+	var u domain.User
+	query := `SELECT id,email,password_hash FROM users WHERE email = $1`
+	ctx, cancel := context.WithTimeout(ctx, PostgresQueryTimeout)
+	defer cancel()
+	err := r.db.QueryRowContext(ctx, query, email).Scan(&u.ID, &u.Email, &u.PasswordHash)
+	if errors.Is(err, sql.ErrNoRows) {
+		return domain.User{}, domain.ErrNotFound
+	}
+	if err != nil {
+		translated := translateError(err)
+		if !errors.Is(err, translated) {
+			return domain.User{}, translated
+		}
+		return domain.User{}, fmt.Errorf("postgres: getByEmail user: %w", err)
+	}
+	return u, nil
+}
 func (r *UserRepo) List(ctx context.Context, filter ports.UserFilter) ([]domain.User, error) {
 	wb := newWhereBuilder()
 	if filter.Name != nil {

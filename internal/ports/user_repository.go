@@ -14,4 +14,5 @@ type UserFilter struct {
 type UserRepository interface {
 	Repository[domain.User]
 	List(ctx context.Context, filter UserFilter) ([]domain.User, error)
+	GetByEmail(ctx context.Context, email string) (domain.User, error)
 }

@@ -28,7 +28,7 @@ func newUserResponse(user domain.User) UserResponseDTO {
 //	@Failure		409		{object}	ErrorResponse
 //	@Failure		422		{object}	ErrorResponse
 //	@Failure		500		{object}	ErrorResponse
-//	@Router			/users [post]
+//	@Router			/authentication/register [post]
 func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var dto CreateUserDTO
 	if err := json.NewDecoder(r.Body).Decode(&dto); err != nil {
@@ -108,6 +108,7 @@ func newListUserResponseDTO(users []domain.User) ListUserResponseDTO {
 //	@Success		200		{array}		ListUserResponseDTO
 //	@Failure		400		{object}	ErrorResponse
 //	@Failure		500		{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/users/ [get]
 func (h *Handler) ListUsers(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
@@ -153,6 +154,7 @@ func (h *Handler) ListUsers(w http.ResponseWriter, r *http.Request) {
 //	@Failure		409		{object}	ErrorResponse
 //	@Failure		422		{object}	ErrorResponse
 //	@Failure		500		{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/users [put]
 func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	var dto UpdateUserDTO
@@ -191,6 +193,7 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 //	@Failure		400	{object}	ErrorResponse
 //	@Failure		404	{object}	ErrorResponse
 //	@Failure		500	{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/users/{id} [delete]
 func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	userID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)

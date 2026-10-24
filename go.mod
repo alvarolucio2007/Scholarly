@@ -3,6 +3,7 @@ module github.com/alvarolucio2007/Scholarly
 go 1.27.1
 
 require (
+	aidanwoods.dev/go-paseto v1.6.0
 	github.com/go-chi/chi/v5 v5.5.0
 	github.com/go-chi/cors v1.2.2
 	github.com/go-faker/faker/v4 v4.12.0
@@ -20,6 +21,7 @@ require (
 )
 
 require (
+	aidanwoods.dev/go-result v0.3.1 // indirect
 	dario.cat/mergo v1.0.2 // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c // indirect
 	github.com/KyleBanks/depth v1.2.1 // indirect

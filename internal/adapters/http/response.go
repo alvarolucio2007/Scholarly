@@ -49,6 +49,8 @@ func writeJSONData(w http.ResponseWriter, status int, data any) error {
 
 func respondDomainError(w http.ResponseWriter, err error) {
 	switch {
+	case errors.Is(err, domain.ErrInvalidCredentials):
+		_ = writeJSONError(w, http.StatusUnauthorized, "invalid credentials")
 	case errors.Is(err, domain.ErrNotFound):
 		_ = writeJSONError(w, http.StatusNotFound, err.Error())
 	case errors.Is(err, domain.ErrConflict):

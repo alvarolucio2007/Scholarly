@@ -27,6 +27,7 @@ func newEnrollmentResponse(enrollment domain.Enrollment) EnrollmentResponseDTO {
 //	@Failure		400	{object}	ErrorResponse
 //	@Failure		404	{object}	ErrorResponse
 //	@Failure		500	{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/enrollments/{id} [get]
 func (h *Handler) GetEnrollmentByID(w http.ResponseWriter, r *http.Request) {
 	courseID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
@@ -70,6 +71,7 @@ func newListEnrollmentResponseDTO(enrollments []domain.Enrollment) ListEnrollmen
 //	@Success		200			{array}		EnrollmentResponseDTO
 //	@Failure		400			{object}	ErrorResponse
 //	@Failure		500			{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/enrollments [get]
 func (h *Handler) ListEnrollments(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
@@ -121,13 +123,14 @@ func (h *Handler) ListEnrollments(w http.ResponseWriter, r *http.Request) {
 //	@Tags			enrollments
 //	@Accept			json
 //	@Produce		json
-//	@Param			payload	body		UpdateEnrollmentDTO	true	"enrollment DTO"
+//	@Param			payload	body	UpdateEnrollmentDTO	true	"enrollment DTO"
 //	@Success		204
-//	@Failure		400		{object}	ErrorResponse
-//	@Failure		404		{object}	ErrorResponse
-//	@Failure		409		{object}	ErrorResponse
-//	@Failure		422		{object}	ErrorResponse
-//	@Failure		500		{object}	ErrorResponse
+//	@Failure		400	{object}	ErrorResponse
+//	@Failure		404	{object}	ErrorResponse
+//	@Failure		409	{object}	ErrorResponse
+//	@Failure		422	{object}	ErrorResponse
+//	@Failure		500	{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/enrollments [put]
 func (h *Handler) UpdateEnrollment(w http.ResponseWriter, r *http.Request) {
 	var dto UpdateEnrollmentDTO
@@ -163,6 +166,7 @@ func (h *Handler) UpdateEnrollment(w http.ResponseWriter, r *http.Request) {
 //	@Failure		400	{object}	ErrorResponse
 //	@Failure		404	{object}	ErrorResponse
 //	@Failure		500	{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/enrollments/{id} [delete]
 func (h *Handler) DeleteEnrollment(w http.ResponseWriter, r *http.Request) {
 	enrollmentID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
