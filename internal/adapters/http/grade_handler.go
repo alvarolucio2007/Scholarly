@@ -150,13 +150,13 @@ func (h *Handler) ListGrades(w http.ResponseWriter, r *http.Request) {
 //	@Tags			grades
 //	@Accept			json
 //	@Produce		json
-//	@Param			payload	body		UpdateGradeDTO	true	"Grade DTO"
+//	@Param			payload	body	UpdateGradeDTO	true	"Grade DTO"
 //	@Success		204
-//	@Failure		400		{object}	ErrorResponse
-//	@Failure		404		{object}	ErrorResponse
-//	@Failure		409		{object}	ErrorResponse
-//	@Failure		422		{object}	ErrorResponse
-//	@Failure		500		{object}	ErrorResponse
+//	@Failure		400	{object}	ErrorResponse
+//	@Failure		404	{object}	ErrorResponse
+//	@Failure		409	{object}	ErrorResponse
+//	@Failure		422	{object}	ErrorResponse
+//	@Failure		500	{object}	ErrorResponse
 //	@Router			/grades [put]
 func (h *Handler) UpdateGrade(w http.ResponseWriter, r *http.Request) {
 	var dto UpdateGradeDTO
@@ -231,7 +231,7 @@ func newListReportCardResponseDTO(reportCards []domain.ReportCard) ListReportCar
 //	@Accept			json
 //	@Produce		json
 //	@Param			student_id	query		int	false	"filter by studentID"
-//	@Success		200			{array}		ListAverageResponseDTO
+//	@Success		200			{array}		ListReportCardResponseDTO
 //	@Failure		400			{object}	ErrorResponse
 //	@Failure		500			{object}	ErrorResponse
 //	@Router			/grades/average/list [get]

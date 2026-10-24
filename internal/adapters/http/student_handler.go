@@ -117,13 +117,13 @@ func (h *Handler) GetStudentByEnrollment(w http.ResponseWriter, r *http.Request)
 //	@Tags			students
 //	@Accept			json
 //	@Produce		json
-//	@Param			payload	body		UpdateStudentDTO	true	"StudentDTO"
+//	@Param			payload	body	UpdateStudentDTO	true	"StudentDTO"
 //	@Success		204
-//	@Failure		400		{object}	ErrorResponse
-//	@Failure		404		{object}	ErrorResponse
-//	@Failure		409		{object}	ErrorResponse
-//	@Failure		422		{object}	ErrorResponse
-//	@Failure		500		{object}	ErrorResponse
+//	@Failure		400	{object}	ErrorResponse
+//	@Failure		404	{object}	ErrorResponse
+//	@Failure		409	{object}	ErrorResponse
+//	@Failure		422	{object}	ErrorResponse
+//	@Failure		500	{object}	ErrorResponse
 //	@Router			/students [put]
 func (h *Handler) UpdateStudent(w http.ResponseWriter, r *http.Request) {
 	var dto UpdateStudentDTO

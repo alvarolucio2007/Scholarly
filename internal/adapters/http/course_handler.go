@@ -162,13 +162,13 @@ func (h *Handler) ListCourses(w http.ResponseWriter, r *http.Request) {
 //	@Tags			courses
 //	@Accept			json
 //	@Produce		json
-//	@Param			payload	body		UpdateCourseDTO	true	"Course DTO"
+//	@Param			payload	body	UpdateCourseDTO	true	"Course DTO"
 //	@Success		204
-//	@Failure		400		{object}	ErrorResponse
-//	@Failure		404		{object}	ErrorResponse
-//	@Failure		409		{object}	ErrorResponse
-//	@Failure		422		{object}	ErrorResponse
-//	@Failure		500		{object}	ErrorResponse
+//	@Failure		400	{object}	ErrorResponse
+//	@Failure		404	{object}	ErrorResponse
+//	@Failure		409	{object}	ErrorResponse
+//	@Failure		422	{object}	ErrorResponse
+//	@Failure		500	{object}	ErrorResponse
 //	@Router			/courses [put]
 func (h *Handler) UpdateCourse(w http.ResponseWriter, r *http.Request) {
 	var dto UpdateCourseDTO

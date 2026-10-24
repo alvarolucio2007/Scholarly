@@ -121,13 +121,13 @@ func (h *Handler) ListEnrollments(w http.ResponseWriter, r *http.Request) {
 //	@Tags			enrollments
 //	@Accept			json
 //	@Produce		json
-//	@Param			payload	body		UpdateEnrollmentDTO	true	"enrollment DTO"
+//	@Param			payload	body	UpdateEnrollmentDTO	true	"enrollment DTO"
 //	@Success		204
-//	@Failure		400		{object}	ErrorResponse
-//	@Failure		404		{object}	ErrorResponse
-//	@Failure		409		{object}	ErrorResponse
-//	@Failure		422		{object}	ErrorResponse
-//	@Failure		500		{object}	ErrorResponse
+//	@Failure		400	{object}	ErrorResponse
+//	@Failure		404	{object}	ErrorResponse
+//	@Failure		409	{object}	ErrorResponse
+//	@Failure		422	{object}	ErrorResponse
+//	@Failure		500	{object}	ErrorResponse
 //	@Router			/enrollments [put]
 func (h *Handler) UpdateEnrollment(w http.ResponseWriter, r *http.Request) {
 	var dto UpdateEnrollmentDTO
