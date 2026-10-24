@@ -30,17 +30,20 @@ func NewHandler(
 	grades *services.GradeService,
 	logger *slog.Logger,
 	healthcheck *services.HealthService,
+	authenticator *services.AuthenticatorService,
+
 ) *Handler {
 	return &Handler{
-		users:       users,
-		students:    students,
-		teachers:    teachers,
-		courses:     courses,
-		enrollments: enrollments,
-		tests:       tests,
-		grades:      grades,
-		logger:      logger,
-		healthcheck: healthcheck,
+		users:         users,
+		students:      students,
+		teachers:      teachers,
+		courses:       courses,
+		enrollments:   enrollments,
+		tests:         tests,
+		grades:        grades,
+		logger:        logger,
+		healthcheck:   healthcheck,
+		authenticator: authenticator,
 	}
 }
 
