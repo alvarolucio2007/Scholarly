@@ -33,14 +33,14 @@ func (h *Handler) Mount() http.Handler {
 	}))
 	r.Use(middleware.Timeout(60 * time.Second))
 	r.Get("/health", h.healthCheckHandler)
-	r.Route("/", func(r chi.Router) {
+	r.Group(func(r chi.Router) {
 		r.Use(h.BasicAuthMiddleware())
 		r.Mount("/debug", middleware.Profiler())
 		r.Get("/metrics", expvar.Handler().ServeHTTP)
 		r.Get("/swagger/*", httpSwagger.Handler())
 	})
 	// TODO: make it so that it gets user ID from path, all updates for that matter.(really gotta do this)
-	r.Route("/", func(r chi.Router) {
+	r.Group(func(r chi.Router) {
 		r.Use(h.AuthTokenMiddleware)
 		r.Route("/users", func(r chi.Router) {
 			r.Post("/", h.CreateUser)
@@ -113,6 +113,9 @@ func (h *Handler) Mount() http.Handler {
 		})
 	})
 
+	r.Route("/authentication", func(r chi.Router) {
+		r.Post("/token", h.createTokenHandler)
+	})
 	return r
 }
 
