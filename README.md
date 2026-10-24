@@ -124,6 +124,7 @@ Scholarly/
 │       ├── argon2/          # Implementação de hash de senha        
 │       ├── http/            # Handlers HTTP, DTOs, middlewares
 |       ├── logger/          # Logger
+|       ├── paseto/          # Autenticação PASETO
 │       ├── postgres/        # PostgreSQL (Banco de dados Relacional)
 |       ├── valkey/          # Valkey (Cache não relacional)
 ├── database/
@@ -197,92 +198,92 @@ Retorna o `id` da matrícula criada via parâmetro `OUT`.
 
 ---
 
-## Endpoints da API
-
-### Infraestrutura
+### Infraestrutura & Autenticação (Público)
 
 | Método | Rota | Descrição |
 | --- | --- | --- |
 | GET | `/health` | Health check |
-| GET | `/swagger/*` | Swagger UI |
+| POST | `/authentication/register` | Cria um novo usuário (Registro) |
+| POST | `/authentication/token` | Autentica e gera o token PASETO (Login) |
 
-### Users
+### Administração (Basic Auth)
 
 | Método | Rota | Descrição |
 | --- | --- | --- |
-| POST | `/users` | Cria usuário |
+| GET | `/swagger/*` | Documentação interativa Swagger UI |
+| GET | `/metrics` | Métricas da aplicação (expvar) |
+| GET | `/debug/*` | Profiling da aplicação (pprof) |
+
+### Users (Bearer Token)
+
+| Método | Rota | Descrição |
+| --- | --- | --- |
 | GET | `/users` | Lista usuários com filtros |
+| PUT | `/users` | Atualiza usuário |
 | GET | `/users/{id}` | Busca usuário por ID |
-| PUT | `/users/{id}` | Atualiza usuário |
 | DELETE | `/users/{id}` | Remove usuário |
 
-### Students
+### Students (Bearer Token)
 
 | Método | Rota | Descrição |
 | --- | --- | --- |
 | POST | `/students` | Cria aluno |
-| GET | `/students/enrollment/{enrollment}` | Busca aluno por número de matrícula |
+| PUT | `/students` | Atualiza aluno |
+| GET | `/students/enrollment/{id}` | Busca aluno por número de matrícula |
 | GET | `/students/{id}` | Busca aluno por ID |
-| PUT | `/students/{id}` | Atualiza aluno |
 | DELETE | `/students/{id}` | Remove aluno |
 
-### Teachers
+### Teachers (Bearer Token)
 
 | Método | Rota | Descrição |
 | --- | --- | --- |
 | POST | `/teachers` | Cria professor |
+| PUT | `/teachers` | Atualiza professor |
 | GET | `/teachers` | Lista professores |
 | GET | `/teachers/{id}` | Busca professor por ID |
-| PUT | `/teachers/{id}` | Atualiza professor |
 | DELETE | `/teachers/{id}` | Remove professor |
 
-### Courses
+### Courses (Bearer Token)
 
 | Método | Rota | Descrição |
 | --- | --- | --- |
 | POST | `/courses` | Cria disciplina |
+| PUT | `/courses` | Atualiza disciplina |
 | GET | `/courses` | Lista disciplinas |
 | GET | `/courses/{id}` | Busca disciplina por ID |
-| PUT | `/courses/{id}` | Atualiza disciplina |
 | DELETE | `/courses/{id}` | Remove disciplina |
 | POST | `/courses/enroll/` | Matricula aluno em uma disciplina (utiliza Procedure) |
 
-### Enrollments
+### Enrollments (Bearer Token)
 
 | Método | Rota | Descrição |
 | --- | --- | --- |
+| PUT | `/enrollments` | Atualiza matrícula |
 | GET | `/enrollments` | Lista matrículas |
 | GET | `/enrollments/{id}` | Busca matrícula por ID |
-| PUT | `/enrollments/{id}` | Atualiza matrícula |
 | DELETE | `/enrollments/{id}` | Remove matrícula |
 
-### Tests
+### Tests (Bearer Token)
 
 | Método | Rota | Descrição |
 | --- | --- | --- |
 | POST | `/tests` | Cria prova |
+| PUT | `/tests` | Atualiza prova |
 | GET | `/tests` | Lista provas |
 | GET | `/tests/{id}` | Busca prova por ID |
-| PUT | `/tests/{id}` | Atualiza prova |
 | DELETE | `/tests/{id}` | Remove prova |
 
-### Grades
+### Grades (Bearer Token)
 
 | Método | Rota | Descrição |
 | --- | --- | --- |
 | POST | `/grades` | Cria nota |
+| PUT | `/grades` | Atualiza nota |
 | GET | `/grades` | Lista notas |
 | GET | `/grades/{id}` | Busca nota por ID |
-| PUT | `/grades/{id}` | Atualiza nota |
 | DELETE | `/grades/{id}` | Remove nota |
-
-### Relatórios
-
-| Método | Rota | Recurso do banco |
-| --- | --- | --- |
-| GET | `/students/{student_id}/report` | View `vw_student_report_card` |
-| GET | `/students/{student_id}/courses/{course_id}/average` | Function `fn_weighted_average` |
-
+| GET | `/grades/average/list` | Lista as médias consolidadas |
+| GET | `/grades/average/{student_id}/{course_id}` | Consulta a média ponderada (Function) |
 A documentação completa, com payloads e códigos de resposta, está disponível via Swagger UI em `http://localhost:8080/swagger/index.html`.
 
 ---
