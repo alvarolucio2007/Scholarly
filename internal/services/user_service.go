@@ -3,10 +3,12 @@ package services
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"time"
 
+	"github.com/alvarolucio2007/Scholarly/internal/adapters/paseto"
 	"github.com/alvarolucio2007/Scholarly/internal/domain"
 	"github.com/alvarolucio2007/Scholarly/internal/ports"
 )
@@ -16,10 +18,11 @@ type UserService struct {
 	hasher ports.PasswordHasher
 	cache  ports.Cache[domain.User]
 	logger *slog.Logger
+	auth   ports.Authenticator
 }
 
-func NewUserService(repo ports.UserRepository, hasher ports.PasswordHasher, cache ports.Cache[domain.User], logger *slog.Logger) *UserService {
-	return &UserService{repo: repo, hasher: hasher, cache: cache, logger: logger}
+func NewUserService(repo ports.UserRepository, hasher ports.PasswordHasher, cache ports.Cache[domain.User], logger *slog.Logger, auth ports.Authenticator) *UserService {
+	return &UserService{repo: repo, hasher: hasher, cache: cache, logger: logger, auth: auth}
 }
 
 type CreateUserPayload struct {
@@ -134,4 +137,29 @@ func (s *UserService) Delete(ctx context.Context, userID int64) error {
 		s.logger.ErrorContext(ctx, "failed to delete cached user", "error", err)
 	}
 	return nil
+}
+func (s *UserService) VerifyUser(ctx context.Context, email, password string) (string, error) {
+	user, err := s.repo.GetByEmail(ctx, email)
+	if err != nil {
+		if errors.Is(err, domain.ErrNotFound) {
+			return "", domain.ErrInvalidCredentials
+		}
+		return "", err
+	}
+	isSame, err := s.hasher.Check(password, string(user.PasswordHash))
+	if err != nil {
+		return "", err
+	}
+	if !isSame {
+		return "", domain.ErrInvalidCredentials
+	}
+	claims, err := paseto.NewClaims(email, 24*time.Hour, user.ID)
+	if err != nil {
+		return "", err
+	}
+	token, err := s.auth.CreateToken(claims)
+	if err != nil {
+		return "", err
+	}
+	return token, nil
 }
