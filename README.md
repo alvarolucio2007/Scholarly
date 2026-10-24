@@ -323,8 +323,8 @@ Ele possui as seguintes variáveis:
 DATABASE_URL = postgres://admin:root@db:5432/scholarly?sslmode=disable
 CACHE_URL = cache:6379
 SERVER_ADDR = 0.0.0.0:8080
-BASIC_AUTH_USER = admin
-BASIC_AUTH_PASS = admin
+BASIC_AUTH_USER = (SEU-USER-AUTH-AQUI)
+BASIC_AUTH_PASS = (SEU-PASS-AUTH-AQUI)
 ```
 
 **3. Suba a aplicação completa (com Postgres local, para Supabase, instruções abaixo.)**
