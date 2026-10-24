@@ -28,6 +28,7 @@ func newTeacherResponseDTO(teacher domain.Teacher) TeacherResponseDTO {
 //	@Failure		409		{object}	ErrorResponse
 //	@Failure		422		{object}	ErrorResponse
 //	@Failure		500		{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/teachers [post]
 func (h *Handler) CreateTeacher(w http.ResponseWriter, r *http.Request) {
 	var dto CreateTeacherDTO
@@ -63,6 +64,7 @@ func (h *Handler) CreateTeacher(w http.ResponseWriter, r *http.Request) {
 //	@Failure		400	{object}	ErrorResponse
 //	@Failure		404	{object}	ErrorResponse
 //	@Failure		500	{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/teachers/{id} [get]
 func (h *Handler) GetTeacherByID(w http.ResponseWriter, r *http.Request) {
 	userID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
@@ -104,6 +106,7 @@ func newListTeacherResponseDTO(teachers []domain.Teacher) ListTeacherResponseDTO
 //	@Success		200			{array}		ListTeacherResponseDTO
 //	@Failure		400			{object}	ErrorResponse
 //	@Failure		500			{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/teachers [get]
 func (h *Handler) ListTeachers(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
@@ -138,6 +141,7 @@ func (h *Handler) ListTeachers(w http.ResponseWriter, r *http.Request) {
 //	@Failure		409	{object}	ErrorResponse
 //	@Failure		422	{object}	ErrorResponse
 //	@Failure		500	{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/teachers [put]
 func (h *Handler) UpdateTeacher(w http.ResponseWriter, r *http.Request) {
 	var dto UpdateTeacherDTO
@@ -172,6 +176,7 @@ func (h *Handler) UpdateTeacher(w http.ResponseWriter, r *http.Request) {
 //	@Failure		400	{object}	ErrorResponse
 //	@Failure		404	{object}	ErrorResponse
 //	@Failure		500	{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/teachers/{id} [delete]
 func (h *Handler) DeleteTeacher(w http.ResponseWriter, r *http.Request) {
 	teacherID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)

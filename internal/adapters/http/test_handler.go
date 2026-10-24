@@ -30,6 +30,7 @@ func newTestResponse(test domain.Test) TestResponseDTO {
 //	@Failure		409		{object}	ErrorResponse
 //	@Failure		422		{object}	ErrorResponse
 //	@Failure		500		{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/tests [post]
 func (h *Handler) CreateTest(w http.ResponseWriter, r *http.Request) {
 	var dto CreateTestDTO
@@ -72,6 +73,7 @@ func (h *Handler) CreateTest(w http.ResponseWriter, r *http.Request) {
 //	@Failure		400	{object}	ErrorResponse
 //	@Failure		404	{object}	ErrorResponse
 //	@Failure		500	{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/tests/{id} [get]
 func (h *Handler) GetTestByID(w http.ResponseWriter, r *http.Request) {
 	testID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
@@ -114,6 +116,7 @@ func newListTestResponseDTO(tests []domain.Test) ListTestResponseDTO {
 //	@Success		200			{array}		ListTestResponseDTO
 //	@Failure		400			{object}	ErrorResponse
 //	@Failure		500			{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/tests [get]
 func (h *Handler) ListTests(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
@@ -160,6 +163,7 @@ func (h *Handler) ListTests(w http.ResponseWriter, r *http.Request) {
 //	@Failure		409		{object}	ErrorResponse
 //	@Failure		422		{object}	ErrorResponse
 //	@Failure		500		{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/tests [put]
 func (h *Handler) UpdateTest(w http.ResponseWriter, r *http.Request) {
 	var dto UpdateTestDTO
@@ -206,6 +210,7 @@ func (h *Handler) UpdateTest(w http.ResponseWriter, r *http.Request) {
 //	@Failure		400	{object}	ErrorResponse
 //	@Failure		404	{object}	ErrorResponse
 //	@Failure		500	{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/tests/{id} [delete]
 func (h *Handler) DeleteTest(w http.ResponseWriter, r *http.Request) {
 	testID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)

@@ -1,4 +1,24 @@
 definitions:
+  github_com_alvarolucio2007_Scholarly_internal_domain.EnrollmentStatus:
+    enum:
+    - active
+    - cancelled
+    - completed
+    type: string
+    x-enum-varnames:
+    - StatusActive
+    - StatusCancelled
+    - StatusCompleted
+  github_com_alvarolucio2007_Scholarly_internal_domain.SituationStatus:
+    enum:
+    - approved
+    - cancelled
+    - recovery
+    type: string
+    x-enum-varnames:
+    - StatusApproved
+    - StatusFailed
+    - StatusRecovery
   internal_adapters_http.CourseResponseDTO:
     properties:
       code:
@@ -119,6 +139,19 @@ definitions:
     - name
     - password
     type: object
+  internal_adapters_http.CreateUserTokenPayloadDTO:
+    properties:
+      email:
+        maxLength: 255
+        type: string
+      password:
+        maxLength: 72
+        minLength: 3
+        type: string
+    required:
+    - email
+    - password
+    type: object
   internal_adapters_http.EnrollStudentDTO:
     properties:
       course_id:
@@ -140,7 +173,7 @@ definitions:
       id:
         type: integer
       status:
-        type: string
+        $ref: '#/definitions/github_com_alvarolucio2007_Scholarly_internal_domain.EnrollmentStatus'
       student_id:
         type: integer
     type: object
@@ -164,7 +197,35 @@ definitions:
       value:
         type: number
     type: object
-  internal_adapters_http.ListAverageResponseDTO:
+  internal_adapters_http.ListReportCardResponseDTO:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/internal_adapters_http.ReportCardResponseDTO'
+        type: array
+    type: object
+  internal_adapters_http.ListTeacherResponseDTO:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/internal_adapters_http.TeacherResponseDTO'
+        type: array
+    type: object
+  internal_adapters_http.ListTestResponseDTO:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/internal_adapters_http.TestResponseDTO'
+        type: array
+    type: object
+  internal_adapters_http.ListUserResponseDTO:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/internal_adapters_http.UserResponseDTO'
+        type: array
+    type: object
+  internal_adapters_http.ReportCardResponseDTO:
     properties:
       average:
         type: number
@@ -175,7 +236,7 @@ definitions:
       course_name:
         type: string
       situation:
-        type: string
+        $ref: '#/definitions/github_com_alvarolucio2007_Scholarly_internal_domain.SituationStatus'
       student_id:
         type: integer
       student_name:
@@ -348,8 +409,48 @@ definitions:
         type: string
     type: object
 info:
-  contact: {}
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample Scholarly server.
+  license:
+    name: MIT
+    url: https://mit-license.org/
+  termsOfService: http://swagger.io/terms/
+  title: Scholarly API
 paths:
+  /authentication/token:
+    post:
+      consumes:
+      - application/json
+      description: Creates a token for the user
+      parameters:
+      - description: User credentials
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/internal_adapters_http.CreateUserTokenPayloadDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: token registered
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema: {}
+        "401":
+          description: Unauthorized
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Creates a token
+      tags:
+      - authentication
   /courses:
     get:
       consumes:
@@ -389,6 +490,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: List courses by parameters
       tags:
       - courses
@@ -426,6 +529,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Create a course
       tags:
       - courses
@@ -443,10 +548,8 @@ paths:
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/internal_adapters_http.CourseResponseDTO'
+        "204":
+          description: No Content
         "400":
           description: Bad Request
           schema:
@@ -467,6 +570,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Update a course
       tags:
       - courses
@@ -498,6 +603,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Deletes an course
       tags:
       - courses
@@ -530,6 +637,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Fetch a course by its ID
       tags:
       - courses
@@ -568,6 +677,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Enroll a student
       tags:
       - courses
@@ -606,6 +717,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: List enrollments by parameters
       tags:
       - enrollments
@@ -623,10 +736,8 @@ paths:
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/internal_adapters_http.EnrollmentResponseDTO'
+        "204":
+          description: No Content
         "400":
           description: Bad Request
           schema:
@@ -647,6 +758,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Update an enrollment
       tags:
       - enrollments
@@ -678,6 +791,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Deletes an enrollment
       tags:
       - enrollments
@@ -710,6 +825,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Fetch an enrollment by it's ID
       tags:
       - enrollments
@@ -744,6 +861,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: List grades by parameters
       tags:
       - grades
@@ -781,6 +900,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Create a grade
       tags:
       - grades
@@ -798,10 +919,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/internal_adapters_http.GradeResponseDTO'
+        "204":
+          description: No Content
         "400":
           description: Bad Request
           schema:
@@ -822,6 +941,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Update a grade
       tags:
       - grades
@@ -853,6 +974,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Deletes a grade
       tags:
       - grades
@@ -885,6 +1008,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Fetch a grade by its ID
       tags:
       - grades
@@ -924,6 +1049,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Gets an student average
       tags:
       - grades
@@ -944,7 +1071,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/internal_adapters_http.ListAverageResponseDTO'
+              $ref: '#/definitions/internal_adapters_http.ListReportCardResponseDTO'
             type: array
         "400":
           description: Bad Request
@@ -954,6 +1081,9 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      - ApiKeyAuth: []
       summary: List averages
       tags:
       - grades
@@ -992,6 +1122,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Create an student account
       tags:
       - students
@@ -1009,10 +1141,8 @@ paths:
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/internal_adapters_http.StudentResponseDTO'
+        "204":
+          description: No Content
         "400":
           description: Bad Request
           schema:
@@ -1033,6 +1163,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Update a student account
       tags:
       - students
@@ -1064,6 +1196,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Deletes an student account
       tags:
       - students
@@ -1096,6 +1230,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Fetch a student by it's ID
       tags:
       - students
@@ -1129,6 +1265,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Fetch a student by it's enrollment
       tags:
       - students
@@ -1149,7 +1287,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/internal_adapters_http.TeacherResponseDTO'
+              $ref: '#/definitions/internal_adapters_http.ListTeacherResponseDTO'
             type: array
         "400":
           description: Bad Request
@@ -1159,6 +1297,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: List teachers by department
       tags:
       - teachers
@@ -1196,6 +1336,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Create an teacher account
       tags:
       - teachers
@@ -1213,10 +1355,8 @@ paths:
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/internal_adapters_http.TeacherResponseDTO'
+        "204":
+          description: No Content
         "400":
           description: Bad Request
           schema:
@@ -1237,6 +1377,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Update an teacher account
       tags:
       - teachers
@@ -1268,6 +1410,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Deletes an teacher account
       tags:
       - teachers
@@ -1300,6 +1444,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Fetch a teacher by its ID
       tags:
       - teachers
@@ -1324,7 +1470,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/internal_adapters_http.TestResponseDTO'
+              $ref: '#/definitions/internal_adapters_http.ListTestResponseDTO'
             type: array
         "400":
           description: Bad Request
@@ -1334,6 +1480,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: List tests by parameters
       tags:
       - tests
@@ -1371,6 +1519,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Create a test
       tags:
       - tests
@@ -1412,6 +1562,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Update a test
       tags:
       - tests
@@ -1443,6 +1595,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Deletes a test
       tags:
       - tests
@@ -1475,6 +1629,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Fetch a test by its ID
       tags:
       - tests
@@ -1554,6 +1710,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Update an user account
       tags:
       - users
@@ -1582,7 +1740,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/internal_adapters_http.UserResponseDTO'
+              $ref: '#/definitions/internal_adapters_http.ListUserResponseDTO'
             type: array
         "400":
           description: Bad Request
@@ -1592,6 +1750,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: List users by parameters
       tags:
       - users
@@ -1623,6 +1783,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Deletes an user account
       tags:
       - users
@@ -1658,4 +1820,9 @@ paths:
       summary: Fetch an user by it's ID
       tags:
       - users
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

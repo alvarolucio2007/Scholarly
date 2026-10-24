@@ -28,6 +28,7 @@ func newGradeResponseDTO(grade domain.Grade) GradeResponseDTO {
 //	@Failure		409		{object}	ErrorResponse
 //	@Failure		422		{object}	ErrorResponse
 //	@Failure		500		{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/grades [post]
 func (h *Handler) CreateGrade(w http.ResponseWriter, r *http.Request) {
 	var dto CreateGradeDTO
@@ -64,6 +65,7 @@ func (h *Handler) CreateGrade(w http.ResponseWriter, r *http.Request) {
 //	@Failure		400	{object}	ErrorResponse
 //	@Failure		404	{object}	ErrorResponse
 //	@Failure		500	{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/grades/{id} [get]
 func (h *Handler) GetGradeByID(w http.ResponseWriter, r *http.Request) {
 	gradeID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
@@ -106,6 +108,7 @@ func newListGradeResponseDTO(grades []domain.Grade) ListGradeResponseDTO {
 //	@Success		200				{array}		GradeResponseDTO
 //	@Failure		400				{object}	ErrorResponse
 //	@Failure		500				{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/grades [get]
 func (h *Handler) ListGrades(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
@@ -157,6 +160,7 @@ func (h *Handler) ListGrades(w http.ResponseWriter, r *http.Request) {
 //	@Failure		409	{object}	ErrorResponse
 //	@Failure		422	{object}	ErrorResponse
 //	@Failure		500	{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/grades [put]
 func (h *Handler) UpdateGrade(w http.ResponseWriter, r *http.Request) {
 	var dto UpdateGradeDTO
@@ -193,6 +197,7 @@ func (h *Handler) UpdateGrade(w http.ResponseWriter, r *http.Request) {
 //	@Failure		400	{object}	ErrorResponse
 //	@Failure		404	{object}	ErrorResponse
 //	@Failure		500	{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/grades/{id} [delete]
 func (h *Handler) DeleteGrade(w http.ResponseWriter, r *http.Request) {
 	gradeID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
@@ -234,6 +239,8 @@ func newListReportCardResponseDTO(reportCards []domain.ReportCard) ListReportCar
 //	@Success		200			{array}		ListReportCardResponseDTO
 //	@Failure		400			{object}	ErrorResponse
 //	@Failure		500			{object}	ErrorResponse
+//	@Security		ApiKeyAuth
+//	@Security		ApiKeyAuth
 //	@Router			/grades/average/list [get]
 func (h *Handler) ListAverages(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
@@ -275,6 +282,7 @@ func newGetAverageResponseDTO(average float64) GetAverageResponseDTO {
 //	@Failure		400			{object}	ErrorResponse
 //	@Failure		404			{object}	ErrorResponse
 //	@Failure		500			{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/grades/average/{student_id}/{course_id} [get]
 func (h *Handler) GetAverage(w http.ResponseWriter, r *http.Request) {
 	studentID, err := strconv.ParseInt(chi.URLParam(r, "student_id"), 10, 64)

@@ -9,14 +9,74 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "contact": {},
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "url": "http://www.swagger.io/support",
+            "email": "support@swagger.io"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://mit-license.org/"
+        },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/authentication/token": {
+            "post": {
+                "description": "Creates a token for the user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "authentication"
+                ],
+                "summary": "Creates a token",
+                "parameters": [
+                    {
+                        "description": "User credentials",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.CreateUserTokenPayloadDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "token registered",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {}
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            }
+        },
         "/courses": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "List courses by name,cpf and email",
                 "consumes": [
                     "application/json"
@@ -79,6 +139,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Update a course",
                 "consumes": [
                     "application/json"
@@ -102,11 +167,8 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.CourseResponseDTO"
-                        }
+                    "204": {
+                        "description": "No Content"
                     },
                     "400": {
                         "description": "Bad Request",
@@ -141,6 +203,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Create a course",
                 "consumes": [
                     "application/json"
@@ -199,6 +266,11 @@ const docTemplate = `{
         },
         "/courses/enroll/": {
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Enroll a student",
                 "consumes": [
                     "application/json"
@@ -257,6 +329,11 @@ const docTemplate = `{
         },
         "/courses/{id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Fetch a course by its ID",
                 "consumes": [
                     "application/json"
@@ -305,6 +382,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Deletes an course by ID",
                 "consumes": [
                     "application/json"
@@ -352,6 +434,11 @@ const docTemplate = `{
         },
         "/enrollments": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "List enrollments by courseID,status and studentID",
                 "consumes": [
                     "application/json"
@@ -408,6 +495,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Update an enrollment by its ID",
                 "consumes": [
                     "application/json"
@@ -431,11 +523,8 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.EnrollmentResponseDTO"
-                        }
+                    "204": {
+                        "description": "No Content"
                     },
                     "400": {
                         "description": "Bad Request",
@@ -472,6 +561,11 @@ const docTemplate = `{
         },
         "/enrollments/{id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Fetch an enrollment by it's ID",
                 "consumes": [
                     "application/json"
@@ -520,6 +614,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Deletes an grade by ID",
                 "consumes": [
                     "application/json"
@@ -567,6 +666,11 @@ const docTemplate = `{
         },
         "/grades": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "List grades by test_id and enrollment_id",
                 "consumes": [
                     "application/json"
@@ -617,6 +721,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Update a grade",
                 "consumes": [
                     "application/json"
@@ -640,11 +749,8 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.GradeResponseDTO"
-                        }
+                    "204": {
+                        "description": "No Content"
                     },
                     "400": {
                         "description": "Bad Request",
@@ -679,6 +785,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Create a grade",
                 "consumes": [
                     "application/json"
@@ -737,6 +848,14 @@ const docTemplate = `{
         },
         "/grades/average/list": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "List averages by studentID",
                 "consumes": [
                     "application/json"
@@ -762,7 +881,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/internal_adapters_http.ListAverageResponseDTO"
+                                "$ref": "#/definitions/internal_adapters_http.ListReportCardResponseDTO"
                             }
                         }
                     },
@@ -783,6 +902,11 @@ const docTemplate = `{
         },
         "/grades/average/{student_id}/{course_id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Gets an student average by userID and courseID",
                 "consumes": [
                     "application/json"
@@ -841,6 +965,11 @@ const docTemplate = `{
         },
         "/grades/{id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Fetch a grade by its ID",
                 "consumes": [
                     "application/json"
@@ -889,6 +1018,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Deletes a grade by ID",
                 "consumes": [
                     "application/json"
@@ -936,6 +1070,11 @@ const docTemplate = `{
         },
         "/students": {
             "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Update a student account",
                 "consumes": [
                     "application/json"
@@ -959,11 +1098,8 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.StudentResponseDTO"
-                        }
+                    "204": {
+                        "description": "No Content"
                     },
                     "400": {
                         "description": "Bad Request",
@@ -998,6 +1134,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Create an user account with user_id and enrollment_number",
                 "consumes": [
                     "application/json"
@@ -1056,6 +1197,11 @@ const docTemplate = `{
         },
         "/students/enrollment/{id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Fetch a student by it's enrollment",
                 "consumes": [
                     "application/json"
@@ -1106,6 +1252,11 @@ const docTemplate = `{
         },
         "/students/{id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Fetch a student by it's ID",
                 "consumes": [
                     "application/json"
@@ -1154,6 +1305,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Deletes an student account by ID",
                 "consumes": [
                     "application/json"
@@ -1201,6 +1357,11 @@ const docTemplate = `{
         },
         "/teachers": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "List teachers by department",
                 "consumes": [
                     "application/json"
@@ -1226,7 +1387,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/internal_adapters_http.TeacherResponseDTO"
+                                "$ref": "#/definitions/internal_adapters_http.ListTeacherResponseDTO"
                             }
                         }
                     },
@@ -1245,6 +1406,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Update an teacher account",
                 "consumes": [
                     "application/json"
@@ -1268,11 +1434,8 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.TeacherResponseDTO"
-                        }
+                    "204": {
+                        "description": "No Content"
                     },
                     "400": {
                         "description": "Bad Request",
@@ -1307,6 +1470,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Create an teacher account",
                 "consumes": [
                     "application/json"
@@ -1365,6 +1533,11 @@ const docTemplate = `{
         },
         "/teachers/{id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Fetch a teacher by its ID",
                 "consumes": [
                     "application/json"
@@ -1413,6 +1586,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Deletes an teacher account by ID",
                 "consumes": [
                     "application/json"
@@ -1460,6 +1638,11 @@ const docTemplate = `{
         },
         "/tests": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "List tests by courseID and name",
                 "consumes": [
                     "application/json"
@@ -1491,7 +1674,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/internal_adapters_http.TestResponseDTO"
+                                "$ref": "#/definitions/internal_adapters_http.ListTestResponseDTO"
                             }
                         }
                     },
@@ -1510,6 +1693,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Update a test",
                 "consumes": [
                     "application/json"
@@ -1572,6 +1760,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Create a test",
                 "consumes": [
                     "application/json"
@@ -1630,6 +1823,11 @@ const docTemplate = `{
         },
         "/tests/{id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Fetch a test by its ID",
                 "consumes": [
                     "application/json"
@@ -1678,6 +1876,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Deletes an test by ID",
                 "consumes": [
                     "application/json"
@@ -1725,6 +1928,11 @@ const docTemplate = `{
         },
         "/users": {
             "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Update an user account",
                 "consumes": [
                     "application/json"
@@ -1845,6 +2053,11 @@ const docTemplate = `{
         },
         "/users/": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "List users by name,cpf and email",
                 "consumes": [
                     "application/json"
@@ -1882,7 +2095,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/internal_adapters_http.UserResponseDTO"
+                                "$ref": "#/definitions/internal_adapters_http.ListUserResponseDTO"
                             }
                         }
                     },
@@ -1951,6 +2164,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Deletes an user account by ID",
                 "consumes": [
                     "application/json"
@@ -1998,6 +2216,32 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "github_com_alvarolucio2007_Scholarly_internal_domain.EnrollmentStatus": {
+            "type": "string",
+            "enum": [
+                "active",
+                "cancelled",
+                "completed"
+            ],
+            "x-enum-varnames": [
+                "StatusActive",
+                "StatusCancelled",
+                "StatusCompleted"
+            ]
+        },
+        "github_com_alvarolucio2007_Scholarly_internal_domain.SituationStatus": {
+            "type": "string",
+            "enum": [
+                "approved",
+                "cancelled",
+                "recovery"
+            ],
+            "x-enum-varnames": [
+                "StatusApproved",
+                "StatusFailed",
+                "StatusRecovery"
+            ]
+        },
         "internal_adapters_http.CourseResponseDTO": {
             "type": "object",
             "properties": {
@@ -2166,6 +2410,24 @@ const docTemplate = `{
                 }
             }
         },
+        "internal_adapters_http.CreateUserTokenPayloadDTO": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "password": {
+                    "type": "string",
+                    "maxLength": 72,
+                    "minLength": 3
+                }
+            }
+        },
         "internal_adapters_http.EnrollStudentDTO": {
             "type": "object",
             "required": [
@@ -2196,7 +2458,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "status": {
-                    "type": "string"
+                    "$ref": "#/definitions/github_com_alvarolucio2007_Scholarly_internal_domain.EnrollmentStatus"
                 },
                 "student_id": {
                     "type": "integer"
@@ -2234,7 +2496,51 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_adapters_http.ListAverageResponseDTO": {
+        "internal_adapters_http.ListReportCardResponseDTO": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_adapters_http.ReportCardResponseDTO"
+                    }
+                }
+            }
+        },
+        "internal_adapters_http.ListTeacherResponseDTO": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_adapters_http.TeacherResponseDTO"
+                    }
+                }
+            }
+        },
+        "internal_adapters_http.ListTestResponseDTO": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_adapters_http.TestResponseDTO"
+                    }
+                }
+            }
+        },
+        "internal_adapters_http.ListUserResponseDTO": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_adapters_http.UserResponseDTO"
+                    }
+                }
+            }
+        },
+        "internal_adapters_http.ReportCardResponseDTO": {
             "type": "object",
             "properties": {
                 "average": {
@@ -2250,7 +2556,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "situation": {
-                    "type": "string"
+                    "$ref": "#/definitions/github_com_alvarolucio2007_Scholarly_internal_domain.SituationStatus"
                 },
                 "student_id": {
                     "type": "integer"
@@ -2498,6 +2804,13 @@ const docTemplate = `{
                 }
             }
         }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
     }
 }`
 
@@ -2507,8 +2820,8 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "",
 	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "",
-	Description:      "",
+	Title:            "Scholarly API",
+	Description:      "This is a sample Scholarly server.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",
