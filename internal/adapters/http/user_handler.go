@@ -65,6 +65,7 @@ func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 //	@Failure		400	{object}	ErrorResponse
 //	@Failure		404	{object}	ErrorResponse
 //	@Failure		500	{object}	ErrorResponse
+//	@Security		ApiKeyAuth
 //	@Router			/users/{id} [get]
 func (h *Handler) GetUserByID(w http.ResponseWriter, r *http.Request) {
 	userID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
