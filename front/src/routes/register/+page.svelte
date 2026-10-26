@@ -5,6 +5,7 @@
     let email=$state('');
     let password=$state('');
     let errorMessage = $state('');
+    let successMessage=$state('');
     async function handleSignup(event: SubmitEvent){
       event.preventDefault();
       try{
@@ -19,7 +20,10 @@
         if (!response.ok){
           const errorData= await response.json();
           errorMessage=errorData.error || 'An error has occurred.';
-      }
+        }else{
+          successMessage='User has been created successfully! Please return to the login screen below.';
+        }
+
       } catch(error){
         errorMessage = 'Connection error. Please try again.';
         console.log(error)
@@ -44,7 +48,7 @@
 
         <form onsubmit={handleSignup} class="flex flex-col gap-5">
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
                 <input
                     type="text"
                     bind:value={name}
@@ -54,7 +58,7 @@
                 />
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
                 <input
                     type="email"
                     bind:value={email}
@@ -64,7 +68,7 @@
                 />
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">CPF</label>
+                <label for="cpf" class="block text-sm font-medium text-gray-700 mb-1">CPF</label>
                 <input
                     type="text"
                     value={cpf}
@@ -76,7 +80,7 @@
                 />
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
                 <input
                     type="password"
                     bind:value={password}
@@ -88,6 +92,11 @@
             {#if errorMessage}
                 <div class="bg-red-50 text-red-500 text-sm p-3 rounded-lg text-center">
                     {errorMessage}
+                </div>
+            {/if}
+            {#if errorMessage}
+                <div class="bg-green-50 text-green-500 text-sm p-3 rounded-lg text-center">
+                    {successMessage}
                 </div>
             {/if}
 
