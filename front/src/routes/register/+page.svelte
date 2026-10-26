@@ -7,7 +7,6 @@
     let errorMessage = $state('');
     async function handleSignup(event: SubmitEvent){
       event.preventDefault();
-    let errorMessage='';
       try{
 
         const response = await fetch('http://localhost:8080/authentication/register', {
@@ -41,20 +40,19 @@
 </script>
 <div class="min-h-screen flex items-center justify-center bg-gray-100 p-4">
     <div class="w-full max-w-md bg-white p-8 rounded-xl shadow-lg">
-
         <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">Registration</h1>
 
         <form onsubmit={handleSignup} class="flex flex-col gap-5">
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
                 <input
+                    type="text"
                     bind:value={name}
                     required
                     placeholder="John Doe"
                     class="w-full p-2.5 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 />
             </div>
-
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
                 <input
@@ -87,7 +85,6 @@
                     class="w-full p-2.5 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 />
             </div>
-
             {#if errorMessage}
                 <div class="bg-red-50 text-red-500 text-sm p-3 rounded-lg text-center">
                     {errorMessage}
@@ -101,9 +98,11 @@
                 Create Account
             </button>
         </form>
+
+        <!-- Link para voltar ao Login -->
         <div class="mt-6 text-center text-sm text-gray-600">
             Already have an account?
-            <a href={resolve('/login')} class="text-blue-600 hover:text-blue-800 font-semibold hover:underline transition-all">
+            <a href={resolve('/register')} class="text-blue-600 hover:text-blue-800 font-semibold hover:underline transition-all">
                 Sign in
             </a>
         </div>
