@@ -20,8 +20,10 @@
         if (!response.ok){
           const errorData= await response.json();
           errorMessage=errorData.error || 'An error has occurred.';
+          successMessage='';
         }else{
           successMessage='User has been created successfully! Please return to the login screen below.';
+          errorMessage='';
         }
 
       } catch(error){
@@ -94,7 +96,7 @@
                     {errorMessage}
                 </div>
             {/if}
-            {#if errorMessage}
+            {#if successMessage}
                 <div class="bg-green-50 text-green-500 text-sm p-3 rounded-lg text-center">
                     {successMessage}
                 </div>
@@ -108,7 +110,6 @@
             </button>
         </form>
 
-        <!-- Link para voltar ao Login -->
         <div class="mt-6 text-center text-sm text-gray-600">
             Already have an account?
             <a href={resolve('/login')} class="text-blue-600 hover:text-blue-800 font-semibold hover:underline transition-all">
