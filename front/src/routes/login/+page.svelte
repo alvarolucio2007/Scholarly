@@ -31,7 +31,6 @@
         }
     }
 </script>
-
 <div class="min-h-screen flex items-center justify-center bg-gray-100 p-4">
     <div class="w-full max-w-md bg-white p-8 rounded-xl shadow-lg">
 
@@ -39,7 +38,7 @@
 
         <form onsubmit={handleLogin} class="flex flex-col gap-5">
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
                 <input
                     type="email"
                     bind:value={email}
@@ -50,7 +49,7 @@
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
                 <input
                     type="password"
                     bind:value={password}
