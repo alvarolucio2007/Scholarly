@@ -7,6 +7,8 @@
 </script>
 
 <svelte:head>
+    <title>Scholarly</title>
+    <meta name="description" content="Sistema de Gestão Acadêmica" />
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
