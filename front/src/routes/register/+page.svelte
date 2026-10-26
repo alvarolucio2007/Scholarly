@@ -102,7 +102,7 @@
         <!-- Link para voltar ao Login -->
         <div class="mt-6 text-center text-sm text-gray-600">
             Already have an account?
-            <a href={resolve('/register')} class="text-blue-600 hover:text-blue-800 font-semibold hover:underline transition-all">
+            <a href={resolve('/login')} class="text-blue-600 hover:text-blue-800 font-semibold hover:underline transition-all">
                 Sign in
             </a>
         </div>
