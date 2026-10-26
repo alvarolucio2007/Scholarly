@@ -3,7 +3,7 @@ package http
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/alvarolucio2007/Scholarly/internal/domain"
@@ -52,27 +52,28 @@ func respondDomainError(w http.ResponseWriter, err error) {
 	case errors.Is(err, domain.ErrInvalidCredentials):
 		_ = writeJSONError(w, http.StatusUnauthorized, "invalid credentials")
 	case errors.Is(err, domain.ErrNotFound):
-		_ = writeJSONError(w, http.StatusNotFound, err.Error())
+		_ = writeJSONError(w, http.StatusNotFound, "Not found")
 	case errors.Is(err, domain.ErrConflict):
-		_ = writeJSONError(w, http.StatusConflict, err.Error())
+		_ = writeJSONError(w, http.StatusConflict, "Resource may already exist")
 	case errors.Is(err, domain.ErrInvalidEmail):
-		_ = writeJSONError(w, http.StatusBadRequest, err.Error())
+		_ = writeJSONError(w, http.StatusBadRequest, "E-mail is invalid")
 	case errors.Is(err, domain.ErrInvalidCPF):
-		_ = writeJSONError(w, http.StatusBadRequest, err.Error())
+		_ = writeJSONError(w, http.StatusBadRequest, "CPF is invalid")
 	case errors.Is(err, domain.ErrEmailAlreadyExists):
-		_ = writeJSONError(w, http.StatusConflict, err.Error())
+		_ = writeJSONError(w, http.StatusConflict, "E-mail already exists")
 	case errors.Is(err, domain.ErrCPFAlreadyExists):
-		_ = writeJSONError(w, http.StatusConflict, err.Error())
+		_ = writeJSONError(w, http.StatusConflict, "CPF already exists")
 	case errors.Is(err, domain.ErrStudentNotFound):
-		_ = writeJSONError(w, http.StatusNotFound, err.Error())
+		_ = writeJSONError(w, http.StatusNotFound, "Student not found")
 	case errors.Is(err, domain.ErrCourseNotFound):
-		_ = writeJSONError(w, http.StatusNotFound, err.Error())
+		_ = writeJSONError(w, http.StatusNotFound, "Course not found")
 	case errors.Is(err, domain.ErrEnrollmentAlreadyExists):
-		_ = writeJSONError(w, http.StatusConflict, err.Error())
+		_ = writeJSONError(w, http.StatusConflict, "Enrollment already exists")
 	case errors.Is(err, domain.ErrCourseFull):
-		_ = writeJSONError(w, http.StatusConflict, err.Error())
+		_ = writeJSONError(w, http.StatusConflict, "Course is full")
 
 	default:
-		_ = writeJSONError(w, http.StatusInternalServerError, fmt.Sprintf("internal error: %v", err.Error()))
+		log.Printf("ERROR: internal error: %v", err.Error())
+		_ = writeJSONError(w, http.StatusInternalServerError, "internal server error")
 	}
 }
