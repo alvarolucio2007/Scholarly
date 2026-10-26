@@ -1,5 +1,23 @@
 # Changelog
 
+## [4.2.0](https://github.com/alvarolucio2007/Scholarly/compare/v4.1.0...v4.2.0) (2026-10-26)
+
+
+### Features
+
+* Adding basic login page. ([10dcfc3](https://github.com/alvarolucio2007/Scholarly/commit/10dcfc3ee7d3782f8d85c88df6bb8933598b0400))
+* Adding user registration page ([f1dcf6d](https://github.com/alvarolucio2007/Scholarly/commit/f1dcf6dd18996ccd79ba8a1a3d847773fce88da5))
+
+
+### Bug Fixes
+
+* Adding for tags in label ([f4ee661](https://github.com/alvarolucio2007/Scholarly/commit/f4ee6619c09870bd68da4b464c3ba8f780258a68))
+* Adding success return message and proper label to input. ([3f1d1a2](https://github.com/alvarolucio2007/Scholarly/commit/3f1d1a2dc4ba2869d35d504af92a2bce27cd3b2c))
+* Adding successMessage and errorMessage reset ([10a2242](https://github.com/alvarolucio2007/Scholarly/commit/10a2242e78ba63530c13918855dc2effefe337d1))
+* changing resolve from /register to /login ([88d84d1](https://github.com/alvarolucio2007/Scholarly/commit/88d84d1d476cd39c2902c29e3fbff149df0a508e))
+* fixing error return ([9c78dfe](https://github.com/alvarolucio2007/Scholarly/commit/9c78dfe6f45d86c33ae1de7327a4cf6cb54b483d))
+* Refactoring error names so they're both passing and more clear. ([57a4838](https://github.com/alvarolucio2007/Scholarly/commit/57a483802eb750b02f7874b78ba3ae16a0ca78a3))
+
 ## [4.1.0](https://github.com/alvarolucio2007/Scholarly/compare/v4.0.0...v4.1.0) (2026-10-24)
 
 
