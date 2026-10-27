@@ -122,6 +122,9 @@ func (r *CourseRepo) Update(ctx context.Context, course domain.Course) error {
 	if err != nil {
 		translated := translateError(err)
 		if !errors.Is(err, translated) {
+			if errors.Is(translated, domain.ErrForeignKeyViolation) {
+				return domain.ErrTeacherNotFound
+			}
 			return translated
 		}
 		return fmt.Errorf("postgres: update courses: %w", err)
