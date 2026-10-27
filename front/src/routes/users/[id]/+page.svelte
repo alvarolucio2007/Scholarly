@@ -81,7 +81,7 @@
                     cpf: cpf.replace(/\D/g, ''), // <-- Envia o CPF SÓ COM NÚMEROS
                     // Se o usuário não digitou senha nova, não mande.
                     // (O Go com nilIfEmpty vai ignorar string vazia)
-                    password: password.trim() || undefined
+                    password: password || undefined
                 })
             });
 
@@ -126,8 +126,8 @@
                         <input
                             id="edit-name"
                             type="text"
-                            bind:value={name}
                             required
+                            bind:value={name}
                             class="w-full p-2.5 rounded-lg border border-gray-300 bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                         />
                     </div>
@@ -161,7 +161,6 @@
                             id="edit-password"
                             type="text"
                             bind:value={password}
-                            required
                             class="w-full p-2.5 rounded-lg border border-gray-300 bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                         />
                     </div>
