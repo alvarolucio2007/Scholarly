@@ -1,5 +1,43 @@
 # Changelog
 
+## [5.0.0](https://github.com/alvarolucio2007/Scholarly/compare/v4.2.0...v5.0.0) (2026-10-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* Adding ErrTeacherNotFound if FK violation in UpdateCourse
+* adding minimum password length to be 8
+* CHanging writeJSONData to writeJSON in ListStudent (will get rid
+
+### Features
+
+* Adding (incomplete and buggy) user edit page ([1d72592](https://github.com/alvarolucio2007/Scholarly/commit/1d725927ff2b4807082a59b00be44123fe75b781))
+* Adding basic dashboard page ([13db66d](https://github.com/alvarolucio2007/Scholarly/commit/13db66da588863d34962156438abb4660d6e5a46))
+* Adding course dashboard, creation,edit and enrollment pages ([28925a8](https://github.com/alvarolucio2007/Scholarly/commit/28925a8a1480fc27368c49a169b2ee06d406e31b))
+* Adding create student page ([02aa9b0](https://github.com/alvarolucio2007/Scholarly/commit/02aa9b06e2fa8f03ba38506743802800a3d3ea06))
+* Adding enrollment dashboard and edit page ([96cdf60](https://github.com/alvarolucio2007/Scholarly/commit/96cdf6009ee7fc58a3fa73a45094f0d0996529d4))
+* Adding ErrTeacherNotFound if FK violation in UpdateCourse ([068ec6c](https://github.com/alvarolucio2007/Scholarly/commit/068ec6c77b4a2e35e0c99a264d1eb75dd9f1e08d))
+* Adding grades dashboard, editing, averages dashboard and average ([4ebe303](https://github.com/alvarolucio2007/Scholarly/commit/4ebe303ad1aecd4c94e2275d3ba451ac06a55e34))
+* Adding student edit page ([fb1e0af](https://github.com/alvarolucio2007/Scholarly/commit/fb1e0af8cf2de4e29587766014d10cfe7397ae5b))
+* Adding student page ([b5e2f1e](https://github.com/alvarolucio2007/Scholarly/commit/b5e2f1e54ada4403c99212bb9eb92e9798943910))
+* Adding teacher creation page ([4c6d3ff](https://github.com/alvarolucio2007/Scholarly/commit/4c6d3ff3e2640ce66b44163a11bc683f012d0369))
+* Adding teacher dashboard ([ec398c0](https://github.com/alvarolucio2007/Scholarly/commit/ec398c0eae44548ab92c866303220371619baa70))
+* Adding teacher editing page ([129eac3](https://github.com/alvarolucio2007/Scholarly/commit/129eac35a6fc6139ca0b6a0ed8914326fe5d83fd))
+* Adding test creation,editing and dashboard pages ([f5f2ac6](https://github.com/alvarolucio2007/Scholarly/commit/f5f2ac62917401116eadc3aca5079c1a753945a6))
+* Adding user dashboard page ([38e32aa](https://github.com/alvarolucio2007/Scholarly/commit/38e32aacde36ab39a7812fcd54e84f25d73d6e26))
+* Making FK violation in Course creation return Teacher Not Found ([b1bd273](https://github.com/alvarolucio2007/Scholarly/commit/b1bd273d2158bde871dbf7cdc75b0adf4f9b9acb))
+
+
+### Bug Fixes
+
+* adding logger and replcaing teachers with students in List ([2c04ed6](https://github.com/alvarolucio2007/Scholarly/commit/2c04ed6ff41d483bbd1a8be1c246d1829177581d))
+* adding minimum password length to be 8 ([beceb00](https://github.com/alvarolucio2007/Scholarly/commit/beceb00bef0a75b57f6cc4f81bc040612feea90f))
+* Adding proper FK violation handling in Create ([3bfd653](https://github.com/alvarolucio2007/Scholarly/commit/3bfd6531c9f82f46c0bbad33ad4830ac696e9c39))
+* CHanging writeJSONData to writeJSON in ListStudent (will get rid ([b49a593](https://github.com/alvarolucio2007/Scholarly/commit/b49a593f6c43d33a404278e28366cadae07d9fa2))
+* Fixing user.email not updating proper emails ([e4d051c](https://github.com/alvarolucio2007/Scholarly/commit/e4d051c0647611ce5ef9fb2cb6677a1d1860003a))
+* Fixing writeJSON to writeJSONData in List ([8f1f563](https://github.com/alvarolucio2007/Scholarly/commit/8f1f5634d9b1e265d6f96ade0826129116efcf10))
+* removing trailing space behind min in Password ([133a4b5](https://github.com/alvarolucio2007/Scholarly/commit/133a4b5ebbc83ac67d0b6e7862441be4c21b441c))
+
 ## [4.2.0](https://github.com/alvarolucio2007/Scholarly/compare/v4.1.0...v4.2.0) (2026-10-26)
 
 
