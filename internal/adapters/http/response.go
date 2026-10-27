@@ -63,6 +63,8 @@ func respondDomainError(w http.ResponseWriter, err error) {
 		_ = writeJSONError(w, http.StatusConflict, "E-mail already exists")
 	case errors.Is(err, domain.ErrCPFAlreadyExists):
 		_ = writeJSONError(w, http.StatusConflict, "CPF already exists")
+	case errors.Is(err, domain.ErrUserNotFound):
+		_ = writeJSONError(w, http.StatusNotFound, "User not found")
 	case errors.Is(err, domain.ErrStudentNotFound):
 		_ = writeJSONError(w, http.StatusNotFound, "Student not found")
 	case errors.Is(err, domain.ErrCourseNotFound):
@@ -71,7 +73,6 @@ func respondDomainError(w http.ResponseWriter, err error) {
 		_ = writeJSONError(w, http.StatusConflict, "Enrollment already exists")
 	case errors.Is(err, domain.ErrCourseFull):
 		_ = writeJSONError(w, http.StatusConflict, "Course is full")
-
 	default:
 		log.Printf("ERROR: internal error: %v", err.Error())
 		_ = writeJSONError(w, http.StatusInternalServerError, "internal server error")

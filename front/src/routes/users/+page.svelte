@@ -113,7 +113,8 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
-                        {#each users as user}
+                        {#each users as user (user.id)}
+
                             <tr class="hover:bg-gray-50 transition-colors">
                                 <td class="p-4 text-gray-500 font-mono text-sm">#{user.id}</td>
                                 <td class="p-4 text-gray-800 font-medium">{user.name}</td>

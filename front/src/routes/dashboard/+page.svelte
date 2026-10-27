@@ -73,16 +73,28 @@
             <span class="text-3xl mb-2">👥</span>
             <span class="font-semibold text-gray-700">Users</span>
         </a>
-        <a href={resolve('/courses')} class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md hover:border-blue-400 transition-all flex flex-col items-center justify-center text-center">
-            <span class="text-3xl mb-2">📚</span>
-            <span class="font-semibold text-gray-700">Courses</span>
-        </a>
         <a href={resolve('/students')} class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md hover:border-blue-400 transition-all flex flex-col items-center justify-center text-center">
             <span class="text-3xl mb-2">🎓</span>
             <span class="font-semibold text-gray-700">Students</span>
         </a>
+        <a href={resolve('/teachers')} class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md hover:border-blue-400 transition-all flex flex-col items-center justify-center text-center">
+            <span class="text-3xl mb-2">🧑‍🏫</span>
+            <span class="font-semibold text-gray-700">Teachers</span>
+        </a>
+        <a href={resolve('/courses')} class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md hover:border-blue-400 transition-all flex flex-col items-center justify-center text-center">
+            <span class="text-3xl mb-2">📚</span>
+            <span class="font-semibold text-gray-700">Courses</span>
+        </a>
+        <a href={resolve('/enrollments')} class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md hover:border-blue-400 transition-all flex flex-col items-center justify-center text-center">
+            <span class="text-3xl mb-2">📋</span>
+            <span class="font-semibold text-gray-700">Enrollments</span>
+        </a>
+        <a href={resolve('/tests')} class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md hover:border-blue-400 transition-all flex flex-col items-center justify-center text-center">
+            <span class="text-3xl mb-2">✏️</span>
+            <span class="font-semibold text-gray-700">Tests</span>
+        </a>
         <a href={resolve('/grades')} class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md hover:border-blue-400 transition-all flex flex-col items-center justify-center text-center">
-            <span class="text-3xl mb-2">📝</span>
+            <span class="text-3xl mb-2">📊</span>
             <span class="font-semibold text-gray-700">Grades</span>
         </a>
     </div>
