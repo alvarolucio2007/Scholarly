@@ -204,6 +204,13 @@ definitions:
           $ref: '#/definitions/internal_adapters_http.ReportCardResponseDTO'
         type: array
     type: object
+  internal_adapters_http.ListStudentResponseDTO:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/internal_adapters_http.StudentResponseDTO'
+        type: array
+    type: object
   internal_adapters_http.ListTeacherResponseDTO:
     properties:
       data:
@@ -1126,6 +1133,35 @@ paths:
       tags:
       - grades
   /students:
+    get:
+      consumes:
+      - application/json
+      description: List students by their enrollments
+      parameters:
+      - description: filter by enrollment number
+        in: query
+        name: enrollment_number
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ListStudentResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: List students by their enrollments
+      tags:
+      - students
     post:
       consumes:
       - application/json
@@ -1271,41 +1307,6 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Fetch a student by it's ID
-      tags:
-      - students
-  /students/enrollment/{id}:
-    get:
-      consumes:
-      - application/json
-      description: Fetch a student by it's enrollment
-      parameters:
-      - description: Student Enrollment
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/internal_adapters_http.StudentResponseDTO'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/internal_adapters_http.ErrorResponse'
-      security:
-      - ApiKeyAuth: []
-      summary: Fetch a student by it's enrollment
       tags:
       - students
   /teachers:
