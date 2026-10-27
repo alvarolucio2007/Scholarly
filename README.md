@@ -1,5 +1,3 @@
-[Read in English](README.en.md)
-
 # Scholarly
 
 <!--toc:start-->
@@ -12,43 +10,35 @@
   - [Banco de dados](#banco-de-dados)
     - [SGBD](#sgbd)
     - [Principais tabelas](#principais-tabelas)
-    - [View](#view)
-    - [Function](#function)
-    - [Procedure](#procedure)
+    - [View, Function e Procedure](#view-function-e-procedure)
   - [Endpoints da API](#endpoints-da-api)
     - [Infraestrutura & Autenticação (Público)](#infraestrutura--autenticação-público)
     - [Administração (Basic Auth)](#administração-basic-auth)
-    - [Users](#users-bearer-token)
-    - [Students](#students-bearer-token)
-    - [Teachers](#teachers-bearer-token)
-    - [Courses](#courses-bearer-token)
-    - [Enrollments](#enrollments-bearer-token)
-    - [Tests](#tests-bearer-token)
-    - [Grades](#grades-bearer-token)
+    - [Recursos Protegidos (Bearer Token)](#recursos-protegidos-bearer-token)
   - [Como executar](#como-executar)
     - [Requisitos](#requisitos)
     - [Passos](#passos)
   - [Decisões de projeto](#decisões-de-projeto)
     - [Arquitetura hexagonal](#arquitetura-hexagonal)
     - [Autenticação e Segurança](#autenticação-e-segurança)
-    - [DTOs de entrada e saída](#dtos-de-entrada-e-saída)
-    - [Erros de domínio](#erros-de-domínio)
+    - [Frontend e Experiência do Usuário](#frontend-e-experiência-do-usuário)
     - [Uso dos recursos do PostgreSQL](#uso-dos-recursos-do-postgresql)
   - [Evolução em relação ao semestre anterior](#evolução-em-relação-ao-semestre-anterior)
   - [Performance](#performance)
-  - [Vídeos](#vídeos)
   - [Licença](#licença)
 <!--toc:end-->
 
-Sistema de gestão acadêmica desenvolvido em Go e PostgreSQL.
+Sistema de gestão acadêmica Fullstack desenvolvido com Go, PostgreSQL e SvelteKit.
 
 ---
 
 ## Visão geral
 
-O Scholarly é uma API REST para gestão acadêmica que lida com alunos, professores, disciplinas, provas, matrículas e notas. O projeto foi desenvolvido como parte de um trabalho da disciplina de Banco de Dados, com o objetivo de demonstrar, na prática, a integração entre uma aplicação e recursos avançados do PostgreSQL.
+O Scholarly é uma aplicação web completa para gestão acadêmica que lida com alunos, professores, disciplinas, provas, matrículas e notas. O projeto foi desenvolvido como parte de um trabalho da disciplina de Banco de Dados, com o objetivo de demonstrar, na prática, a integração entre uma aplicação Fullstack moderna e recursos avançados do PostgreSQL.
 
-O sistema atende à necessidade de uma plataforma centralizada de gestão acadêmica que vá além do CRUD tradicional, utilizando recursos nativos do banco de dados para processar e consolidar informações, como cálculo de média ponderada, boletins consolidados de alunos e matrícula atômica com validação de vagas.
+O sistema atende à necessidade de uma plataforma centralizada de gestão acadêmica que vá além do CRUD tradicional. No backend, utiliza recursos nativos do banco de dados para processar e consolidar informações (como cálculo de média ponderada, boletins consolidados e matrícula atômica com validação de vagas). No frontend, entrega uma interface de usuário (UI) fluida, responsiva e moderna para a manipulação desses dados.
+
+Nota: Front-end criado majoritariamente com ajuda de IA.
 
 ---
 
@@ -56,20 +46,18 @@ O sistema atende à necessidade de uma plataforma centralizada de gestão acadê
 
 Além dos requisitos mínimos, o projeto foi construído seguindo práticas adotadas em ambientes de produção:
 
-- **Arquitetura hexagonal (ports and adapters)**, com separação estrita entre domínio, casos de uso, contratos e adaptadores de infraestrutura.
-- **Camada de domínio pura**, independente de frameworks, drivers de banco de dados ou bibliotecas HTTP, permitindo que as regras de negócio sejam testadas sem dependências externas.
-- **Autenticação stateless com PASETO v4**, utilizando criptografia simétrica (XChaCha20-Poly1305) e proteção contra ataques de análise de tempo (timing attacks).
-- **Hash de senha com Argon2id**, utilizando parâmetros acima da recomendação mínima do OWASP.
-- **Rate Limiting e proteção contra DDoS/Brute Force**, limitando requisições por IP e garantindo a estabilidade da API sob cargas maliciosas.
-- **Observabilidade nativa**, com endpoints de profiling (`pprof`) e métricas (`expvar`) protegidos por autenticação.
-- **DTOs específicos por camada**, isolando o contrato HTTP das entidades de domínio e evitando a exposição de campos sensíveis como `password_hash`.
-- **Tradução de erros do PostgreSQL**, mapeando códigos SQLSTATE (`23505`, `23503` e códigos customizados da aplicação como `P0S01`, `P0C01`) para erros de domínio.
-- **Documentação interativa com Swagger UI**, permitindo que todos os endpoints sejam explorados e testados sem ferramentas adicionais.
-- Orquestração completa com Docker Compose, incluindo banco de dados, migrações e aplicação. O projeto pode ser executado com apenas três comandos, sem necessidade de instalar Go ou PostgreSQL localmente.
-- **Integração contínua com GitHub Actions**, executando `go vet`, `staticcheck` e testes automatizados a cada push.
-- **Hot reload em desenvolvimento** com Air.
-- **Migrações de banco de dados com golang-migrate em docker**, versionando a evolução do schema.
-- Programa inteiramente containerizado.
+- **Arquitetura Fullstack desacoplada:** Backend em Go (API REST) e Frontend em SvelteKit (SPA), comunicando-se de forma segura via Bearer Token.
+- **Arquitetura hexagonal (ports and adapters):** Separação estrita no backend entre domínio, casos de uso, contratos e adaptadores de infraestrutura.
+- **Camada de domínio pura:** Independente de frameworks, drivers de banco de dados ou bibliotecas HTTP, permitindo que as regras de negócio sejam testadas sem dependências externas.
+- **Autenticação stateless com PASETO v4:** Utilizando criptografia simétrica (XChaCha20-Poly1305) e proteção contra ataques de análise de tempo (*timing attacks*).
+- **Hash de senha com Argon2id:** Utilizando parâmetros acima da recomendação mínima do OWASP.
+- **Rate Limiting e proteção contra DDoS/Brute Force:** Limitando requisições por IP para garantir a estabilidade da API.
+- **Observabilidade nativa:** Endpoints de profiling (`pprof`) e métricas (`expvar`) protegidos por autenticação.
+- **Frontend moderno:** Interface construída com SvelteKit, TypeScript e Tailwind CSS, com validação de formulários em tempo real e feedback visual de erros.
+- **Tradução de erros do PostgreSQL:** Mapeando códigos SQLSTATE (`23505`, `23503` e códigos customizados) para erros de domínio na API.
+- **Documentação interativa com Swagger UI:** Permitindo que todos os endpoints sejam explorados e testados.
+- **Orquestração completa com Docker Compose:** Banco de dados, migrações, backend e frontend sobem com um único comando.
+- **Integração contínua com GitHub Actions:** Executando `go vet`, `staticcheck` e testes automatizados a cada push.
 
 ---
 
@@ -77,6 +65,7 @@ Além dos requisitos mínimos, o projeto foi construído seguindo práticas adot
 
 | Camada | Tecnologia |
 | --- | --- |
+| **Backend** | |
 | Linguagem | Go 1.27 |
 | Banco de dados | PostgreSQL 17 |
 | Cache | Valkey 9 |
@@ -85,18 +74,23 @@ Além dos requisitos mínimos, o projeto foi construído seguindo práticas adot
 | Autenticação | PASETO v4 (aidantwoods) |
 | Rate Limiting | httprate |
 | Hash de senha | Argon2id |
-| Documentação da API | Swagger (swaggo) |
+| Documentação | Swagger (swaggo) |
+| **Frontend** | |
+| Framework | SvelteKit (Svelte 5) |
+| Linguagem | TypeScript |
+| Estilização | Tailwind CSS |
+| **Infraestrutura** | |
 | Containerização | Docker e Docker Compose |
 | Testes | Testify e Testcontainers |
 | CI | GitHub Actions |
-| Ferramenta de desenvolvimento | Air |
-| Migrações de banco de dados | golang-migrate |
 
 ---
 
 ## Arquitetura
 
-O projeto segue os princípios da **arquitetura hexagonal**, com dependências fluindo exclusivamente de fora para dentro:
+O projeto adota uma separação clara entre as responsabilidades de backend e frontend.
+
+O **Backend** segue os princípios da **arquitetura hexagonal**, com dependências fluindo exclusivamente de fora para dentro:
 
 ```
 ┌─────────────────────────────────────────┐
@@ -112,35 +106,35 @@ O projeto segue os princípios da **arquitetura hexagonal**, com dependências f
          │  Adapters de saída (Postgres, Argon2, Valkey, PASETO)
 ```
 
-A camada de domínio não possui conhecimento de HTTP, bancos de dados ou qualquer biblioteca de infraestrutura. Os serviços dependem apenas de interfaces (`ports`), e os adaptadores implementam essas interfaces — permitindo substituir PostgreSQL por outro banco de dados, ou chi por outro roteador, sem alterações no núcleo da aplicação.
+O **Frontend** atua como um consumidor puro da API REST. Ele gerencia o estado de autenticação (armazenando o token PASETO) e consome os endpoints protegidos, garantindo que a lógica de negócio permaneça centralizada no backend.
 
 ### Estrutura do projeto
 
 ```
 Scholarly/
 ├── cmd/
-│   └── api/                 # Entrypoint da aplicação
+│   └── api/                 # Entrypoint da aplicação (Backend)
 ├── internal/
 │   ├── domain/              # Entidades e regras de negócio
 │   ├── ports/               # Interfaces (contratos)
 │   ├── service/             # Casos de uso
-│   ├── env/                 # Suporte a variáveis de ambiente (.env)
+│   ├── env/                 # Suporte a variáveis de ambiente
 │   ├── config/              # Configurações básicas
-│   └── adapters/
-│       ├── argon2/          # Implementação de hash de senha        
-│       ├── http/            # Handlers HTTP, DTOs, middlewares
-│       ├── logger/          # Logger
-│       ├── paseto/          # Autenticação PASETO
-│       ├── postgres/        # PostgreSQL (Banco de dados Relacional)
-│       └── valkey/          # Valkey (Cache não relacional)
+│   └── adapters/            # Implementações de infraestrutura (HTTP, DB, Cache, Auth)
 ├── database/
 │   ├── tables/              # Scripts de criação de tabelas
 │   ├── views/               # Scripts de criação de Views
 │   ├── functions/           # Scripts de criação de Functions
 │   ├── procedures/          # Scripts de criação de Procedures
 │   └── inserts/             # Dados de teste (seed)
+├── frontend/                # Aplicação SvelteKit (Frontend)
+│   ├── src/
+│   │   ├── routes/          # Páginas (login, dashboard, CRUDs)
+│   │   └── lib/             # Componentes e utilitários
+│   ├── package.json
+│   └── Dockerfile
 ├── docs/                    # Documentação Swagger gerada
-├── docker-compose.yml
+├── docker-compose.yml       # Orquestração de toda a stack
 ├── Makefile
 └── README.md
 ```
@@ -150,57 +144,27 @@ Scholarly/
 ## Banco de dados
 
 ### SGBD
-
-**PostgreSQL 17**, executado via Docker.
-**Supabase**, como opção.
+**PostgreSQL 17**, executado via Docker. O projeto também possui suporte para conexão com o **Supabase** em nuvem.
 
 ### Principais tabelas
+O modelo utiliza **herança por tabela** para separar a identidade (`users`) das especializações (`students`, `teachers`), evitando duplicação de dados e permitindo múltiplos papéis para um mesmo usuário.
 
 | Tabela | Descrição |
 | --- | --- |
-| `users` | Identidade central de alunos, professores e administradores |
-| `students` | Dados específicos de alunos (herança de tabela a partir de `users`) |
-| `teachers` | Dados específicos de professores (herança de tabela a partir de `users`) |
-| `courses` | Disciplinas ofertadas por semestre |
+| `users` | Identidade central (autenticação) |
+| `students` | Dados específicos de alunos |
+| `teachers` | Dados específicos de professores |
+| `courses` | Disciplinas ofertadas |
 | `enrollments` | Matrículas de alunos em disciplinas |
 | `tests` | Provas por disciplina, com peso |
 | `grades` | Nota de cada aluno por prova |
 
-O modelo utiliza **herança por tabela** para separar a identidade (`users`) das especializações (`students`, `teachers`), evitando duplicação de dados de autenticação e permitindo que um único usuário possua múltiplos papéis.
+### View, Function e Procedure
+A inteligência de dados foi delegada ao PostgreSQL para garantir performance e atomicidade:
 
-### View
-
-**`vw_student_report_card`**
-
-Consolida, em uma única linha por aluno e disciplina, os dados do boletim acadêmico: nome do aluno, disciplina, professor, média ponderada e situação (aprovado, recuperação ou reprovado). A View encapsula múltiplos JOINs entre `users`, `students`, `enrollments`, `courses` e `teachers`, e integra a função `fn_weighted_average` para o cálculo da média.
-
-**Uso na aplicação:** `GET /students/{student_id}/report`
-
-### Function
-
-**`fn_weighted_average(p_student_id BIGINT, p_course_id BIGINT)`**
-
-Calcula a média ponderada de um aluno em uma disciplina, considerando o peso de cada prova. Retorna um valor `NUMERIC` — `0` quando o aluno não possui notas, ou levanta uma exceção (`P0S01`, `P0C01`) quando o aluno ou a disciplina não existem.
-
-**Uso na aplicação:**
-
-- Diretamente pelo endpoint `GET /students/{student_id}/courses/{course_id}/average`
-- Internamente pela View `vw_student_report_card`
-
-### Procedure
-
-**`sp_enroll_student(p_student_id BIGINT, p_course_id BIGINT, OUT p_enrollment_id BIGINT)`**
-
-Realiza a matrícula de um aluno em uma disciplina com validações atômicas:
-
-1. Aluno existe
-2. Disciplina existe
-3. Aluno não está já matriculado
-4. Disciplina possui vaga disponível
-
-Retorna o `id` da matrícula criada via parâmetro `OUT`.
-
-**Uso na aplicação:** `POST /courses/enroll/`
+- **View (`vw_student_report_card`):** Consolida múltiplos JOINs para gerar o boletim acadêmico (média e situação do aluno).
+- **Function (`fn_weighted_average`):** Calcula a média ponderada de um aluno em uma disciplina.
+- **Procedure (`sp_enroll_student`):** Realiza a matrícula de forma atômica, validando vagas disponíveis e duplicidade em uma única transação.
 
 ---
 
@@ -222,76 +186,20 @@ Retorna o `id` da matrícula criada via parâmetro `OUT`.
 | GET | `/metrics` | Métricas da aplicação (expvar) |
 | GET | `/debug/*` | Profiling da aplicação (pprof) |
 
-### Users (Bearer Token)
+### Recursos Protegidos (Bearer Token)
 
 | Método | Rota | Descrição |
 | --- | --- | --- |
-| GET | `/users` | Lista usuários com filtros |
-| PUT | `/users` | Atualiza usuário |
-| GET | `/users/{id}` | Busca usuário por ID |
-| DELETE | `/users/{id}` | Remove usuário |
-
-### Students (Bearer Token)
-
-| Método | Rota | Descrição |
-| --- | --- | --- |
-| POST | `/students` | Cria aluno |
-| PUT | `/students` | Atualiza aluno |
-| GET | `/students/enrollment/{id}` | Busca aluno por número de matrícula |
-| GET | `/students/{id}` | Busca aluno por ID |
-| DELETE | `/students/{id}` | Remove aluno |
-
-### Teachers (Bearer Token)
-
-| Método | Rota | Descrição |
-| --- | --- | --- |
-| POST | `/teachers` | Cria professor |
-| PUT | `/teachers` | Atualiza professor |
-| GET | `/teachers` | Lista professores |
-| GET | `/teachers/{id}` | Busca professor por ID |
-| DELETE | `/teachers/{id}` | Remove professor |
-
-### Courses (Bearer Token)
-
-| Método | Rota | Descrição |
-| --- | --- | --- |
-| POST | `/courses` | Cria disciplina |
-| PUT | `/courses` | Atualiza disciplina |
-| GET | `/courses` | Lista disciplinas |
-| GET | `/courses/{id}` | Busca disciplina por ID |
-| DELETE | `/courses/{id}` | Remove disciplina |
-| POST | `/courses/enroll/` | Matricula aluno em uma disciplina (utiliza Procedure) |
-
-### Enrollments (Bearer Token)
-
-| Método | Rota | Descrição |
-| --- | --- | --- |
-| PUT | `/enrollments` | Atualiza matrícula |
-| GET | `/enrollments` | Lista matrículas |
-| GET | `/enrollments/{id}` | Busca matrícula por ID |
-| DELETE | `/enrollments/{id}` | Remove matrícula |
-
-### Tests (Bearer Token)
-
-| Método | Rota | Descrição |
-| --- | --- | --- |
-| POST | `/tests` | Cria prova |
-| PUT | `/tests` | Atualiza prova |
-| GET | `/tests` | Lista provas |
-| GET | `/tests/{id}` | Busca prova por ID |
-| DELETE | `/tests/{id}` | Remove prova |
-
-### Grades (Bearer Token)
-
-| Método | Rota | Descrição |
-| --- | --- | --- |
-| POST | `/grades` | Cria nota |
-| PUT | `/grades` | Atualiza nota |
-| GET | `/grades` | Lista notas |
-| GET | `/grades/{id}` | Busca nota por ID |
-| DELETE | `/grades/{id}` | Remove nota |
-| GET | `/grades/average/list` | Lista as médias consolidadas |
-| GET | `/grades/average/{student_id}/{course_id}` | Consulta a média ponderada (Function) |
+| GET/PUT/DELETE | `/users` | Listagem, atualização e remoção de usuários |
+| GET/POST/PUT/DELETE | `/students` | Gerenciamento de alunos |
+| GET/POST/PUT/DELETE | `/teachers` | Gerenciamento de professores |
+| GET/POST/PUT/DELETE | `/courses` | Gerenciamento de disciplinas |
+| POST | `/courses/enroll/` | Matrícula de aluno (consome a Procedure do banco) |
+| GET/PUT/DELETE | `/enrollments` | Gerenciamento de matrículas |
+| GET/POST/PUT/DELETE | `/tests` | Gerenciamento de provas |
+| GET/POST/PUT/DELETE | `/grades` | Gerenciamento de notas |
+| GET | `/grades/average/list` | Lista as médias consolidadas (View) |
+| GET | `/grades/average/{s_id}/{c_id}` | Consulta a média ponderada (Function) |
 
 A documentação completa, com payloads e códigos de resposta, está disponível via Swagger UI em `http://localhost:8080/swagger/index.html`.
 
@@ -300,63 +208,41 @@ A documentação completa, com payloads e códigos de resposta, está disponíve
 ## Como executar
 
 ### Requisitos
-
 - Docker e Docker Compose
-- Make
+- Make (Opcional, para atalhos de desenvolvimento)
 
 ### Passos
 
-**1. Clone o repositório**
-
+**1. Clone o repositório e configure o ambiente**
 ```bash
 git clone https://github.com/alvarolucio2007/Scholarly.git
 cd Scholarly
+cp .env.example .env
 ```
+*(Edite o arquivo `.env` com as suas credenciais e defina um `BASIC_AUTH_USER` e `BASIC_AUTH_PASS` para acessar o Swagger e Métricas).*
 
-**2. Remova o .example do arquivo .env.example**
-
-O arquivo .env.example possui exemplos válidos de variáveis de ambiente.
-
-Ele possui as seguintes variáveis:
-
-```env
-DATABASE_URL = postgres://admin:root@db:5432/scholarly?sslmode=disable
-CACHE_URL = cache:6379
-SERVER_ADDR = 0.0.0.0:8080
-BASIC_AUTH_USER = (SEU-USER-AUTH-AQUI)
-BASIC_AUTH_PASS = (SEU-PASS-AUTH-AQUI)
-```
-
-**3. Suba a aplicação completa (com Postgres local, para Supabase, instruções abaixo.)**
-
+**2. Suba a aplicação completa (Backend + Frontend + Banco + Cache)**
 ```bash
 docker compose up --build
 ```
+O Docker Compose já monta toda a aplicação, incluindo as migrações do banco de dados.
 
-O docker compose já monta toda a aplicação, incluindo migrações de banco de dados.
+**3. Acesse a aplicação**
+*   **Frontend:** `http://localhost:5173` (ou a porta definida no compose)
+*   **Swagger UI:** `http://127.0.0.1:8080/swagger/index.html`
 
-Em modo de desenvolvimento com hot reload (é necessário ter a ferramenta [Make](https://kb.shells.com/tutorials/Windows_11/GNU_Make/)):
-
+**(Opcional) Desenvolvimento com Hot Reload**
+Para rodar o backend via Air e o frontend via Vite localmente:
 ```bash
+# Backend
 docker compose up db cache -d
 make migrateup
 air
-```
 
-**(OPCIONAL) Supabase como banco de dados**
-
-Primeiro, mude a variável `DATABASE_URL` para a URL do supabase (é altamente recomendado usar Session Pooler nas opções de conexão do Supabase).
-
-Após isso, basta executar:
-
-```bash
-docker compose up api cache --build --no-deps
-```
-
-**4. Acesse o Swagger UI**
-
-```
-http://127.0.0.1:8080/swagger/index.html
+# Frontend
+cd frontend
+npm install
+npm run dev
 ```
 
 ---
@@ -364,40 +250,32 @@ http://127.0.0.1:8080/swagger/index.html
 ## Decisões de projeto
 
 ### Arquitetura hexagonal
-
-A arquitetura hexagonal foi escolhida para isolar o domínio de dependências externas. Isso permite que as regras de negócio sejam testadas sem banco de dados, que adaptadores sejam substituídos sem impacto no núcleo, e que o projeto evolua sem acumular acoplamento.
+A arquitetura hexagonal foi escolhida no backend para isolar o domínio de dependências externas. Isso permite que as regras de negócio sejam testadas sem banco de dados, que adaptadores sejam substituídos sem impacto no núcleo, e que o projeto evolua sem acumular acoplamento.
 
 ### Autenticação e Segurança
+- **PASETO v4 em vez de JWT:** Elimina vulnerabilidades comuns de JWT, forçando versões estritas e seguras por padrão.
+- **Rate Limiting (`httprate`):** Aplicado em duas camadas (restrição severa no login para evitar *brute force* e limite global nas rotas da API).
+- **Basic Auth:** Utilizado para proteger rotas administrativas e de infraestrutura (Swagger, Pprof e Métricas).
 
-- **PASETO v4 em vez de JWT:** O PASETO elimina vulnerabilidades comuns de JWT (como algoritmos de criptografia configuráveis de forma insegura), forçando versões estritas e seguras por padrão.
-- **Rate Limiting (`httprate`):** Aplicado em duas camadas. Uma restrição mais severa no login (`/authentication/token`) para mitigar *brute force*, e um limite global nas rotas da API para evitar abusos e sobrecarga.
-- **Basic Auth:** Utilizado para rotas administrativas e de infraestrutura (Swagger, Pprof e Métricas), garantindo que dados sensíveis de monitoramento não fiquem expostos publicamente.
-
-### DTOs de entrada e saída
-
-A aplicação utiliza DTOs específicos para HTTP, mantidos separados das entidades de domínio. Isso evita a exposição de campos sensíveis como `password_hash`, desacopla o contrato da API das entidades internas e simplifica a geração da documentação Swagger.
-
-### Erros de domínio
-
-Erros são definidos no pacote `domain` (`ErrNotFound`, `ErrEmailAlreadyExists`, `ErrCourseFull`, `ErrInvalidCredentials`, entre outros) e traduzidos no adaptador PostgreSQL a partir de códigos SQLSTATE. O handler HTTP é responsável por mapear cada erro de domínio para o status HTTP apropriado, mantendo o núcleo independente de detalhes de infraestrutura.
+### Frontend e Experiência do Usuário
+- **SvelteKit e Tailwind CSS:** Fornecem uma interface de usuário extremamente rápida, com bundle reduzido e estilização moderna sem dependência de bibliotecas pesadas.
+- **Validação e Máscaras:** O frontend implementa validação de formulários (ex: máscara de CPF) e gerencia os estados de *loading* e erros amigáveis, garantindo uma boa experiência mesmo em falhas de rede.
 
 ### Uso dos recursos do PostgreSQL
-
 A View, a Function e a Procedure foram escolhidas para resolver problemas que fazem sentido no nível do banco:
-
-- **View:** consultas consolidadas com múltiplos JOINs e agregações, que seriam duplicadas na aplicação.
-- **Function:** cálculo de média ponderada, executado tanto diretamente quanto dentro da View.
-- **Procedure:** matrícula de aluno, envolvendo múltiplas validações e uma inserção que precisa ser atômica.
+- **View:** Consultas consolidadas com múltiplos JOINs.
+- **Function:** Cálculo de média ponderada.
+- **Procedure:** Matrícula de aluno, envolvendo múltiplas validações e uma inserção atômica.
 
 ---
 
 ## Evolução em relação ao semestre anterior
 
-Este projeto é uma reescrita de um sistema acadêmico desenvolvido no semestre anterior, agora com foco em qualidade arquitetural e uso avançado de banco de dados.
+Este projeto é uma reescrita de um sistema acadêmico desenvolvido no semestre anterior, agora com foco em qualidade arquitetural, segurança, performance e entrega Fullstack.
 
 | Aspecto | Versão anterior | Versão atual |
 | --- | --- | --- |
-| Arquitetura | Arquitetura em camadas | Hexagonal (ports and adapters) |
+| Arquitetura | Arquitetura em camadas | Hexagonal (backend) + SPA (frontend) |
 | Persistência | Sem FKs, sem índices | FKs, índices e constraints |
 | Recursos SQL | Sem View, Function ou Procedure | View, Function e Procedure integrados |
 | Autenticação | Inexistente | PASETO v4 (XChaCha20-Poly1305) |
@@ -405,22 +283,19 @@ Este projeto é uma reescrita de um sistema acadêmico desenvolvido no semestre 
 | Segurança da API | Nenhuma | Rate Limiting e Basic Auth (admin) |
 | Observabilidade | Inexistente | pprof e expvar (métricas) |
 | Documentação | Inexistente | Swagger |
+| Interface | Inexistente | SvelteKit + Tailwind CSS |
 | Testes | Testes unitários básicos | Testes unitários e de integração |
 | CI/CD | Inexistente | GitHub Actions |
-| Containerização | Docker e Docker Compose | Docker e Docker Compose |
+| Containerização | Docker e Docker Compose | Docker e Docker Compose (Fullstack) |
 
 ---
 
 ## Performance
 
-Os testes de carga foram realizados utilizando a ferramenta **Autocannon** com 1.000 conexões simultâneas.
+Os testes de carga foram realizados utilizando a ferramenta **Autocannon** com 1.000 conexões simultâneas no backend.
 
 ### Cache Hit vs Cache Miss
 Otimização da rota `GET /users/1` com implementação do padrão *Cache-Aside* no Valkey:
-
-```bash
-npx autocannon -c 1000 -d 20 -V http://127.0.0.1:8080/users/1 --renderStatusCodes
-```
 
 | Cenário | Requisições/Seg | Latência (p50) | Latência (p99) |
 | --- | --- | --- | --- |
@@ -429,10 +304,6 @@ npx autocannon -c 1000 -d 20 -V http://127.0.0.1:8080/users/1 --renderStatusCode
 
 ### Resiliência do Rate Limiter
 Teste de estresse forçando o bloqueio de IP para validar a proteção contra DDoS e *Brute Force*:
-
-```bash
-npx autocannon -c 1000 -d 20 -V http://127.0.0.1:8080/users/1
-```
 
 | Métrica | Valor |
 | --- | --- |
@@ -443,7 +314,6 @@ npx autocannon -c 1000 -d 20 -V http://127.0.0.1:8080/users/1
 *Mesmo sob um ataque massivo de 1 milhão de requisições em 20 segundos, a API manteve a estabilidade e respondeu instantaneamente com os bloqueios.*
 
 ---
-
 ## Vídeos
 
 - [Parte 1: Demonstração do sistema](https://youtu.be/W15-8AW7WaY)

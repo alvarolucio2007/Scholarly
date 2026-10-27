@@ -107,10 +107,10 @@ func (s *UserService) Update(ctx context.Context, payload UpdateUserPayload) err
 		}
 	}
 	if payload.Email != nil {
+		user.Email = *payload.Email
 		if err := user.ValidateEmail(); err != nil {
 			return err
 		}
-		user.Email = *payload.Email
 	}
 	if payload.Password != nil {
 		hash, err := s.hasher.Hash(*payload.Password)

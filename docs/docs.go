@@ -1127,6 +1127,52 @@ const docTemplate = `{
             }
         },
         "/students": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "List students by their enrollments",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "students"
+                ],
+                "summary": "List students by their enrollments",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "filter by enrollment number",
+                        "name": "enrollment_number",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ListStudentResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
+                        }
+                    }
+                }
+            },
             "put": {
                 "security": [
                     {
@@ -1240,61 +1286,6 @@ const docTemplate = `{
                     },
                     "422": {
                         "description": "Unprocessable Entity",
-                        "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/students/enrollment/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Fetch a student by it's enrollment",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "students"
-                ],
-                "summary": "Fetch a student by it's enrollment",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Student Enrollment",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.StudentResponseDTO"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/internal_adapters_http.ErrorResponse"
                         }
@@ -2014,11 +2005,8 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/internal_adapters_http.UserResponseDTO"
-                        }
+                    "204": {
+                        "description": "No Content"
                     },
                     "400": {
                         "description": "Bad Request",
@@ -2510,6 +2498,17 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/internal_adapters_http.ReportCardResponseDTO"
+                    }
+                }
+            }
+        },
+        "internal_adapters_http.ListStudentResponseDTO": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_adapters_http.StudentResponseDTO"
                     }
                 }
             }

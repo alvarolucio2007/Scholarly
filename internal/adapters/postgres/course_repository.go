@@ -33,6 +33,9 @@ func (r *CourseRepo) Create(ctx context.Context, course *domain.Course) error {
 	if err := r.db.QueryRowContext(ctx, query, course.TeacherID, course.Name, course.Code, course.Semester, course.MaxStudents).Scan(&course.ID, &course.CreatedAt); err != nil {
 		translated := translateError(err)
 		if !errors.Is(err, translated) {
+			if errors.Is(translated, domain.ErrForeignKeyViolation) {
+				return domain.ErrTeacherNotFound
+			}
 			return translated
 		}
 		return fmt.Errorf("postgres: create course: %w", err)
@@ -119,6 +122,9 @@ func (r *CourseRepo) Update(ctx context.Context, course domain.Course) error {
 	if err != nil {
 		translated := translateError(err)
 		if !errors.Is(err, translated) {
+			if errors.Is(translated, domain.ErrForeignKeyViolation) {
+				return domain.ErrTeacherNotFound
+			}
 			return translated
 		}
 		return fmt.Errorf("postgres: update courses: %w", err)

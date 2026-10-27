@@ -52,8 +52,8 @@ func (s *StudentService) GetByID(ctx context.Context, studentID int64) (domain.S
 	return student, nil
 }
 
-func (s *StudentService) GetByEnrollment(ctx context.Context, enrollment string) (domain.Student, error) {
-	return s.repo.GetByEnrollment(ctx, enrollment)
+func (s *StudentService) List(ctx context.Context, filter ports.StudentFilter) ([]domain.Student, error) {
+	return s.repo.List(ctx, filter)
 }
 
 type UpdateStudentPayload struct {

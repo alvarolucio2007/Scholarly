@@ -7,6 +7,7 @@ var (
 	ErrInvalidCPF         = errors.New("invalid CPF")
 	ErrInvalidEmail       = errors.New("invalid email")
 	ErrInvalidCredentials = errors.New("invalid credentials")
+	ErrUserNotFound       = errors.New("student not found")
 
 	// Student
 	ErrStudentNotFound          = errors.New("student not found")
@@ -14,6 +15,7 @@ var (
 
 	// Teacher
 	ErrDepartmentRequired = errors.New("department is required")
+	ErrTeacherNotFound    = errors.New("teacher not found")
 
 	// Course
 	ErrCourseNotFound = errors.New("course not found")
