@@ -67,6 +67,8 @@ func respondDomainError(w http.ResponseWriter, err error) {
 		_ = writeJSONError(w, http.StatusNotFound, "User not found")
 	case errors.Is(err, domain.ErrStudentNotFound):
 		_ = writeJSONError(w, http.StatusNotFound, "Student not found")
+	case errors.Is(err, domain.ErrTeacherNotFound):
+		_ = writeJSONError(w, http.StatusNotFound, "Teacher not found")
 	case errors.Is(err, domain.ErrCourseNotFound):
 		_ = writeJSONError(w, http.StatusNotFound, "Course not found")
 	case errors.Is(err, domain.ErrEnrollmentAlreadyExists):
