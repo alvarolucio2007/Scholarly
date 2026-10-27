@@ -22,8 +22,8 @@ type StudentRepo struct {
 	logger *slog.Logger
 }
 
-func NewStudentRepo(db *sql.DB) *StudentRepo {
-	return &StudentRepo{db: db}
+func NewStudentRepo(db *sql.DB, logger *slog.Logger) *StudentRepo {
+	return &StudentRepo{db: db, logger: logger}
 }
 
 func (r *StudentRepo) Create(ctx context.Context, student *domain.Student) error {
@@ -82,18 +82,18 @@ func (r *StudentRepo) List(ctx context.Context, filter ports.StudentFilter) ([]d
 			r.logger.ErrorContext(ctx, "postgres: rows.close list students ", "error", err)
 		}
 	}()
-	var teachers []domain.Student
+	var students []domain.Student
 	for rows.Next() {
 		var t domain.Student
 		if err := rows.Scan(&t.UserID, &t.EnrollmentNumber); err != nil {
 			return nil, fmt.Errorf("postgres: scan students: %w", err)
 		}
-		teachers = append(teachers, t)
+		students = append(students, t)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("postgres: iterate teachers: %w", err)
 	}
-	return teachers, nil
+	return students, nil
 }
 
 func (r *StudentRepo) Update(ctx context.Context, student domain.Student) error {
