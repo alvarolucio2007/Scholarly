@@ -2,12 +2,10 @@
     import { onMount } from 'svelte';
     import { resolve } from '$app/paths';
 
-    // Variáveis de estado
     let users = $state<any[]>([]);
     let isLoading = $state(true);
     let errorMessage = $state('');
 
-    // Busca os usuários no backend
     async function fetchUsers() {
         isLoading = true;
         errorMessage = '';
@@ -21,7 +19,6 @@
             });
 
             if (response.status === 401) {
-                // Token expirado ou inválido
                 localStorage.removeItem('paseto_token');
                 window.location.href = '/login';
                 return;
@@ -32,7 +29,6 @@
             }
 
             const data = await response.json();
-            // Lida com o envelope {"data": [...]} ou um array puro
             users = data.data ? data.data : data;
 
         } catch (error) {
@@ -42,7 +38,6 @@
         }
     }
 
-    // Deleta um usuário
     async function deleteUser(id: number) {
         if (!confirm('Are you sure you want to delete this user?')) return;
 
@@ -56,7 +51,6 @@
             });
 
             if (response.ok) {
-                // Remove o usuário da lista na tela sem precisar recarregar a página
                 users = users.filter(u => u.id !== id);
             } else {
                 alert('Failed to delete user.');
@@ -66,7 +60,6 @@
         }
     }
 
-    // Executa ao carregar a tela
     onMount(() => {
         if (!localStorage.getItem('paseto_token')) {
             window.location.href = '/login';

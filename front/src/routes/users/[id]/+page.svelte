@@ -1,9 +1,8 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import { page } from '$app/state'; // Atualizado para Svelte 5
+    import { page } from '$app/state';
     import { resolve } from '$app/paths';
 
-    // Pega o ID da URL de forma reativa
     let userId = $derived(page.params.id);
 
     let name = $state('');
@@ -77,18 +76,14 @@
                 body: JSON.stringify({
                     id: Number(userId),
                     name: name.trim(),
-                    email: email.trim(), // <-- Remove espaços extras
-                    cpf: cpf.replace(/\D/g, ''), // <-- Envia o CPF SÓ COM NÚMEROS
-                    // Se o usuário não digitou senha nova, não mande.
-                    // (O Go com nilIfEmpty vai ignorar string vazia)
+                    email: email.trim(),
+                    cpf: cpf.replace(/\D/g, ''),
                     password: password || undefined
                 })
             });
 
             if (!response.ok) {
                 const errorData = await response.json();
-                // Adicione um console.log para ver o erro exato do Go no navegador
-                console.log("Erro do Go:", errorData.error);
                 throw new Error(errorData.error || 'Failed to update user');
             }
 
