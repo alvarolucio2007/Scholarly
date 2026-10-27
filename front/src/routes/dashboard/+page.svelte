@@ -38,6 +38,9 @@
     });
 </script>
 
+<svelte:head>
+    <title>Dashboard | Scholarly</title>
+</svelte:head>
 <div class="min-h-screen bg-gray-100 p-8">
     <header class="flex justify-between items-center mb-10">
         <div>
