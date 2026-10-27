@@ -221,11 +221,17 @@ cp .env.example .env
 ```
 *(Edite o arquivo `.env` com as suas credenciais e defina um `BASIC_AUTH_USER` e `BASIC_AUTH_PASS` para acessar o Swagger e Métricas).*
 
-**2. Suba a aplicação completa (Backend + Frontend + Banco + Cache)**
+**2. Suba o Backend ,Banco de dados e Cache**
 ```bash
 docker compose up --build
 ```
-O Docker Compose já monta toda a aplicação, incluindo as migrações do banco de dados.
+**3. Suba o frontend**
+```bash
+cd frontend
+npm install
+npm run dev
+```
+O Docker Compose já monta todo o backend, incluindo as migrações do banco de dados.
 
 **3. Acesse a aplicação**
 *   **Frontend:** `http://localhost:5173` (ou a porta definida no compose)
