@@ -115,13 +115,13 @@ func (h *Handler) ListStudent(w http.ResponseWriter, r *http.Request) {
 		}
 		filter.EnrollmentNumber = &v
 	}
-	teachers, err := h.students.List(r.Context(), filter)
+	students, err := h.students.List(r.Context(), filter)
 	if err != nil {
 		respondDomainError(w, err)
 		return
 	}
-	response := new(teachers)
-	_ = writeJSONData(w, http.StatusOK, response)
+	response := newListStudentResponseDTO(students)
+	_ = writeJSON(w, http.StatusOK, response)
 }
 
 // UpdateStudent godoc
