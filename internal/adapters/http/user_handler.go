@@ -148,13 +148,13 @@ func (h *Handler) ListUsers(w http.ResponseWriter, r *http.Request) {
 //	@Tags			users
 //	@Accept			json
 //	@Produce		json
-//	@Param			payload	body		UpdateUserDTO	true	"User DTO"
-//	@Success		201		{object}	UserResponseDTO
-//	@Failure		400		{object}	ErrorResponse
-//	@Failure		404		{object}	ErrorResponse
-//	@Failure		409		{object}	ErrorResponse
-//	@Failure		422		{object}	ErrorResponse
-//	@Failure		500		{object}	ErrorResponse
+//	@Param			payload	body	UpdateUserDTO	true	"User DTO"
+//	@Success		204
+//	@Failure		400	{object}	ErrorResponse
+//	@Failure		404	{object}	ErrorResponse
+//	@Failure		409	{object}	ErrorResponse
+//	@Failure		422	{object}	ErrorResponse
+//	@Failure		500	{object}	ErrorResponse
 //	@Security		ApiKeyAuth
 //	@Router			/users [put]
 func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
