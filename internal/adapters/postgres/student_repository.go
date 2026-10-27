@@ -33,6 +33,9 @@ func (r *StudentRepo) Create(ctx context.Context, student *domain.Student) error
 	if _, err := r.db.ExecContext(ctx, query, student.UserID, student.EnrollmentNumber); err != nil {
 		translated := translateError(err)
 		if !errors.Is(err, translated) {
+			if errors.Is(translated, domain.ErrForeignKeyViolation) {
+				return domain.ErrUserNotFound
+			}
 			return translated
 		}
 		return fmt.Errorf("postgres: create student: %w", err)

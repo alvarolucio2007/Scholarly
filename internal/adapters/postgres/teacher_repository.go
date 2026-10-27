@@ -34,6 +34,9 @@ func (r *TeacherRepo) Create(ctx context.Context, teacher *domain.Teacher) error
 	if _, err := r.db.ExecContext(ctx, query, teacher.UserID, teacher.Department); err != nil {
 		translated := translateError(err)
 		if !errors.Is(err, translated) {
+			if errors.Is(translated, domain.ErrForeignKeyViolation) {
+				return domain.ErrUserNotFound
+			}
 			return translated
 		}
 		return fmt.Errorf("postgres: create teacher: %w", err)
