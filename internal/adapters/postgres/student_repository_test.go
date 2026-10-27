@@ -27,7 +27,7 @@ func cleanupStudent(t *testing.T, studentID, userID int64) {
 	})
 }
 func createStudentTest(t *testing.T, student *domain.Student) {
-	r := postgres.NewStudentRepo(testDB)
+	r := postgres.NewStudentRepo(testDB, testLogger)
 	err := r.Create(t.Context(), student)
 	require.NoError(t, err)
 }
@@ -35,7 +35,7 @@ func createStudentTest(t *testing.T, student *domain.Student) {
 func TestStudentRepo_Create(t *testing.T) {
 	s := newStudentScenario(t)
 	student := &domain.Student{UserID: s.User.ID, EnrollmentNumber: "TestingCreation"}
-	r := postgres.NewStudentRepo(testDB)
+	r := postgres.NewStudentRepo(testDB, testLogger)
 	tests := []struct {
 		name    string // description of this test case
 		student *domain.Student
@@ -73,7 +73,7 @@ func TestStudentRepo_Create(t *testing.T) {
 }
 
 func TestStudentRepo_GetByID(t *testing.T) {
-	r := postgres.NewStudentRepo(testDB)
+	r := postgres.NewStudentRepo(testDB, testLogger)
 	s := newStudentScenario(t)
 	student := domain.Student{UserID: s.User.ID, EnrollmentNumber: "Testing"}
 	createStudentTest(t, &student)
@@ -144,7 +144,7 @@ func TestStudentRepo_List(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := postgres.NewStudentRepo(testDB)
+			r := postgres.NewStudentRepo(testDB, nil)
 			got, gotErr := r.List(t.Context(), ports.StudentFilter{EnrollmentNumber: &tt.enrollment})
 			if gotErr != nil {
 				if !tt.wantErr {
@@ -186,7 +186,7 @@ func TestStudentRepo_Update(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := postgres.NewStudentRepo(testDB)
+			r := postgres.NewStudentRepo(testDB, testLogger)
 			gotErr := r.Update(t.Context(), tt.student)
 			if gotErr != nil {
 				if !tt.wantErr {
@@ -228,7 +228,7 @@ func TestStudentRepo_Delete(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := postgres.NewStudentRepo(testDB)
+			r := postgres.NewStudentRepo(testDB, testLogger)
 			gotErr := r.Delete(t.Context(), tt.studentID)
 			if gotErr != nil {
 				if !tt.wantErr {

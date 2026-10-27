@@ -31,7 +31,7 @@ func New(db *sql.DB, rdb *redis.Client, logger *slog.Logger, symmetricKey []byte
 	userCache := valkey.NewUserCache(rdb)
 	userSvc := services.NewUserService(userRepo, hasher, userCache, logger, pasetoAuth)
 
-	studentRepo := postgres.NewStudentRepo(db)
+	studentRepo := postgres.NewStudentRepo(db, logger)
 	studentCache := valkey.NewStudentCache(rdb)
 	studentSvc := services.NewStudentService(studentRepo, studentCache, logger)
 
