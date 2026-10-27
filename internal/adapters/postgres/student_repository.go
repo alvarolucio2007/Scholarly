@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log/slog"
 
 	"github.com/alvarolucio2007/Scholarly/internal/domain"
 	"github.com/alvarolucio2007/Scholarly/internal/ports"
@@ -17,7 +18,8 @@ var (
 )
 
 type StudentRepo struct {
-	db *sql.DB
+	db     *sql.DB
+	logger *slog.Logger
 }
 
 func NewStudentRepo(db *sql.DB) *StudentRepo {
@@ -54,20 +56,41 @@ func (r *StudentRepo) GetByID(ctx context.Context, studentID int64) (domain.Stud
 	return s, nil
 }
 
-func (r *StudentRepo) GetByEnrollment(ctx context.Context, enrollment string) (domain.Student, error) {
-	query := `SELECT user_id,enrollment_number FROM students WHERE enrollment_number=$1`
-	var s domain.Student
-
+// List implements [ports.StudentRepository].
+func (r *StudentRepo) List(ctx context.Context, filter ports.StudentFilter) ([]domain.Student, error) {
+	wb := newWhereBuilder()
+	if filter.EnrollmentNumber != nil {
+		wb.addILike("enrollment_number", *filter.EnrollmentNumber)
+	}
+	where, args := wb.build()
+	query := `
+    SELECT user_id,enrollment_number
+    FROM students
+		` + where + `ORDER BY user_id ASC`
 	ctx, cancel := context.WithTimeout(ctx, PostgresQueryTimeout)
 	defer cancel()
-	err := r.db.QueryRowContext(ctx, query, enrollment).Scan(&s.UserID, &s.EnrollmentNumber)
-	if errors.Is(err, sql.ErrNoRows) {
-		return domain.Student{}, domain.ErrNotFound
-	}
+
+	rows, err := r.db.QueryContext(ctx, query, args...)
 	if err != nil {
-		return domain.Student{}, fmt.Errorf("postgres: getByEnrollment student: %w", err)
+		return nil, fmt.Errorf("postgres: list students: %w", err)
 	}
-	return s, nil
+	defer func() {
+		if err := rows.Close(); err != nil {
+			r.logger.ErrorContext(ctx, "postgres: rows.close list students ", "error", err)
+		}
+	}()
+	var teachers []domain.Student
+	for rows.Next() {
+		var t domain.Student
+		if err := rows.Scan(&t.UserID, &t.EnrollmentNumber); err != nil {
+			return nil, fmt.Errorf("postgres: scan students: %w", err)
+		}
+		teachers = append(teachers, t)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("postgres: iterate teachers: %w", err)
+	}
+	return teachers, nil
 }
 
 func (r *StudentRepo) Update(ctx context.Context, student domain.Student) error {

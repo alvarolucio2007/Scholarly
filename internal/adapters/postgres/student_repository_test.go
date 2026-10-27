@@ -5,6 +5,7 @@ import (
 
 	"github.com/alvarolucio2007/Scholarly/internal/adapters/postgres"
 	"github.com/alvarolucio2007/Scholarly/internal/domain"
+	"github.com/alvarolucio2007/Scholarly/internal/ports"
 	"github.com/go-openapi/testify/require"
 )
 
@@ -119,42 +120,45 @@ func TestStudentRepo_GetByID(t *testing.T) {
 	cleanupStudent(t, student.UserID, s.User.ID)
 }
 
-func TestStudentRepo_GetByEnrollment(t *testing.T) {
+func TestStudentRepo_List(t *testing.T) {
 	s := newStudentScenario(t)
 	student := domain.Student{UserID: s.User.ID, EnrollmentNumber: "Testing"}
 	createStudentTest(t, &student)
 	tests := []struct {
 		name       string // description of this test case
 		enrollment string
-		want       domain.Student
+		want       []domain.Student
 		wantErr    bool
 	}{
 		{
 			name:       "should return valid user with valid enrollment number",
 			enrollment: "Testing",
-			want:       student,
+			want:       []domain.Student{student},
 			wantErr:    false,
 		}, {
 			name:       "should not return anything if userID doesn't exist",
 			enrollment: "DOESN'T EXIST",
-			want:       domain.Student{},
-			wantErr:    true,
+			want:       []domain.Student{},
+			wantErr:    false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			r := postgres.NewStudentRepo(testDB)
-			got, gotErr := r.GetByEnrollment(t.Context(), tt.enrollment)
+			got, gotErr := r.List(t.Context(), ports.StudentFilter{EnrollmentNumber: &tt.enrollment})
 			if gotErr != nil {
 				if !tt.wantErr {
-					t.Errorf("GetByEnrollment() failed: %v", gotErr)
+					t.Errorf("List() failed: %v", gotErr)
 				}
 				return
 			}
 			if tt.wantErr {
-				t.Fatal("GetByEnrollment() succeeded unexpectedly")
+				t.Fatal("List() succeeded unexpectedly")
 			}
-			require.EqualValues(t, tt.want, got)
+			require.Equal(t, len(got), len(tt.want))
+			for i := range got {
+				require.Equal(t, got[i], tt.want[i])
+			}
 		})
 	}
 	cleanupStudent(t, student.UserID, s.User.ID)

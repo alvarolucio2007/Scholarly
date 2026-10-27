@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/alvarolucio2007/Scholarly/internal/domain"
+	"github.com/alvarolucio2007/Scholarly/internal/ports"
 	"github.com/alvarolucio2007/Scholarly/internal/services"
 	"github.com/go-chi/chi/v5"
 )
@@ -83,34 +84,44 @@ func (h *Handler) GetStudentByID(w http.ResponseWriter, r *http.Request) {
 	response := newStudentResponseDTO(student)
 	_ = writeJSONData(w, http.StatusOK, response)
 }
+func newListStudentResponseDTO(students []domain.Student) ListStudentResponseDTO {
+	responses := make([]StudentResponseDTO, 0, len(students))
+	for _, student := range students {
+		responses = append(responses, newStudentResponseDTO(student))
+	}
+	return ListStudentResponseDTO{Data: responses}
+}
 
-// GetStudentByEnrollment godoc
+// ListStudents godoc
 //
-//	@Summary		Fetch a student by it's enrollment
-//	@Description	Fetch a student by it's enrollment
+//	@Summary		List students by their enrollments
+//	@Description	List students by their enrollments
 //	@Tags			students
 //	@Accept			json
 //	@Produce		json
-//	@Param			id	path		int	true	"Student Enrollment"
-//	@Success		200	{object}	StudentResponseDTO
-//	@Failure		400	{object}	ErrorResponse
-//	@Failure		404	{object}	ErrorResponse
-//	@Failure		500	{object}	ErrorResponse
+//	@Param			enrollment_number	query		string	false	"filter by enrollment number"
+//	@Success		200					{object}	ListStudentResponseDTO
+//	@Failure		400					{object}	ErrorResponse
+//	@Failure		500					{object}	ErrorResponse
 //	@Security		ApiKeyAuth
-//	@Router			/students/enrollment/{id} [get]
-func (h *Handler) GetStudentByEnrollment(w http.ResponseWriter, r *http.Request) {
-	studentEnrollment := chi.URLParam(r, "id")
-	if studentEnrollment == "" {
-		_ = writeJSONError(w, http.StatusBadRequest, "studentEnrollment is missing")
-		return
+//	@Router			/students [get]
+func (h *Handler) ListStudent(w http.ResponseWriter, r *http.Request) {
+	q := r.URL.Query()
+	filter := ports.StudentFilter{}
+	if v := q.Get("enrollment_number"); v != "" {
+		if len(v) > 100 {
+			_ = writeJSONError(w, http.StatusBadRequest, "department should be less than 100 characters long")
+			return
+		}
+		filter.EnrollmentNumber = &v
 	}
-	student, err := h.students.GetByEnrollment(r.Context(), studentEnrollment)
+	teachers, err := h.students.List(r.Context(), filter)
 	if err != nil {
 		respondDomainError(w, err)
 		return
 	}
-	response := newStudentResponseDTO(student)
-	_ = writeJSONData(w, http.StatusOK, response)
+	response := new(teachers)
+	_ = writeJSON(w, http.StatusOK, response)
 }
 
 // UpdateStudent godoc
