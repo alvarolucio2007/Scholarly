@@ -15,6 +15,7 @@ var (
 
 	// Teacher
 	ErrDepartmentRequired = errors.New("department is required")
+	ErrTeacherNotFound    = errors.New("teacher not found")
 
 	// Course
 	ErrCourseNotFound = errors.New("course not found")
