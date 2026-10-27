@@ -88,6 +88,7 @@
                     bind:value={password}
                     required
                     placeholder="••••••••"
+                    minlength="8"
                     class="w-full p-2.5 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 />
             </div>
