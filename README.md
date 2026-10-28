@@ -222,7 +222,7 @@ cp /front/.env.example /front/.env
 ```
 *(Edite o arquivo `.env` com as suas credenciais e defina um `BASIC_AUTH_USER` e `BASIC_AUTH_PASS` para acessar o Swagger e Métricas).*
 
-**2. Suba a aplicação completa (Backend + Frontend + Banco + Cache)**
+**2. Suba o Backend ,Banco de dados e Cache**
 ```bash
 docker compose up --build
 ```
