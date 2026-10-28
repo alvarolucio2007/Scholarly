@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.0.1](https://github.com/alvarolucio2007/Scholarly/compare/v5.0.0...v5.0.1) (2026-10-28)
+
+
+### Bug Fixes
+
+* Fixing vulnerability caused by postcss-selector-parser ([37a09b9](https://github.com/alvarolucio2007/Scholarly/commit/37a09b962bc70934ed6de40f8f253abd8e9434ca))
+
 ## [5.0.0](https://github.com/alvarolucio2007/Scholarly/compare/v4.2.0...v5.0.0) (2026-10-27)
 
 
