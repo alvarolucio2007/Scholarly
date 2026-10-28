@@ -38,7 +38,7 @@ O Scholarly é uma aplicação web completa para gestão acadêmica que lida com
 
 O sistema atende à necessidade de uma plataforma centralizada de gestão acadêmica que vá além do CRUD tradicional. No backend, utiliza recursos nativos do banco de dados para processar e consolidar informações (como cálculo de média ponderada, boletins consolidados e matrícula atômica com validação de vagas). No frontend, entrega uma interface de usuário (UI) fluida, responsiva e moderna para a manipulação desses dados.
 
-> **Nota de transparência:** O frontend foi construído com o auxílio de IA, refletindo a adoção de ferramentas modernas de produtividade para acelerar a entrega de interfaces, enquanto toda a lógica de negócio, arquitetura e infraestrutura do backend foram desenvolvidas do zero.
+> **Nota de transparência:** O frontend foi construído com o auxílio de IA, refletindo a adoção de ferramentas modernas de produtividade para acelerar a entrega de interfaces, enquanto quase toda a lógica de negócio, arquitetura e infraestrutura do backend foram desenvolvidas do zero.
 
 ---
 
