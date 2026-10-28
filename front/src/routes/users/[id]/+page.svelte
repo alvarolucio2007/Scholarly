@@ -2,6 +2,7 @@
     import { onMount } from 'svelte';
     import { page } from '$app/state';
     import { resolve } from '$app/paths';
+    import { PUBLIC_API_URL } from '$env/static/public';
 
     let userId = $derived(page.params.id);
 
@@ -37,7 +38,7 @@
         }
 
         try {
-            const response = await fetch(`http://localhost:8080/users/${userId}`, {
+            const response = await fetch(`${PUBLIC_API_URL}/users/${userId}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
@@ -67,7 +68,7 @@
         const token = localStorage.getItem('paseto_token');
 
         try {
-            const response = await fetch('http://localhost:8080/users', {
+            const response = await fetch(`${PUBLIC_API_URL}/users`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

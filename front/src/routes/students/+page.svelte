@@ -1,5 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
+    import { resolve } from '$app/paths';
+    import { PUBLIC_API_URL } from '$env/static/public';
 
     let students = $state<any[]>([]);
     let isLoading = $state(true);
@@ -11,7 +13,7 @@
         const token = localStorage.getItem('paseto_token');
 
         try {
-            const response = await fetch('http://localhost:8080/students', {
+            const response = await fetch(`${PUBLIC_API_URL}/students`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
@@ -38,7 +40,7 @@
 
         const token = localStorage.getItem('paseto_token');
         try {
-            const response = await fetch(`http://localhost:8080/students/${userId}`, {
+            const response = await fetch(`${PUBLIC_API_URL}/students/${userId}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -69,14 +71,14 @@
 <div class="min-h-screen bg-gray-100 p-8">
     <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
-            <a href="/dashboard" class="text-blue-600 hover:underline text-sm font-medium mb-2 inline-block">
+            <a href={resolve('/dashboard')} class="text-blue-600 hover:underline text-sm font-medium mb-2 inline-block">
                 &larr; Back to Dashboard
             </a>
             <h1 class="text-3xl font-bold text-gray-800">Students Management</h1>
             <p class="text-gray-500">View and manage enrolled students</p>
         </div>
 
-        <a href="/students/create" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors inline-block">
+        <a href={resolve('/students/create')} class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors inline-block">
             + New Student
         </a>
     </header>
@@ -105,7 +107,7 @@
                                 <td class="p-4 text-gray-800 font-medium">{student.enrollment_number}</td>
                                 <td class="p-4 text-right flex justify-end gap-2">
                                     <a
-                                        href={`/students/${student.user_id}`}
+                                        href={resolve('/students/[id]', { id: student.user_id.toString() })}
                                         class="text-blue-600 hover:bg-blue-50 px-3 py-1 rounded-md text-sm font-medium transition-colors"
                                     >
                                         Edit

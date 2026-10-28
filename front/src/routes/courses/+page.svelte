@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onMount } from 'svelte';
+    import { PUBLIC_API_URL } from '$env/static/public';
 
     let courses = $state<any[]>([]);
     let isLoading = $state(true);
@@ -11,7 +12,7 @@
         const token = localStorage.getItem('paseto_token');
 
         try {
-            const response = await fetch('http://localhost:8080/courses', {
+            const response = await fetch(`${PUBLIC_API_URL}/courses`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
@@ -38,7 +39,7 @@
 
         const token = localStorage.getItem('paseto_token');
         try {
-            const response = await fetch(`http://localhost:8080/courses/${id}`, {
+            const response = await fetch(`${PUBLIC_API_URL}/courses/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -61,7 +62,6 @@
         fetchCourses();
     });
 </script>
-
 <svelte:head>
     <title>Courses | Scholarly</title>
 </svelte:head>

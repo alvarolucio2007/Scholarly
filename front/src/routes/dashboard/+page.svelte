@@ -1,6 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { resolve } from '$app/paths';
+    import { PUBLIC_API_URL } from '$env/static/public';
 
     let userCount = $state(0);
     let courseCount = $state(0);
@@ -13,9 +14,9 @@
 
         try {
             const [usersRes, coursesRes, studentsRes] = await Promise.all([
-                fetch('http://localhost:8080/users', { headers }),
-                fetch('http://localhost:8080/courses', { headers }),
-                fetch('http://localhost:8080/students', { headers })
+                fetch(`${PUBLIC_API_URL}/users`, { headers }),
+                fetch(`${PUBLIC_API_URL}/courses`, { headers }),
+                fetch(`${PUBLIC_API_URL}/students`, { headers })
             ]);
 
             if (usersRes.ok) userCount = (await usersRes.json()).data.length;

@@ -1,6 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { resolve } from '$app/paths';
+    import { PUBLIC_API_URL } from '$env/static/public';
 
     let tests = $state<any[]>([]);
     let isLoading = $state(true);
@@ -12,7 +13,7 @@
         const token = localStorage.getItem('paseto_token');
 
         try {
-            const response = await fetch('http://localhost:8080/tests', {
+            const response = await fetch(`${PUBLIC_API_URL}/tests`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
@@ -39,7 +40,7 @@
 
         const token = localStorage.getItem('paseto_token');
         try {
-            const response = await fetch(`http://localhost:8080/tests/${id}`, {
+            const response = await fetch(`${PUBLIC_API_URL}/tests/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });

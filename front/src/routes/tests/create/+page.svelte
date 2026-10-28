@@ -1,6 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { resolve } from '$app/paths';
+    import { PUBLIC_API_URL } from '$env/static/public';
 
     let courseId = $state<string | number>('');
     let name = $state('');
@@ -25,7 +26,7 @@
         try {
             const isoDate = new Date(testDate).toISOString();
 
-            const response = await fetch('http://localhost:8080/tests', {
+            const response = await fetch(`${PUBLIC_API_URL}/tests`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

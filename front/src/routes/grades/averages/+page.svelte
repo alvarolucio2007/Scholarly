@@ -1,6 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { resolve } from '$app/paths';
+    import { PUBLIC_API_URL } from '$env/static/public';
 
     let averages = $state<any[]>([]);
     let isLoading = $state(true);
@@ -12,7 +13,7 @@
         const token = localStorage.getItem('paseto_token');
 
         try {
-            const response = await fetch('http://localhost:8080/grades/average/list', {
+            const response = await fetch(`${PUBLIC_API_URL}/grades/average/list`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
