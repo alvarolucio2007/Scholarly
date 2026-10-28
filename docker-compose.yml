@@ -49,6 +49,16 @@ services:
         condition: service_healthy
       migrate:
         condition: service_completed_successfully
+  frontend:
+    build:
+      context: ./front
+      args:
+        PUBLIC_API_URL: http://localhost:8080
+    container_name: frontend
+    ports:
+      - "80:3000"
+    depends_on:
+      - api
 
 volumes:
   db-data:
