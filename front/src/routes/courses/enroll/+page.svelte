@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onMount } from 'svelte';
+    import { PUBLIC_API_URL } from '$env/static/public';
 
     let studentId = $state<string | number>('');
     let courseId = $state<string | number>('');
@@ -22,7 +23,7 @@
         const token = localStorage.getItem('paseto_token');
 
         try {
-            const response = await fetch('http://localhost:8080/courses/enroll/', {
+            const response = await fetch(`${PUBLIC_API_URL}/courses/enroll/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -51,7 +52,6 @@
         }
     }
 </script>
-
 <svelte:head>
     <title>Enroll Student | Scholarly</title>
 </svelte:head>

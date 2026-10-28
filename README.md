@@ -38,7 +38,7 @@ O Scholarly é uma aplicação web completa para gestão acadêmica que lida com
 
 O sistema atende à necessidade de uma plataforma centralizada de gestão acadêmica que vá além do CRUD tradicional. No backend, utiliza recursos nativos do banco de dados para processar e consolidar informações (como cálculo de média ponderada, boletins consolidados e matrícula atômica com validação de vagas). No frontend, entrega uma interface de usuário (UI) fluida, responsiva e moderna para a manipulação desses dados.
 
-Nota: Front-end criado majoritariamente com ajuda de IA.
+> **Nota de transparência:** O frontend foi construído com o auxílio de IA, refletindo a adoção de ferramentas modernas de produtividade para acelerar a entrega de interfaces, enquanto toda a lógica de negócio, arquitetura e infraestrutura do backend foram desenvolvidas do zero.
 
 ---
 
@@ -218,6 +218,7 @@ A documentação completa, com payloads e códigos de resposta, está disponíve
 git clone https://github.com/alvarolucio2007/Scholarly.git
 cd Scholarly
 cp .env.example .env
+cp /front/.env.example /front/.env
 ```
 *(Edite o arquivo `.env` com as suas credenciais e defina um `BASIC_AUTH_USER` e `BASIC_AUTH_PASS` para acessar o Swagger e Métricas).*
 
@@ -225,16 +226,10 @@ cp .env.example .env
 ```bash
 docker compose up --build
 ```
-**3. Suba o frontend**
-```bash
-cd frontend
-npm install
-npm run dev
-```
-O Docker Compose já monta todo o backend, incluindo as migrações do banco de dados.
+O Docker Compose já monta toda a aplicação, incluindo as migrações do banco de dados e o servidor do frontend.
 
 **3. Acesse a aplicação**
-*   **Frontend:** `http://localhost:5173` (ou a porta definida no compose)
+*   **Frontend:** `http://localhost/login`
 *   **Swagger UI:** `http://127.0.0.1:8080/swagger/index.html`
 
 **(Opcional) Desenvolvimento com Hot Reload**
@@ -288,11 +283,11 @@ Este projeto é uma reescrita de um sistema acadêmico desenvolvido no semestre 
 | Hash de senha | Inexistente | Argon2id |
 | Segurança da API | Nenhuma | Rate Limiting e Basic Auth (admin) |
 | Observabilidade | Inexistente | pprof e expvar (métricas) |
-| Documentação | Inexistente | Swagger |
-| Interface | Inexistente | SvelteKit + Tailwind CSS |
+| Documentação | Apenas README | Swagger |
+| Interface | Streamlit | SvelteKit + Tailwind CSS |
 | Testes | Testes unitários básicos | Testes unitários e de integração |
 | CI/CD | Inexistente | GitHub Actions |
-| Containerização | Docker e Docker Compose | Docker e Docker Compose (Fullstack) |
+| Containerização | Docker e Docker Compose (Fullstack) | Docker e Docker Compose (Fullstack) |
 
 ---
 

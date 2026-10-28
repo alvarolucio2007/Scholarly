@@ -2,6 +2,7 @@
     import { onMount } from 'svelte';
     import { page } from '$app/state';
     import { resolve } from '$app/paths';
+    import { PUBLIC_API_URL } from '$env/static/public';
 
     let enrollmentId = $derived(page.params.id);
 
@@ -23,7 +24,7 @@
         }
 
         try {
-            const response = await fetch(`http://localhost:8080/enrollments/${enrollmentId}`, {
+            const response = await fetch(`${PUBLIC_API_URL}/enrollments/${enrollmentId}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
@@ -52,7 +53,7 @@
         const token = localStorage.getItem('paseto_token');
 
         try {
-            const response = await fetch('http://localhost:8080/enrollments', {
+            const response = await fetch(`${PUBLIC_API_URL}/enrollments`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

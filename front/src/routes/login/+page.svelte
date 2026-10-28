@@ -1,5 +1,7 @@
 <script lang="ts">
-    import {resolve} from '$app/paths'
+    import { resolve } from '$app/paths';
+    import { PUBLIC_API_URL } from '$env/static/public';
+
     let email = $state('');
     let password = $state('');
     let errorMessage = $state('');
@@ -9,7 +11,7 @@
         errorMessage = '';
 
         try {
-            const response = await fetch('http://localhost:8080/authentication/token', {
+            const response = await fetch(`${PUBLIC_API_URL}/authentication/token`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -31,6 +33,7 @@
         }
     }
 </script>
+
 <div class="min-h-screen flex items-center justify-center bg-gray-100 p-4">
     <div class="w-full max-w-md bg-white p-8 rounded-xl shadow-lg">
 
@@ -40,6 +43,7 @@
             <div>
                 <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
                 <input
+                    id="email"
                     type="email"
                     bind:value={email}
                     required
@@ -51,6 +55,7 @@
             <div>
                 <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
                 <input
+                    id="password"
                     type="password"
                     bind:value={password}
                     required

@@ -1,6 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { resolve } from '$app/paths';
+    import { PUBLIC_API_URL } from '$env/static/public';
 
     let users = $state<any[]>([]);
     let isLoading = $state(true);
@@ -12,7 +13,7 @@
         const token = localStorage.getItem('paseto_token');
 
         try {
-            const response = await fetch('http://localhost:8080/users', {
+            const response = await fetch(`${PUBLIC_API_URL}/users`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -43,7 +44,7 @@
 
         const token = localStorage.getItem('paseto_token');
         try {
-            const response = await fetch(`http://localhost:8080/users/${id}`, {
+            const response = await fetch(`${PUBLIC_API_URL}/users/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -93,7 +94,6 @@
         {:else if users.length === 0}
             <div class="p-10 text-center text-gray-500 font-medium">No users found in the system.</div>
         {:else}
-            <!-- Tabela de Usuários -->
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
@@ -107,7 +107,6 @@
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         {#each users as user (user.id)}
-
                             <tr class="hover:bg-gray-50 transition-colors">
                                 <td class="p-4 text-gray-500 font-mono text-sm">#{user.id}</td>
                                 <td class="p-4 text-gray-800 font-medium">{user.name}</td>

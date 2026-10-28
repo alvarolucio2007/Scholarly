@@ -132,6 +132,7 @@ definitions:
         maxLength: 255
         type: string
       password:
+        minLength: 8
         type: string
     required:
     - cpf

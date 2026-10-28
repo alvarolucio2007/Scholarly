@@ -1,5 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
+    import { resolve } from '$app/paths';
+    import { PUBLIC_API_URL } from '$env/static/public';
 
     let userId = $state<string | number>('');
     let department = $state('');
@@ -19,7 +21,7 @@
         const token = localStorage.getItem('paseto_token');
 
         try {
-            const response = await fetch('http://localhost:8080/teachers', {
+            const response = await fetch(`${PUBLIC_API_URL}/teachers`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -51,7 +53,7 @@
 
 <div class="min-h-screen bg-gray-100 p-8 flex justify-center">
     <div class="w-full max-w-lg">
-        <a href="/teachers" class="text-blue-600 hover:underline text-sm font-medium mb-4 inline-block">
+        <a href={resolve('/teachers')} class="text-blue-600 hover:underline text-sm font-medium mb-4 inline-block">
             &larr; Back to Teachers
         </a>
 

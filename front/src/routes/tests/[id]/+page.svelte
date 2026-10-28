@@ -2,6 +2,7 @@
     import { onMount } from 'svelte';
     import { page } from '$app/state';
     import { resolve } from '$app/paths';
+    import { PUBLIC_API_URL } from '$env/static/public';
 
     let testId = $derived(page.params.id);
 
@@ -23,7 +24,7 @@
         }
 
         try {
-            const response = await fetch(`http://localhost:8080/tests/${testId}`, {
+            const response = await fetch(`${PUBLIC_API_URL}/tests/${testId}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
@@ -57,7 +58,7 @@
         try {
             const isoDate = testDate ? new Date(testDate).toISOString() : '';
 
-            const response = await fetch('http://localhost:8080/tests', {
+            const response = await fetch(`${PUBLIC_API_URL}/tests`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onMount } from 'svelte';
+    import { PUBLIC_API_URL } from '$env/static/public';
 
     let teacherId = $state<string | number>('');
     let name = $state('');
@@ -23,7 +24,7 @@
         const token = localStorage.getItem('paseto_token');
 
         try {
-            const response = await fetch('http://localhost:8080/courses', {
+            const response = await fetch(`${PUBLIC_API_URL}/courses`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
